@@ -1,0 +1,10 @@
+node_modules/
+shots/
+dist/
+*.log
+web/standalone.html
+web/data/email-*.png
+web/data/writeup.json
+Revamped League — Preview.html
+.DS_Store
+.vercel

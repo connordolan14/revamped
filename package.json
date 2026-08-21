@@ -1,0 +1,27 @@
+{
+  "name": "revamped-league",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "validate": "tsx scripts/validate2025.ts",
+    "build:bundle": "tsx scripts/buildBundle.ts",
+    "build:live": "tsx src/pipeline/buildLive.ts",
+    "writeup": "tsx src/pipeline/writeup.ts",
+    "render:email": "node scripts/renderEmailImages.mjs",
+    "email": "tsx src/pipeline/email.ts",
+    "standalone": "node scripts/buildStandalone.mjs",
+    "shots": "node scripts/shoot.mjs",
+    "typecheck": "tsc --noEmit",
+    "weekly": "npm run build:live && npm run render:email && npm run email"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "playwright": "^1.62.1",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "marked": "^18.0.10"
+  }
+}

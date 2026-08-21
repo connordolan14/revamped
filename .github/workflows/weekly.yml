@@ -1,0 +1,60 @@
+name: Weekly league update
+
+# Tuesday 12:00 UTC (7:00 AM ET in winter / 8:00 AM in summer). Also runnable
+# on demand from the Actions tab.
+on:
+  schedule:
+    - cron: "0 12 * * 2"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      LEAGUE_ID: ${{ vars.LEAGUE_ID || '1312251123628789760' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Chromium for email images
+        run: npx playwright install --with-deps chromium
+
+      - name: Build league data from Sleeper + FantasyCalc
+        run: npm run build:live
+        env:
+          GEN_TS: ${{ github.event.repository.updated_at }}
+
+      - name: Render standings & power images
+        run: npm run render:email
+
+      - name: Commit refreshed data (triggers Vercel deploy)
+        run: |
+          git config user.name "league-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add web/data/bundle.json
+          if git diff --staged --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "chore: weekly data refresh"
+            git push
+          fi
+
+      - name: Email the weekly write-up (skips itself if secrets unset)
+        run: npm run email
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ vars.EMAIL_FROM }}
