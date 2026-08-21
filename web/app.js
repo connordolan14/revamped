@@ -295,12 +295,13 @@ function pageHistory() {
     const cards = h("div", { class: "records-grid" });
     const rc = (lb, vl, sb, live, teamIds, headshot) => h("div", { class: "rec-card" + (live ? " live" : "") },
       h("div", { class: "lb" }, lb),
-      h("div", { class: "vl-row" }, h("div", { class: "vl" }, vl), headshot || null),
+      h("div", { class: "vl" }, vl),
       h("div", { class: "sb" }, sb),
-      recTeams(teamIds));
+      recTeams(teamIds),
+      headshot || null);
     const bpw = B.history.recordPlayerWeek;
     cards.append(rc("Highest player-week", bpw ? fmt(bpw.points, 1) : "—", bpw ? `${bpw.name} · ${nameOf(bpw.rosterId)} · ${bpw.season} Wk ${bpw.week}${bpw.isPlayoff ? " (PO)" : ""}` : "", !bpw,
-      bpw ? [{ rid: bpw.rosterId }] : null, bpw ? playerHeadshot(bpw.playerId, 30) : null));
+      bpw ? [{ rid: bpw.rosterId }] : null, bpw ? playerHeadshot(bpw.playerId, 44) : null));
     cards.append(rc("Most points, one team", fmt(R.highestWeek?.value, 1), gwhen(R.highestWeek), false,
       R.highestWeek ? [{ rid: R.highestWeek.rosterId }] : null));
     cards.append(rc("Highest-scoring game", fmt(R.highestGame?.total, 1), R.highestGame ? `${nameOf(R.highestGame.aRoster)} ${fmt(R.highestGame.aP, 1)}–${fmt(R.highestGame.bP, 1)} ${nameOf(R.highestGame.bRoster)} · ${R.highestGame.season} Wk ${R.highestGame.week}` : "", false,
@@ -331,7 +332,7 @@ function pageHistory() {
   wrap.append(h("div", { class: "wk-select-row", style: "flex-wrap:wrap" }, h("span", { class: "muted", style: "font-size:13px" }, "Team"), teamSel, teamLogoWrap));
   wrap.append(detail);
 
-  function tile(label, val, sub, live, headshot) { return h("div", { class: "card tile" + (live ? " " : ""), style: live ? "border-style:dashed;opacity:.9" : "" }, h("div", { class: "label" }, label), h("div", { class: "val-row" }, h("div", { class: "val tnum" }, val), headshot || null), sub ? h("div", { class: "sub" }, sub) : null); }
+  function tile(label, val, sub, live, headshot) { return h("div", { class: "card tile" + (live ? " " : ""), style: live ? "border-style:dashed;opacity:.9" : "" }, h("div", { class: "label" }, label), h("div", { class: "val tnum" }, val), sub ? h("div", { class: "sub" }, sub) : null, headshot || null); }
   let logMount;
   function renderTeam() {
     const rid = Number(teamSel.value);
@@ -362,7 +363,7 @@ function pageHistory() {
       tile("Longest losing streak", ml + "L", "regular season")));
     detail.append(h("div", { class: "grid cols-4", style: "margin-top:14px" },
       at.bestPlayerWeek
-        ? tile("Top player-week", fmt(at.bestPlayerWeek.points, 1), `${at.bestPlayerWeek.name} · ${at.bestPlayerWeek.season} Wk ${at.bestPlayerWeek.week}${at.bestPlayerWeek.isPlayoff ? " (PO)" : ""}`, false, playerHeadshot(at.bestPlayerWeek.playerId, 26))
+        ? tile("Top player-week", fmt(at.bestPlayerWeek.points, 1), `${at.bestPlayerWeek.name} · ${at.bestPlayerWeek.season} Wk ${at.bestPlayerWeek.week}${at.bestPlayerWeek.isPlayoff ? " (PO)" : ""}`, false, playerHeadshot(at.bestPlayerWeek.playerId, 36))
         : tile("Top player-week", "—", "unlocks with live scoring", true),
       tile("Biggest win", at.biggestWin ? "+" + fmt(at.biggestWin.margin, 1) : "—", gscore(at.biggestWin)),
       tile("Worst loss", at.worstLoss ? fmt(at.worstLoss.margin, 1) : "—", gscore(at.worstLoss)),
