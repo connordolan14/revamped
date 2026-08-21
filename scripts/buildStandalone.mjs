@@ -8,9 +8,9 @@ const css = readFileSync(join(W, "styles.css"), "utf8");
 const js = readFileSync(join(W, "app.js"), "utf8");
 const bundle = readFileSync(join(W, "data", "bundle.json"), "utf8");
 
-html = html.replace('<link rel="stylesheet" href="./styles.css" />', `<style>\n${css}\n</style>`);
+html = html.replace('<link rel="stylesheet" href="/styles.css" />', `<style>\n${css}\n</style>`);
 html = html.replace(
-  '<script src="./app.js"></script>',
+  '<script src="/app.js"></script>',
   `<script>window.__BUNDLE__ = ${bundle};</script>\n<script>\n${js}\n</script>`,
 );
 writeFileSync(join(W, "standalone.html"), html);

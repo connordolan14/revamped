@@ -4,6 +4,10 @@
   "buildCommand": null,
   "outputDirectory": "web",
   "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/data/bundle.json",

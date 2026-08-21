@@ -11,17 +11,16 @@ const MIME = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript
 const server = createServer((req, res) => {
   let p = decodeURIComponent(req.url.split("?")[0]);
   if (p === "/") p = "/index.html";
-  const fp = join(ROOT, p);
-  if (existsSync(fp) && statSync(fp).isFile()) {
-    res.writeHead(200, { "content-type": MIME[extname(fp)] || "text/plain" });
-    res.end(readFileSync(fp));
-  } else { res.writeHead(404); res.end("nf"); }
+  let fp = join(ROOT, p);
+  if (!(existsSync(fp) && statSync(fp).isFile())) fp = join(ROOT, "index.html"); // SPA fallback, mirrors vercel.json rewrite
+  res.writeHead(200, { "content-type": MIME[extname(fp)] || "text/plain" });
+  res.end(readFileSync(fp));
 });
 await new Promise((r) => server.listen(4599, r));
 
 const routes = [
-  ["home", "/"], ["standings", "/#/standings"], ["schedule", "/#/schedule"],
-  ["history", "/#/history"], ["rules", "/#/rules"],
+  ["home", "/"], ["standings", "/standings"], ["schedule", "/schedule"],
+  ["history", "/history"], ["rules", "/rules"],
 ];
 const browser = await chromium.launch({ executablePath: process.env.PW || undefined });
 const errors = [];

@@ -61,7 +61,7 @@ function pageHome() {
 
   // top: standings (left) + power (right)
   const stdCard = h("div", { class: "card pad" }, h("div", { class: "mini-title" }, "Standings"));
-  s.standings.forEach((st, i) => stdCard.append(h("div", { class: "mini-row" + (i === 5 ? " playoff-line" : ""), onclick: () => location.hash = "#/standings", style: "cursor:pointer" },
+  s.standings.forEach((st, i) => stdCard.append(h("div", { class: "mini-row" + (i === 5 ? " playoff-line" : ""), onclick: () => navigate("/standings"), style: "cursor:pointer" },
     h("div", { class: "mini-rank" }, st.rank), h("div", { class: "match-side" }, avatar(st.avatar, st.teamName, 20), h("span", { class: "mini-name" }, st.teamName)),
     h("div", { class: "mini-stats" },
       h("span", { class: "st pct" }, st.winPct.toFixed(3).replace(/^0/, "")),
@@ -454,13 +454,24 @@ const ROUTES = {
   "/rules": { fn: pageRules, nav: "Rules", g: "§" },
 };
 const BOTTOM = ["/", "/standings", "/schedule", "/history", "/rules"];
+function navigate(path) {
+  if (location.pathname !== path) { try { history.pushState(null, "", path); } catch { return; } }
+  route();
+}
+function navClick(path) {
+  return (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    navigate(path);
+  };
+}
 function buildNav() {
   const nav = $("#nav"), bot = $("#botnav"); nav.innerHTML = ""; bot.innerHTML = "";
-  for (const [path, r] of Object.entries(ROUTES)) nav.append(h("a", { href: "#" + path, "data-path": path }, r.nav));
-  for (const path of BOTTOM) { const r = ROUTES[path]; bot.append(h("a", { href: "#" + path, "data-path": path }, h("span", { class: "g" }, r.g), r.nav)); }
+  for (const [path, r] of Object.entries(ROUTES)) nav.append(h("a", { href: path, "data-path": path, onclick: navClick(path) }, r.nav));
+  for (const path of BOTTOM) { const r = ROUTES[path]; bot.append(h("a", { href: path, "data-path": path, onclick: navClick(path) }, h("span", { class: "g" }, r.g), r.nav)); }
 }
 function route() {
-  const path = location.hash.replace(/^#/, "") || "/";
+  const path = location.pathname || "/";
   const r = ROUTES[path] || ROUTES["/"];
   const main = $("#main"); main.innerHTML = ""; main.append(r.fn()); window.scrollTo(0, 0);
   document.querySelectorAll("[data-path]").forEach((a) => a.classList.toggle("active", a.getAttribute("data-path") === path));
@@ -472,10 +483,11 @@ function initTheme() {
   $("#themeBtn").addEventListener("click", () => { const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"; document.documentElement.setAttribute("data-theme", next); try { localStorage.setItem("rl-theme", next); } catch {} $("#themeBtn").textContent = next === "light" ? "☾" : "☀"; });
 }
 async function boot() {
-  try { B = window.__BUNDLE__ || await (await fetch("./data/bundle.json")).json(); }
+  try { B = window.__BUNDLE__ || await (await fetch("/data/bundle.json")).json(); }
   catch (e) { $("#main").innerHTML = `<div class="callout"><strong>Couldn't load league data</strong>${e.message}</div>`; return; }
   TByR = new Map(B.teams.map((t) => [t.rosterId, t]));
   buildNav(); initTheme();
-  window.addEventListener("hashchange", route); route();
+  const brand = $("#brand"); if (brand) brand.addEventListener("click", navClick("/"));
+  window.addEventListener("popstate", route); route();
 }
 boot();
