@@ -1,17 +1,17 @@
 {
   "byRoster": {
-    "1": {"name":"Caleb Williams","points":37.7,"season":"2025","week":9,"isPlayoff":false},
-    "2": {"name":"Kyle Pitts","points":42.85,"season":"2025","week":15,"isPlayoff":true},
-    "3": {"name":"Jahmyr Gibbs","points":49.9,"season":"2025","week":12,"isPlayoff":false},
-    "4": {"name":"Amon-Ra St. Brown","points":34.9,"season":"2025","week":15,"isPlayoff":true},
-    "5": {"name":"Drake London","points":34.3,"season":"2025","week":9,"isPlayoff":false},
-    "6": {"name":"Stefon Diggs","points":32.74,"season":"2025","week":12,"isPlayoff":false},
-    "7": {"name":"Trevor Lawrence","points":44.3,"season":"2025","week":15,"isPlayoff":true},
-    "8": {"name":"Jonathan Taylor","points":48.1,"season":"2025","week":10,"isPlayoff":false},
-    "9": {"name":"Derrick Henry","points":45.6,"season":"2025","week":17,"isPlayoff":true},
-    "10": {"name":"Bijan Robinson","points":37.4,"season":"2025","week":17,"isPlayoff":true},
+    "1": {"name":"Caleb Williams","playerId":"11560","points":37.7,"season":"2025","week":9,"isPlayoff":false},
+    "2": {"name":"Kyle Pitts","playerId":"7553","points":42.85,"season":"2025","week":15,"isPlayoff":true},
+    "3": {"name":"Jahmyr Gibbs","playerId":"9221","points":49.9,"season":"2025","week":12,"isPlayoff":false},
+    "4": {"name":"Amon-Ra St. Brown","playerId":"7547","points":34.9,"season":"2025","week":15,"isPlayoff":true},
+    "5": {"name":"Drake London","playerId":"8112","points":34.3,"season":"2025","week":9,"isPlayoff":false},
+    "6": {"name":"Stefon Diggs","playerId":"2449","points":32.74,"season":"2025","week":12,"isPlayoff":false},
+    "7": {"name":"Trevor Lawrence","playerId":"7523","points":44.3,"season":"2025","week":15,"isPlayoff":true},
+    "8": {"name":"Jonathan Taylor","playerId":"6813","points":48.1,"season":"2025","week":10,"isPlayoff":false},
+    "9": {"name":"Derrick Henry","playerId":"3198","points":45.6,"season":"2025","week":17,"isPlayoff":true},
+    "10": {"name":"Bijan Robinson","playerId":"9509","points":37.4,"season":"2025","week":17,"isPlayoff":true},
     "11": {"name":"2025 rookie","points":34.46,"season":"2025","week":14,"isPlayoff":false},
-    "12": {"name":"Brock Purdy","points":37.92,"season":"2025","week":17,"isPlayoff":true}
+    "12": {"name":"Brock Purdy","playerId":"8183","points":37.92,"season":"2025","week":17,"isPlayoff":true}
   },
-  "leagueRecord": {"name":"Jahmyr Gibbs","rosterId":3,"points":49.9,"season":"2025","week":12,"isPlayoff":false}
+  "leagueRecord": {"name":"Jahmyr Gibbs","playerId":"9221","rosterId":3,"points":49.9,"season":"2025","week":12,"isPlayoff":false}
 }

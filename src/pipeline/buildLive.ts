@@ -38,12 +38,12 @@ interface SeasonData {
   season: string; leagueId: string; complete: boolean;
   rowsByWeek: Record<string, MatchRow[]>;
   teams: TeamInfo[];
-  playerBest: Map<number, { name: string; points: number; season: string; week: number }>;
+  playerBest: Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>;
 }
 
 async function fetchSeason(leagueId: string, season: string, complete: boolean, regWeeks: number, teams: TeamInfo[], players: Record<string, any>): Promise<SeasonData> {
   const rowsByWeek: Record<string, MatchRow[]> = {};
-  const playerBest = new Map<number, { name: string; points: number; season: string; week: number }>();
+  const playerBest = new Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>();
   for (let w = 1; w <= regWeeks; w++) {
     let ms; try { ms = await sleeper.matchups(leagueId, w); } catch { continue; }
     if (!ms || !ms.length) continue;
@@ -57,7 +57,7 @@ async function fetchSeason(leagueId: string, season: string, complete: boolean, 
         const cur = playerBest.get(m.roster_id);
         if (!cur || bestPts > cur.points) {
           const meta = players[bestId];
-          playerBest.set(m.roster_id, { name: meta ? `${meta.first_name} ${meta.last_name}` : bestId, points: round(bestPts, 2), season, week: w });
+          playerBest.set(m.roster_id, { name: meta ? `${meta.first_name} ${meta.last_name}` : bestId, playerId: bestId, points: round(bestPts, 2), season, week: w });
         }
       }
     }
@@ -281,7 +281,7 @@ async function main() {
   historySeasons.sort((a, b) => b.season.localeCompare(a.season));
 
   const hist = computeHistory(seasonInputs);
-  const bestByRoster = new Map<number, { name: string; points: number; season: string; week: number }>();
+  const bestByRoster = new Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>();
   for (const sd of seasonDatas) for (const [rid, b] of sd.playerBest) { const cur = bestByRoster.get(rid); if (!cur || b.points > cur.points) bestByRoster.set(rid, b); }
   for (const [rid, at] of Object.entries(hist.byRoster)) (at as any).bestPlayerWeek = bestByRoster.get(Number(rid)) ?? null;
   let recordPlayerWeek: any = null;

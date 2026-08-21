@@ -2169,6 +2169,7 @@
     },
     "recordPlayerWeek": {
       "name": "Jahmyr Gibbs",
+      "playerId": "9221",
       "rosterId": 3,
       "points": 49.9,
       "season": "2025",
@@ -2229,6 +2230,7 @@
         },
         "bestPlayerWeek": {
           "name": "Caleb Williams",
+          "playerId": "11560",
           "points": 37.7,
           "season": "2025",
           "week": 9,
@@ -2295,6 +2297,7 @@
         },
         "bestPlayerWeek": {
           "name": "Kyle Pitts",
+          "playerId": "7553",
           "points": 42.85,
           "season": "2025",
           "week": 15,
@@ -2361,6 +2364,7 @@
         },
         "bestPlayerWeek": {
           "name": "Jahmyr Gibbs",
+          "playerId": "9221",
           "points": 49.9,
           "season": "2025",
           "week": 12,
@@ -2427,6 +2431,7 @@
         },
         "bestPlayerWeek": {
           "name": "Amon-Ra St. Brown",
+          "playerId": "7547",
           "points": 34.9,
           "season": "2025",
           "week": 15,
@@ -2493,6 +2498,7 @@
         },
         "bestPlayerWeek": {
           "name": "Drake London",
+          "playerId": "8112",
           "points": 34.3,
           "season": "2025",
           "week": 9,
@@ -2559,6 +2565,7 @@
         },
         "bestPlayerWeek": {
           "name": "Stefon Diggs",
+          "playerId": "2449",
           "points": 32.74,
           "season": "2025",
           "week": 12,
@@ -2625,6 +2632,7 @@
         },
         "bestPlayerWeek": {
           "name": "Trevor Lawrence",
+          "playerId": "7523",
           "points": 44.3,
           "season": "2025",
           "week": 15,
@@ -2691,6 +2699,7 @@
         },
         "bestPlayerWeek": {
           "name": "Jonathan Taylor",
+          "playerId": "6813",
           "points": 48.1,
           "season": "2025",
           "week": 10,
@@ -2757,6 +2766,7 @@
         },
         "bestPlayerWeek": {
           "name": "Derrick Henry",
+          "playerId": "3198",
           "points": 45.6,
           "season": "2025",
           "week": 17,
@@ -2823,6 +2833,7 @@
         },
         "bestPlayerWeek": {
           "name": "Bijan Robinson",
+          "playerId": "9509",
           "points": 37.4,
           "season": "2025",
           "week": 17,
@@ -2955,6 +2966,7 @@
         },
         "bestPlayerWeek": {
           "name": "Brock Purdy",
+          "playerId": "8183",
           "points": 37.92,
           "season": "2025",
           "week": 17,

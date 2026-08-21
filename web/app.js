@@ -25,6 +25,14 @@ function avatar(url, name, size = 28) {
   else wrap.textContent = initials(name);
   return wrap;
 }
+function playerHeadshot(playerId, size = 30) {
+  if (!playerId) return null;
+  const wrap = h("span", { class: "rec-headshot", style: `width:${size}px;height:${size}px` });
+  const img = h("img", { src: `https://sleepercdn.com/content/nfl/players/thumb/${playerId}.jpg`, loading: "lazy", alt: "" });
+  img.addEventListener("error", () => wrap.remove());
+  wrap.append(img);
+  return wrap;
+}
 function teamCell(team, rank, size = 28) {
   return h("div", { class: "team-cell" },
     rank ? h("span", { class: "chip", style: "background:var(--surface-3);color:var(--ink-2)" }, rank) : null,
@@ -224,6 +232,13 @@ function bTeamRow(rid, pts, win, seedOf, byeText) {
 }
 function bGameBox(g, seedOf) { return h("div", { class: "bgame" }, bTeamRow(g.a, g.aP, g.w === g.a, seedOf), bTeamRow(g.b, g.bP, g.w === g.b, seedOf)); }
 function bByeBox(rid, seedOf) { return h("div", { class: "bgame bye" }, bTeamRow(rid, 0, true, seedOf, "BYE"), h("div", { class: "byemsg muted" }, "advances to semifinal")); }
+function recTeams(ids) {
+  if (!ids || !ids.length) return null;
+  const multi = ids.length > 1;
+  return h("div", { class: "rec-teams" }, ids.map((it) =>
+    h("div", { class: "bteam" + (multi ? (it.win ? " bw" : " bl") : "") },
+      h("div", { class: "bt-n" }, avatar(TByR.get(it.rid)?.avatar, nameOf(it.rid), 16), h("span", {}, nameOf(it.rid))))));
+}
 function bracketColumn(title, games, seedOf) {
   const col = h("div", { class: "bround" }, h("div", { class: "mini-title" }, title));
   games.forEach((g) => { if (g) col.append(bGameBox(g, seedOf)); });
@@ -274,20 +289,32 @@ function pageHistory() {
   // all-time records
   const R = B.history.records;
   if (R) {
-    wrap.append(h("div", { class: "section-title" }, "All-time records"));
+    wrap.append(h("div", { style: "margin-top:34px" }, pageHead("All-Time Records")));
     const po = (r) => r.isPlayoff ? " (PO)" : "";
     const gwhen = (r) => r ? `${nameOf(r.rosterId)} ${fmt(r.value, 1)}–${fmt(r.oppPoints, 1)} ${nameOf(r.oppRosterId)} · ${r.season} Wk ${r.week}${po(r)}` : "";
     const cards = h("div", { class: "records-grid" });
-    const rc = (lb, vl, sb, live) => h("div", { class: "rec-card" + (live ? " live" : "") }, h("div", { class: "lb" }, lb), h("div", { class: "vl" }, vl), h("div", { class: "sb" }, sb));
+    const rc = (lb, vl, sb, live, teamIds, headshot) => h("div", { class: "rec-card" + (live ? " live" : "") },
+      h("div", { class: "lb" }, lb),
+      h("div", { class: "vl-row" }, h("div", { class: "vl" }, vl), headshot || null),
+      h("div", { class: "sb" }, sb),
+      recTeams(teamIds));
     const bpw = B.history.recordPlayerWeek;
-    cards.append(rc("Highest player-week", bpw ? fmt(bpw.points, 1) : "—", bpw ? `${bpw.name} · ${nameOf(bpw.rosterId)} · ${bpw.season} Wk ${bpw.week}${bpw.isPlayoff ? " (PO)" : ""}` : "", !bpw));
-    cards.append(rc("Most points, one team", fmt(R.highestWeek?.value, 1), gwhen(R.highestWeek)));
-    cards.append(rc("Highest-scoring game", fmt(R.highestGame?.total, 1), R.highestGame ? `${nameOf(R.highestGame.aRoster)} ${fmt(R.highestGame.aP, 1)}–${fmt(R.highestGame.bP, 1)} ${nameOf(R.highestGame.bRoster)} · ${R.highestGame.season} Wk ${R.highestGame.week}` : ""));
-    cards.append(rc("Biggest blowout", R.biggestBlowout ? "+" + fmt(R.biggestBlowout.value, 1) : "—", R.biggestBlowout ? `${nameOf(R.biggestBlowout.rosterId)} ${fmt(R.biggestBlowout.points, 1)}–${fmt(R.biggestBlowout.oppPoints, 1)} ${nameOf(R.biggestBlowout.oppRosterId)} · ${R.biggestBlowout.season} Wk ${R.biggestBlowout.week}${po(R.biggestBlowout)}` : ""));
-    cards.append(rc("Fewest points, one team", fmt(R.lowestWeek?.value, 1), gwhen(R.lowestWeek)));
-    cards.append(rc("Longest win streak", (R.longestWinStreak?.len ?? "—") + "W", R.longestWinStreak ? `${nameOf(R.longestWinStreak.rosterId)} · ${R.longestWinStreak.season}` : ""));
-    cards.append(rc("Longest losing streak", (R.longestLossStreak?.len ?? "—") + "L", R.longestLossStreak ? `${nameOf(R.longestLossStreak.rosterId)} · ${R.longestLossStreak.season}` : ""));
-    cards.append(rc("Most points, season", fmt(R.mostPointsSeason?.points, 1), R.mostPointsSeason ? `${nameOf(R.mostPointsSeason.rosterId)} · ${R.mostPointsSeason.season}` : ""));
+    cards.append(rc("Highest player-week", bpw ? fmt(bpw.points, 1) : "—", bpw ? `${bpw.name} · ${nameOf(bpw.rosterId)} · ${bpw.season} Wk ${bpw.week}${bpw.isPlayoff ? " (PO)" : ""}` : "", !bpw,
+      bpw ? [{ rid: bpw.rosterId }] : null, bpw ? playerHeadshot(bpw.playerId, 30) : null));
+    cards.append(rc("Most points, one team", fmt(R.highestWeek?.value, 1), gwhen(R.highestWeek), false,
+      R.highestWeek ? [{ rid: R.highestWeek.rosterId }] : null));
+    cards.append(rc("Highest-scoring game", fmt(R.highestGame?.total, 1), R.highestGame ? `${nameOf(R.highestGame.aRoster)} ${fmt(R.highestGame.aP, 1)}–${fmt(R.highestGame.bP, 1)} ${nameOf(R.highestGame.bRoster)} · ${R.highestGame.season} Wk ${R.highestGame.week}` : "", false,
+      R.highestGame ? [{ rid: R.highestGame.aRoster, win: true }, { rid: R.highestGame.bRoster, win: false }] : null));
+    cards.append(rc("Biggest blowout", R.biggestBlowout ? "+" + fmt(R.biggestBlowout.value, 1) : "—", R.biggestBlowout ? `${nameOf(R.biggestBlowout.rosterId)} ${fmt(R.biggestBlowout.points, 1)}–${fmt(R.biggestBlowout.oppPoints, 1)} ${nameOf(R.biggestBlowout.oppRosterId)} · ${R.biggestBlowout.season} Wk ${R.biggestBlowout.week}${po(R.biggestBlowout)}` : "", false,
+      R.biggestBlowout ? [{ rid: R.biggestBlowout.rosterId, win: true }, { rid: R.biggestBlowout.oppRosterId, win: false }] : null));
+    cards.append(rc("Fewest points, one team", fmt(R.lowestWeek?.value, 1), gwhen(R.lowestWeek), false,
+      R.lowestWeek ? [{ rid: R.lowestWeek.rosterId }] : null));
+    cards.append(rc("Longest win streak", (R.longestWinStreak?.len ?? "—") + "W", R.longestWinStreak ? `${nameOf(R.longestWinStreak.rosterId)} · ${R.longestWinStreak.season}` : "", false,
+      R.longestWinStreak ? [{ rid: R.longestWinStreak.rosterId }] : null));
+    cards.append(rc("Longest losing streak", (R.longestLossStreak?.len ?? "—") + "L", R.longestLossStreak ? `${nameOf(R.longestLossStreak.rosterId)} · ${R.longestLossStreak.season}` : "", false,
+      R.longestLossStreak ? [{ rid: R.longestLossStreak.rosterId }] : null));
+    cards.append(rc("Most points, season", fmt(R.mostPointsSeason?.points, 1), R.mostPointsSeason ? `${nameOf(R.mostPointsSeason.rosterId)} · ${R.mostPointsSeason.season}` : "", false,
+      R.mostPointsSeason ? [{ rid: R.mostPointsSeason.rosterId }] : null));
     wrap.append(cards);
   }
 
@@ -304,7 +331,7 @@ function pageHistory() {
   wrap.append(h("div", { class: "wk-select-row", style: "flex-wrap:wrap" }, h("span", { class: "muted", style: "font-size:13px" }, "Team"), teamSel, teamLogoWrap));
   wrap.append(detail);
 
-  function tile(label, val, sub, live) { return h("div", { class: "card tile" + (live ? " " : ""), style: live ? "border-style:dashed;opacity:.9" : "" }, h("div", { class: "label" }, label), h("div", { class: "val tnum" }, val), sub ? h("div", { class: "sub" }, sub) : null); }
+  function tile(label, val, sub, live, headshot) { return h("div", { class: "card tile" + (live ? " " : ""), style: live ? "border-style:dashed;opacity:.9" : "" }, h("div", { class: "label" }, label), h("div", { class: "val-row" }, h("div", { class: "val tnum" }, val), headshot || null), sub ? h("div", { class: "sub" }, sub) : null); }
   let logMount;
   function renderTeam() {
     const rid = Number(teamSel.value);
@@ -335,7 +362,7 @@ function pageHistory() {
       tile("Longest losing streak", ml + "L", "regular season")));
     detail.append(h("div", { class: "grid cols-4", style: "margin-top:14px" },
       at.bestPlayerWeek
-        ? tile("Top player-week", fmt(at.bestPlayerWeek.points, 1), `${at.bestPlayerWeek.name} · ${at.bestPlayerWeek.season} Wk ${at.bestPlayerWeek.week}${at.bestPlayerWeek.isPlayoff ? " (PO)" : ""}`)
+        ? tile("Top player-week", fmt(at.bestPlayerWeek.points, 1), `${at.bestPlayerWeek.name} · ${at.bestPlayerWeek.season} Wk ${at.bestPlayerWeek.week}${at.bestPlayerWeek.isPlayoff ? " (PO)" : ""}`, false, playerHeadshot(at.bestPlayerWeek.playerId, 26))
         : tile("Top player-week", "—", "unlocks with live scoring", true),
       tile("Biggest win", at.biggestWin ? "+" + fmt(at.biggestWin.margin, 1) : "—", gscore(at.biggestWin)),
       tile("Worst loss", at.worstLoss ? fmt(at.worstLoss.margin, 1) : "—", gscore(at.worstLoss)),
