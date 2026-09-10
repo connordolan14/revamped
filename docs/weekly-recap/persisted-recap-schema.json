@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PersistedWeeklyRecap",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "season",
+    "week",
+    "generated_at",
+    "source_data_hash",
+    "prompt_versions",
+    "models",
+    "recap"
+  ],
+  "properties": {
+    "season": {
+      "type": "integer"
+    },
+    "week": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "source_data_hash": {
+      "type": "string"
+    },
+    "prompt_versions": {
+      "type": "object",
+      "required": [
+        "research",
+        "writer",
+        "editor"
+      ],
+      "properties": {
+        "research": {
+          "type": "string"
+        },
+        "writer": {
+          "type": "string"
+        },
+        "editor": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "models": {
+      "type": "object",
+      "required": [
+        "research",
+        "writer",
+        "editor"
+      ],
+      "properties": {
+        "research": {
+          "type": "string"
+        },
+        "writer": {
+          "type": "string"
+        },
+        "editor": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "recap": {
+      "$ref": "output-schema.json"
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "season": 2025,
+  "week": 8,
+  "publication_date": "2025-10-28",
+  "context_window": {
+    "start": "2025-10-21",
+    "end": "2025-10-27"
+  },
+  "teams": [
+    {
+      "roster_id": 1,
+      "team_name": "The Permanent Rebuild",
+      "username": "dackerly36",
+      "record_before": "0-7",
+      "record_after": "0-8"
+    },
+    {
+      "roster_id": 2,
+      "team_name": "Jayden's Blue Balls",
+      "username": "Hank1517",
+      "record_before": "4-3",
+      "record_after": "5-3"
+    },
+    {
+      "roster_id": 3,
+      "team_name": "Green Egbukas & Ham",
+      "username": "greenie0513",
+      "record_before": "3-4",
+      "record_after": "3-5"
+    },
+    {
+      "roster_id": 4,
+      "team_name": "Jerking Goff",
+      "username": "TheBearJew44",
+      "record_before": "2-5",
+      "record_after": "2-6"
+    },
+    {
+      "roster_id": 5,
+      "team_name": "Injured Reserve",
+      "username": "mhaanders",
+      "record_before": "6-1",
+      "record_after": "6-2"
+    },
+    {
+      "roster_id": 6,
+      "team_name": "Woodys Toy Box",
+      "username": "dball11",
+      "record_before": "3-4",
+      "record_after": "4-4"
+    },
+    {
+      "roster_id": 7,
+      "team_name": "New York Mudbones",
+      "username": "ryanog",
+      "record_before": "6-1",
+      "record_after": "6-2"
+    },
+    {
+      "roster_id": 8,
+      "team_name": "New England Keys",
+      "username": "connordolan14",
+      "record_before": "4-3",
+      "record_after": "5-3"
+    },
+    {
+      "roster_id": 9,
+      "team_name": null,
+      "username": "jtyurconic2",
+      "record_before": "4-3",
+      "record_after": "5-3"
+    },
+    {
+      "roster_id": 10,
+      "team_name": null,
+      "username": "chrisrenna17",
+      "record_before": "3-4",
+      "record_after": "3-5"
+    },
+    {
+      "roster_id": 11,
+      "team_name": "Mark 2.0",
+      "username": "jbitterman99",
+      "record_before": "4-3",
+      "record_after": "5-3"
+    },
+    {
+      "roster_id": 12,
+      "team_name": null,
+      "username": "BrendanBall03",
+      "record_before": "3-4",
+      "record_after": "4-4"
+    }
+  ],
+  "matchups": [
+    {
+      "matchup_id": 1,
+      "a_roster_id": 5,
+      "a_score": 84.19,
+      "b_roster_id": 8,
+      "b_score": 160.59
+    },
+    {
+      "matchup_id": 2,
+      "a_roster_id": 6,
+      "a_score": 118.98,
+      "b_roster_id": 7,
+      "b_score": 105.12
+    },
+    {
+      "matchup_id": 3,
+      "a_roster_id": 1,
+      "a_score": 70.65,
+      "b_roster_id": 12,
+      "b_score": 118.75
+    },
+    {
+      "matchup_id": 4,
+      "a_roster_id": 9,
+      "a_score": 154.22,
+      "b_roster_id": 10,
+      "b_score": 107.0
+    },
+    {
+      "matchup_id": 5,
+      "a_roster_id": 4,
+      "a_score": 99.35,
+      "b_roster_id": 11,
+      "b_score": 129.63
+    },
+    {
+      "matchup_id": 6,
+      "a_roster_id": 2,
+      "a_score": 129.32,
+      "b_roster_id": 3,
+      "b_score": 99.91
+    }
+  ],
+  "notable_players": [
+    {
+      "roster_id": 8,
+      "player_id": "6813",
+      "name": "Jonathan Taylor",
+      "points": 36.4,
+      "started": true
+    },
+    {
+      "roster_id": 8,
+      "player_id": "9484",
+      "name": "Tucker Kraft",
+      "points": 31.55,
+      "started": true
+    },
+    {
+      "roster_id": 8,
+      "player_id": "6804",
+      "name": "Jordan Love",
+      "points": 28.3,
+      "started": true
+    },
+    {
+      "roster_id": 8,
+      "player_id": "9224",
+      "name": "Chase Brown",
+      "points": 24.0,
+      "started": true
+    },
+    {
+      "roster_id": 9,
+      "player_id": "8138",
+      "name": "James Cook",
+      "points": 33.6,
+      "started": true
+    },
+    {
+      "roster_id": 10,
+      "player_id": "6768",
+      "name": "Tua Tagovailoa",
+      "points": 24.2,
+      "started": false
+    },
+    {
+      "roster_id": 8,
+      "player_id": "7083",
+      "name": "Tyler Huntley",
+      "points": 16.74,
+      "started": true
+    }
+  ],
+  "transactions": [
+    {
+      "type": "free_agent",
+      "roster_id": 8,
+      "player_id": "7083",
+      "player_name": "Tyler Huntley",
+      "timing": "Saturday",
+      "faab": 0,
+      "same_week_start": true,
+      "same_week_points": 16.74
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RevampedLeagueWeeklyRecap",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "body",
+    "for_the_record",
+    "used_body_fact_ids",
+    "external_context_used",
+    "team_bits_used"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "body": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 15,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "for_the_record": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "text",
+          "fact_ids"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fact_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "used_body_fact_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "external_context_used": {
+      "type": "array",
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "team_bits_used": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "team",
+          "theme"
+        ],
+        "properties": {
+          "team": {
+            "type": "string",
+            "minLength": 1
+          },
+          "theme": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          }
+        }
+      }
+    },
+    "opening_mechanism": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ending_mechanism": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

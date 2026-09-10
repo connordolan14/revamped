@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WeeklyRecapExternalContext",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publication_date",
+    "window_start",
+    "window_end",
+    "candidates"
+  ],
+  "properties": {
+    "publication_date": {
+      "type": "string"
+    },
+    "window_start": {
+      "type": "string"
+    },
+    "window_end": {
+      "type": "string"
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "event_date",
+          "category",
+          "description",
+          "comedy_use",
+          "recognizability",
+          "source_title",
+          "source_url"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "event_date": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "comedy_use": {
+            "type": "string"
+          },
+          "recognizability": {
+            "enum": [
+              "high",
+              "medium",
+              "niche"
+            ]
+          },
+          "source_title": {
+            "type": "string"
+          },
+          "source_url": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

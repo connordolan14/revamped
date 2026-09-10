@@ -1,0 +1,113 @@
+{
+  "season": 2025,
+  "week": 8,
+  "scoring_order": [
+    {
+      "rank": 1,
+      "display": "New England Keys",
+      "roster_id": 8,
+      "score": 160.59
+    },
+    {
+      "rank": 2,
+      "display": "jtyurconic2",
+      "roster_id": 9,
+      "score": 154.22
+    },
+    {
+      "rank": 3,
+      "display": "Mark 2.0",
+      "roster_id": 11,
+      "score": 129.63
+    },
+    {
+      "rank": 4,
+      "display": "Jayden's Blue Balls",
+      "roster_id": 2,
+      "score": 129.32
+    },
+    {
+      "rank": 5,
+      "display": "Woodys Toy Box",
+      "roster_id": 6,
+      "score": 118.98
+    },
+    {
+      "rank": 6,
+      "display": "BrendanBall03",
+      "roster_id": 12,
+      "score": 118.75
+    },
+    {
+      "rank": 7,
+      "display": "chrisrenna17",
+      "roster_id": 10,
+      "score": 107.0
+    },
+    {
+      "rank": 8,
+      "display": "New York Mudbones",
+      "roster_id": 7,
+      "score": 105.12
+    },
+    {
+      "rank": 9,
+      "display": "Green Egbukas & Ham",
+      "roster_id": 3,
+      "score": 99.91
+    },
+    {
+      "rank": 10,
+      "display": "Jerking Goff",
+      "roster_id": 4,
+      "score": 99.35
+    },
+    {
+      "rank": 11,
+      "display": "Injured Reserve",
+      "roster_id": 5,
+      "score": 84.19
+    },
+    {
+      "rank": 12,
+      "display": "The Permanent Rebuild",
+      "roster_id": 1,
+      "score": 70.65
+    }
+  ],
+  "top_six_cutline": 118.75,
+  "exact_cutline_roster_id": 12,
+  "largest_margin": {
+    "winner_roster_id": 8,
+    "loser_roster_id": 5,
+    "margin": 76.4
+  },
+  "closest_margin": {
+    "winner_roster_id": 6,
+    "loser_roster_id": 7,
+    "margin": 13.86
+  },
+  "h2h_winner_roster_ids": [
+    8,
+    6,
+    12,
+    9,
+    11,
+    2
+  ],
+  "all_h2h_winners_are_top_six_scorers": true,
+  "notable": {
+    "highest_bench_score": {
+      "roster_id": 10,
+      "player_id": "6768",
+      "player_name": "Tua Tagovailoa",
+      "points": 24.2
+    },
+    "same_week_add_start": {
+      "roster_id": 8,
+      "player_id": "7083",
+      "player_name": "Tyler Huntley",
+      "points": 16.74
+    }
+  }
+}

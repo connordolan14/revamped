@@ -1,0 +1,37 @@
+{
+  "publication_date": "2025-10-28",
+  "window_start": "2025-10-21",
+  "window_end": "2025-10-27",
+  "candidates": [
+    {
+      "id": "2025-w08-jets-first-win",
+      "event_date": "2025-10-26",
+      "category": "NFL",
+      "description": "The New York Jets entered Sunday 0-7 and beat Cincinnati 39 to 38 for their first win of the season.",
+      "comedy_use": "Potential parallel with a fantasy team entering the week 0-7.",
+      "recognizability": "high",
+      "source_title": "Jets at Bengals, Week 8",
+      "source_url": "https://www.nfl.com/games/jets-at-bengals-2025-reg-8"
+    },
+    {
+      "id": "2025-w08-world-series-18",
+      "event_date": "2025-10-27",
+      "category": "sports",
+      "description": "Dodgers-Blue Jays World Series Game 3 lasted 18 innings and ended on a Freddie Freeman walk-off home run.",
+      "comedy_use": "Potential contrast if the fantasy week had no close matchups despite another sport producing an absurdly long close game.",
+      "recognizability": "high",
+      "source_title": "World Series Game 3 goes 18 innings",
+      "source_url": "https://apnews.com/article/ec8b7b457a436ab899c322255bd4ef03"
+    },
+    {
+      "id": "2025-w08-perry-trudeau",
+      "event_date": "2025-10-25",
+      "category": "pop_culture",
+      "description": "Katy Perry and Justin Trudeau made their first public appearance as a couple in Paris.",
+      "comedy_use": "Potential comparison for an unlikely pairing or combination that would have sounded made up earlier in the year.",
+      "recognizability": "high",
+      "source_title": "Katy Perry and Justin Trudeau make first public appearance as a couple",
+      "source_url": "https://people.com/katy-perry-justin-trudeau-make-their-first-public-appearance-as-a-couple-11837215"
+    }
+  ]
+}
