@@ -111,6 +111,31 @@ function pageHome() {
     ? (B.state.recapSeason === curSeason && recaps.some((r) => r.week === B.state.recapWeek) ? B.state.recapWeek : recaps[recaps.length - 1].week)
     : weekOptions[0];
   sel.value = def; renderRecap(def);
+
+  wrap.append(recentActivity());
+  return wrap;
+}
+
+/* Recent roster moves — bundle feed, replaced by live Sleeper reads when liveSync lands. */
+const TX_LABEL = { free_agent: "Add", waiver: "Waiver", trade: "Trade", commissioner: "Commish" };
+function recentActivity() {
+  const tx = (B.transactions || []).slice(0, 8);
+  if (!tx.length) return null;
+  const wrap = h("div", {});
+  wrap.append(h("div", { class: "section-title" }, "Recent activity"));
+  const card = h("div", { class: "card pad" });
+  tx.forEach((t, i) => {
+    const adds = (t.adds || []).map((a) => a.player).filter(Boolean).join(", ");
+    const drops = (t.drops || []).map((d) => d.player).filter(Boolean).join(", ");
+    card.append(h("div", { style: `display:flex;gap:10px;align-items:baseline;padding:9px 4px;font-size:13px${i ? ";border-top:1px solid var(--hair)" : ""}` },
+      h("span", { class: "pill", style: "flex:none" }, TX_LABEL[t.type] || "Move"),
+      h("span", { style: "flex:1;min-width:0" },
+        h("strong", {}, (t.rosterIds || []).map(nameOf).join(" ↔ ") || "—"),
+        adds ? h("span", { style: "color:var(--up)" }, "  + " + adds) : null,
+        drops ? h("span", { class: "muted" }, (adds ? "  " : "  ") + "− " + drops) : null),
+      t.faab ? h("span", { class: "muted", style: "flex:none;font-size:12px" }, "$" + t.faab) : null));
+  });
+  wrap.append(card);
   return wrap;
 }
 
@@ -448,6 +473,73 @@ function pageRules() {
   return wrap;
 }
 
+/* ---------- live layer: fresh Sleeper reads over the daily bundle ---------- */
+const SLEEPER = "https://api.sleeper.app/v1";
+let LIVE_DONE = false;
+const pName = (pid) => B.players?.[pid]?.n || null;
+async function liveSync() {
+  if (LIVE_DONE) return;
+  const id = B.league?.currentLeagueId;
+  if (!id || typeof fetch !== "function") return;
+  const lastWeek = Math.min(18, Math.max(2, (Number(B.state?.week) || 1) + 1));
+  const weeks = []; for (let w = 1; w <= lastWeek; w++) weeks.push(w);
+  try {
+    const j = (p) => fetch(SLEEPER + p).then((r) => { if (!r.ok) throw new Error(p + " -> " + r.status); return r.json(); });
+    const [users, rosters, ...txByWeek] = await Promise.all([
+      j(`/league/${id}/users`),
+      j(`/league/${id}/rosters`),
+      ...weeks.map((w) => j(`/league/${id}/transactions/${w}`).catch(() => null)),
+    ]);
+
+    // team identity — owners rename teams / change avatars mid-season
+    const uById = new Map((users || []).map((u) => [u.user_id, u]));
+    for (const r of rosters || []) {
+      const t = TByR.get(r.roster_id), u = uById.get(r.owner_id);
+      if (!t || !u) continue;
+      t.teamName = u.metadata?.team_name || u.display_name || t.teamName;
+      t.handle = u.display_name || t.handle;
+      const av = u.metadata?.avatar || (u.avatar ? `https://sleepercdn.com/avatars/thumbs/${u.avatar}` : null);
+      if (av) t.avatar = av;
+    }
+
+    // transactions — recent feed + per-team "Moves" counts
+    const gotTx = txByWeek.some((x) => Array.isArray(x));
+    if (gotTx) {
+      const moves = new Map(), feed = [];
+      txByWeek.forEach((list, i) => {
+        if (!Array.isArray(list)) return;
+        for (const tx of list) {
+          if (tx.status !== "complete") continue;
+          for (const rid of tx.roster_ids || []) moves.set(rid, (moves.get(rid) || 0) + 1);
+          feed.push({
+            type: tx.type, week: weeks[i], created: tx.created, rosterIds: tx.roster_ids || [],
+            adds: Object.entries(tx.adds || {}).map(([pid, rid]) => ({ player: pName(pid) || "New player", rosterId: rid })),
+            drops: Object.entries(tx.drops || {}).map(([pid, rid]) => ({ player: pName(pid) || "Player", rosterId: rid })),
+            faab: tx.settings?.waiver_bid ?? null,
+          });
+        }
+      });
+      feed.sort((a, b) => b.created - a.created);
+      const cur = B.seasons?.[B.state?.season];
+      if (cur?.standings) for (const st of cur.standings) st.moves = moves.get(st.rosterId) ?? 0;
+      if (feed.length) B.transactions = feed;
+    }
+
+    B.syncedAt = Date.now();
+    LIVE_DONE = true;
+    TByR = new Map(B.teams.map((t) => [t.rosterId, t]));
+    const y = window.scrollY; route(); window.scrollTo(0, y);
+    stampFreshness();
+  } catch (e) { console.warn("[liveSync]", e && e.message); }
+}
+function stampFreshness() {
+  if (!B.syncedAt) return;
+  const foot = $(".foot"); if (!foot) return;
+  let tag = $("#freshness");
+  if (!tag) { tag = h("span", { id: "freshness", class: "muted", style: "display:block;margin-top:6px;font-size:11.5px" }); foot.append(tag); }
+  tag.textContent = "Rosters & activity synced live · " + new Date(B.syncedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
 /* ---------- router ---------- */
 const ROUTES = {
   "/": { fn: pageHome, nav: "Home", g: "◆" },
@@ -492,5 +584,6 @@ async function boot() {
   buildNav(); initTheme();
   const brand = $("#brand"); if (brand) brand.addEventListener("click", navClick("/"));
   window.addEventListener("popstate", route); route();
+  liveSync();
 }
 boot();

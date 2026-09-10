@@ -16,7 +16,7 @@ import { readFileSync } from "node:fs";
 import { marked } from "marked";
 
 const LEAGUE_ID = process.env.LEAGUE_ID || "1312251123628789760";
-const GEN_TS = process.env.GEN_TS || null;
+const GEN_TS = process.env.GEN_TS || new Date().toISOString();
 
 interface TeamInfo { rosterId: number; ownerId: string; handle: string; teamName: string; avatar: string | null; }
 
@@ -221,6 +221,18 @@ async function main() {
   const currentUsers = await sleeper.users(LEAGUE_ID);
   const currentTeams = teamsFromLeague(currentUsers, rosters);
 
+  // Compact player name/pos/team map (dynasty-relevant + everyone rostered +
+  // everyone in recent transactions) so the client can name live waiver/trade
+  // activity it pulls straight from Sleeper. Extended after the tx loop below.
+  const playerMap: Record<string, { n: string; p: string; t: string | null }> = {};
+  const addPlayer = (pid: string) => {
+    if (playerMap[pid] || !players[pid]) return;
+    const m = players[pid];
+    playerMap[pid] = { n: `${m.first_name ?? ""} ${m.last_name ?? ""}`.trim() || pid, p: m.position ?? "", t: m.team ?? null };
+  };
+  for (const v of values) if (v.sleeperId) playerMap[v.sleeperId] = { n: v.name, p: v.position, t: v.team };
+  for (const r of rosters) for (const pid of r.players || []) addPlayer(pid);
+
   // transactions (current league) → list + per-roster counts for standings.moves
   const movesByRoster = new Map<number, number>();
   const transactions: any[] = [];
@@ -231,6 +243,7 @@ async function main() {
       for (const tx of txs || []) {
         if (tx.status !== "complete") continue;
         for (const rid of tx.roster_ids || []) movesByRoster.set(rid, (movesByRoster.get(rid) ?? 0) + 1);
+        for (const pid of [...Object.keys(tx.adds || {}), ...Object.keys(tx.drops || {})]) addPlayer(pid);
         transactions.push({
           id: tx.transaction_id, type: tx.type, week: w, created: tx.created, rosterIds: tx.roster_ids,
           adds: tx.adds ? Object.entries(tx.adds).map(([pid, rid]) => ({ player: players[pid] ? `${players[pid].first_name} ${players[pid].last_name}` : pid, pos: players[pid]?.position ?? null, rosterId: rid })) : [],
@@ -350,6 +363,7 @@ async function main() {
     },
     state: { season: state.season, week: state.week, seasonType: state.season_type, inSeason: state.season_type === "regular" && currentScored, recapSeason, recapWeek },
     teams: currentTeams,
+    players: playerMap,
     seasons,
     transactions: transactions.slice(0, 60),
     history: { seasons: historySeasons, champsByRoster, trophiesByRoster, records: computeRecords(allMatchups as any), recordPlayerWeek, allTime: hist.byRoster, matchups: allMatchups },

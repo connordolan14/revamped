@@ -1,9 +1,11 @@
-# Revamped League — site + weekly automation
+# Revamped League — site + automation
 
-A fast, mobile-first site for the Revamped Dynasty League and a weekly job that
-refreshes it and emails a write-up. **No database, $0 to run.** Data is computed
-from the public Sleeper API + FantasyCalc by a scheduled GitHub Action, written
-to a JSON file, and served as a static site on Vercel.
+A fast, mobile-first site for the Revamped Dynasty League and a daily job that
+refreshes it (plus a weekly emailed write-up). **No database, $0 to run.** Data
+is computed from the public Sleeper API + FantasyCalc by a scheduled GitHub
+Action, written to a JSON file, and served as a static site on Vercel. The site
+also pulls live rosters + transactions straight from Sleeper on each visit and
+layers them over that snapshot.
 
 ## What's here
 
@@ -13,7 +15,7 @@ src/pipeline/      buildLive (Sleeper+FantasyCalc → bundle.json), writeup, ema
 src/data/          League identity + 2025 fixtures
 web/               The static site (index.html, styles.css, app.js) + web/data/bundle.json
 scripts/           validate2025, buildBundle (offline), render images, screenshots
-.github/workflows/ weekly.yml — the Tuesday job
+.github/workflows/ weekly.yml — daily data refresh (+ Tuesday write-up email)
 ```
 
 The half-win logic and power model are unit-validated against the 2025 sheet:
@@ -42,11 +44,18 @@ Create a new **private** repo and push this folder to it (any name, e.g.
 - Back in Vercel, set the primary domain (apex or www) and it issues the SSL cert
   automatically. Live in a few minutes.
 
-### 4. Turn on the weekly job
-The workflow `.github/workflows/weekly.yml` runs **Tuesdays 12:00 UTC** (7–8 AM
+### 4. Turn on the refresh job
+The workflow `.github/workflows/weekly.yml` runs **daily at 12:00 UTC** (7–8 AM
 ET) and can be run anytime from the repo's **Actions** tab (“Run workflow”).
-It: pulls fresh data → commits `web/data/bundle.json` (which auto-redeploys
-Vercel) → emails you the write-up + standings/power images.
+It: pulls fresh data → sanity-checks it → commits `web/data/bundle.json` → tells
+Vercel to redeploy. The **Tuesday** run additionally renders the standings/power
+PNGs and emails you the write-up (or tick *send_email* on a manual run).
+
+**Deploy trigger:** if Vercel's Git integration reliably redeploys on push, no
+setup is needed. If it doesn't (a known flake on private repos), create a
+**Deploy Hook** in Vercel → Project → **Settings → Git → Deploy Hooks** (branch
+`main`) and paste the URL into the repo as secret `VERCEL_DEPLOY_HOOK`. The job
+POSTs it after every data change; without the secret it just relies on Git.
 
 ### 5. Email (Resend, free)
 - Create a free account at resend.com and make an **API key**.
@@ -74,12 +83,15 @@ npm run shots           # screenshot every page (desktop + mobile) into shots/
 npx serve web           # preview the site at localhost
 ```
 
-## How the weekly update flows
+## How the update flows
 
 ```
-GitHub Action (Tue) ─► buildLive: Sleeper + FantasyCalc ─► core engine
-   ─► web/data/bundle.json ─► git commit ─► Vercel redeploys the site
-   ─► render standings/power PNGs ─► Resend emails you the write-up + images
+GitHub Action (daily) ─► buildLive: Sleeper + FantasyCalc ─► core engine
+   ─► web/data/bundle.json ─► git commit ─► Vercel deploy hook redeploys
+   (Tuesday only) ─► render standings/power PNGs ─► Resend emails the write-up
+
+Each page load ─► app.js fetches Sleeper /users, /rosters, /transactions
+   ─► patches team names, "Moves" counts, and the Recent-activity feed live
 ```
 
 ## Notes / next steps
