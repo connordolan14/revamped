@@ -1,7 +1,6 @@
-// Half-win standings engine. Reproduces the league's custom scoring:
-//   - Head-to-head result each week (1 / 0.5 / 0)
-//   - PLUS a 0.5 "bonus win" for every team that finishes in the top half of
-//     scorers that week (top 6 of 12).
+// Standings engine. Reproduces the league's scoring: up to 1.5 wins a week —
+//   - 1 win for the head-to-head matchup result (1 / 0 — 0.5 each on an exact tie)
+//   - PLUS 0.5 for finishing in the top half of scorers that week (top 6 of 12)
 // So a team's weekly result is 0, 0.5, 1, or 1.5 wins; losses = 1.5 - wins.
 
 import { TeamWeek, WeeklyResult, TeamStanding } from "./types.js";
@@ -115,11 +114,15 @@ export function computeStandings(results: WeeklyResult[]): TeamStanding[] {
     // stored here; callers that need PA should use computeWeeklyResults' pair
     // data. We approximate PA as 0 when unavailable (filled by the sync layer).
 
-    // Streak: a "winning" week is weekWins >= 1 (beat opponent or split+top6).
+    // Streak: consecutive head-to-head matchup results only — the top-6 weekly
+    // bonus does not count. Walk back from the latest week until the result flips
+    // (a bye or an exact tie ends the streak).
     let streak = 0;
     for (let i = ordered.length - 1; i >= 0; i--) {
-      const win = ordered[i].weekWins >= 1;
-      if (i === ordered.length - 1) streak = win ? 1 : -1;
+      const h = ordered[i].h2h;
+      if (h !== 1 && h !== 0) break;
+      const win = h === 1;
+      if (streak === 0) streak = win ? 1 : -1;
       else if (win && streak > 0) streak += 1;
       else if (!win && streak < 0) streak -= 1;
       else break;

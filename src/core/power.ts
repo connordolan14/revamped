@@ -4,8 +4,10 @@
 // are ordered by that score (lowest = strongest). Trend = movement vs last week.
 //
 // The six factors (all ranked high-value = rank 1, i.e. descending):
-//   wins        half-win standings total (h2h result + top-6 weekly bonus)
-//   streak      signed active streak (+3 = 3-game win streak, -2 = 2-game skid)
+//   wins        standings win total: per week, 1 for the h2h matchup win + 0.5
+//               for a top-6 scoring finish (so 0 / 0.5 / 1 / 1.5 a week)
+//   streak      signed active streak by h2h matchup result only, top-6 bonus
+//               ignored (+3 = 3-game win streak, -2 = 2-game skid)
 //   rosterScore SF TE-premium starter value: top2 QB + top3 RB + top4 WR + top1 TE
 //   ovw         season "all-play" wins: each week, (teams you outscored); summed
 //   consistency (teamAvg - 3*teamDev) / (0.75 * league PPG); -99 before a team
