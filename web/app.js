@@ -47,10 +47,11 @@ function table(headers, rows, opts = {}) {
 }
 function seasonNote() {
   if (B.state.inSeason) return null;
-  return h("p", { class: "muted", style: "font-size:12.5px;margin:-6px 0 14px" }, "2026 kicks off soon — showing the 2025 final season until Week 1.");
+  return h("p", { class: "muted", style: "font-size:12.5px;margin:-6px 0 14px" }, `Preseason — the ${B.state.season} records are reset to 0–0. Power rankings are seeded by roster strength only until Week 1 scores land.`);
 }
 function nameOf(rid) { const t = TByR.get(rid); return t ? t.teamName : "—"; }
 const latestSeasonKey = () => Object.keys(B.seasons || {}).sort().pop();
+const streakText = (s) => /^[WL]0$/.test(s || "") ? "—" : s;
 
 /* ---------- HOME: standings + power + weekly recap ---------- */
 function pageHome() {
@@ -66,7 +67,7 @@ function pageHome() {
     h("div", { class: "mini-stats" },
       h("span", { class: "st pct" }, st.winPct.toFixed(3).replace(/^0/, "")),
       h("span", { class: "rec-grid" }, h("span", { class: "rw" }, st.wins), h("span", { class: "rh" }, "–"), h("span", { class: "rl" }, st.losses)),
-      h("span", { class: "st stk", style: `color:${(st.streak || "").startsWith("W") ? "var(--up)" : (st.streak || "").startsWith("L") ? "var(--down)" : "var(--muted)"};font-weight:600` }, st.streak)))));
+      h("span", { class: "st stk", style: `color:${/^W[1-9]/.test(st.streak || "") ? "var(--up)" : /^L[1-9]/.test(st.streak || "") ? "var(--down)" : "var(--muted)"};font-weight:600` }, streakText(st.streak))))));
   const powCard = h("div", { class: "card pad" }, h("div", { class: "mini-title" }, "Power Rankings"));
   s.power.forEach((p) => {
     const d = p.trend == null ? h("span", { class: "muted", style: "font-size:12px" }, "—")
@@ -128,11 +129,13 @@ function pageStandings() {
     h("td", { class: "tnum" }, fmt(st.pf, 1)), h("td", { class: "tnum muted" }, fmt(st.pa, 1)),
     h("td", { class: "tnum" }, fmt(st.maxPF, 1)), h("td", { class: "tnum muted" }, fmt(st.avgPF, 1)),
     h("td", { class: "tnum" }, st.topFinishes), h("td", { class: "tnum muted" }, st.moves == null ? "—" : st.moves),
-    h("td", { class: "tnum" }, st.streak)));
+    h("td", { class: "tnum" }, streakText(st.streak))));
   wrap.append(table(headers, rows));
   wrap.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" }, "Line marks the 6-team playoff cut · Max = highest single week · Top-6 = weeks in the scoring-bonus group · Moves = transactions (live in-season)."));
-  wrap.append(h("div", { class: "section-title" }, "Weekly scoring — " + sk));
-  wrap.append(weeklyHeatmap(s.weeklyScores));
+  if (s.weeklyScores.some((m) => m.scores.length)) {
+    wrap.append(h("div", { class: "section-title" }, "Weekly scoring — " + sk));
+    wrap.append(weeklyHeatmap(s.weeklyScores));
+  }
   return wrap;
 }
 const GREEN6 = ["#2fbf5b", "#28a54c", "#1f8c40", "#177535", "#12602c", "#0d4f25"];

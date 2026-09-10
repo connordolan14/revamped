@@ -41,13 +41,21 @@ interface SeasonData {
   playerBest: Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>;
 }
 
-async function fetchSeason(leagueId: string, season: string, complete: boolean, regWeeks: number, teams: TeamInfo[], players: Record<string, any>): Promise<SeasonData> {
+// A week only "counts" once every roster has posted a full score. Below this
+// floor the week is still in progress (or hasn't started) — folding partial
+// totals into standings/power would badly distort them. Lowest real weekly
+// score on record is ~50, so 40 clears every finished week.
+const WEEK_COMPLETE_FLOOR = 40;
+
+async function fetchSeason(leagueId: string, season: string, complete: boolean, regWeeks: number, teams: TeamInfo[], players: Record<string, any>, liveWeek = Number.POSITIVE_INFINITY): Promise<SeasonData> {
   const rowsByWeek: Record<string, MatchRow[]> = {};
   const playerBest = new Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>();
   for (let w = 1; w <= regWeeks; w++) {
     let ms; try { ms = await sleeper.matchups(leagueId, w); } catch { continue; }
     if (!ms || !ms.length) continue;
     if (!ms.some((m) => (m.points ?? 0) > 0)) break;
+    // The live NFL week (and beyond) is only folded in once it's fully scored.
+    if (w >= liveWeek && !ms.every((m) => (m.points ?? 0) >= WEEK_COMPLETE_FLOOR)) break;
     rowsByWeek[String(w)] = ms.map((m) => ({ r: m.roster_id, m: m.matchup_id ?? 0, p: m.points ?? 0 }));
     for (const m of ms) {
       const pp = m.players_points || {};
@@ -74,7 +82,15 @@ function toTeamWeeks(rowsByWeek: Record<string, MatchRow[]>): TeamWeek[] {
 function standingsShape(rowsByWeek: Record<string, MatchRow[]>, teams: TeamInfo[], movesByRoster?: Map<number, number>) {
   const std = computeStandings(computeWeeklyResults(toTeamWeeks(rowsByWeek)));
   const byR = new Map(teams.map((t) => [t.rosterId, t]));
-  return std.map((s, i) => {
+  // Preseason: no scored weeks yet — show every current team at 0–0.
+  const rowsSrc = std.length
+    ? std
+    : [...teams].sort((a, b) => a.rosterId - b.rosterId).map((t) => ({
+        rosterId: t.rosterId, wins: 0, losses: 0, winPct: 0, h2hWins: 0, h2hLosses: 0,
+        pointsFor: 0, pointsAgainst: 0, high: 0, low: 0, avgPF: 0, stdev: 0,
+        topFinishes: 0, ovw: 0, streakLabel: "W0",
+      }));
+  return rowsSrc.map((s, i) => {
     const t = byR.get(s.rosterId)!;
     return {
       rank: i + 1, rosterId: s.rosterId, handle: t.handle, teamName: t.teamName, avatar: t.avatar,
@@ -94,8 +110,13 @@ function powerShape(rowsByWeek: Record<string, MatchRow[]>, teams: TeamInfo[], r
     const st = computeStandings(computeWeeklyResults(weeks.filter((w) => w.week <= upto)));
     const sByR = new Map(st.map((s) => [s.rosterId, s]));
     const tf: TeamFactors[] = teams.map((t) => {
-      const s = sByR.get(t.rosterId)!;
-      return { rosterId: t.rosterId, factors: { wins: s.wins, streak: s.streak, rosterScore: rosterScores.get(t.rosterId) ?? 0, ovw: s.ovw, consistency: -s.stdev, avgPF: s.avgPF } };
+      // Preseason: no standings row yet — every on-field factor is 0, so the
+      // ranking collapses to roster strength (the one component that's live).
+      const s = sByR.get(t.rosterId);
+      return { rosterId: t.rosterId, factors: {
+        wins: s?.wins ?? 0, streak: s?.streak ?? 0, rosterScore: rosterScores.get(t.rosterId) ?? 0,
+        ovw: s?.ovw ?? 0, consistency: s ? -s.stdev : 0, avgPF: s?.avgPF ?? 0,
+      } };
     });
     return computePowerRankings(tf);
   };
@@ -189,8 +210,11 @@ async function main() {
     const rs = await sleeper.rosters(lg.league_id);
     const teams = teamsFromLeague(users, rs);
     const regWeeks = (lg.settings.playoff_week_start ?? 15) - 1;
-    const sd = await fetchSeason(lg.league_id, lg.season, lg.status === "complete", regWeeks, teams, players);
-    if (Object.keys(sd.rowsByWeek).length) seasonDatas.push(sd);
+    const liveWeek = lg.league_id === LEAGUE_ID ? state.week : Number.POSITIVE_INFINITY;
+    const sd = await fetchSeason(lg.league_id, lg.season, lg.status === "complete", regWeeks, teams, players, liveWeek);
+    // Always keep the current league (even preseason with no games) so the site
+    // shows a fresh 0–0 season; older seasons only count if they have games.
+    if (lg.league_id === LEAGUE_ID || Object.keys(sd.rowsByWeek).length) seasonDatas.push(sd);
   }
 
   // current league teams (for the roster/nav layer)
@@ -239,6 +263,8 @@ async function main() {
       weeklyScores: weeklyMatrix(sd.rowsByWeek, sd.teams),
       recaps: computeRecaps(sd.season, sd.rowsByWeek, nameByRoster),
     };
+    // Preseason current league: standings + power only, no history/playoff rows.
+    if (!Object.keys(sd.rowsByWeek).length) continue;
     const finishByRoster: Record<number, number> = {};
     standings.forEach((s: any) => (finishByRoster[s.rosterId] = s.rank));
     seasonInputs.push({ season: sd.season, weeks: sd.rowsByWeek, finishByRoster });
@@ -308,8 +334,11 @@ async function main() {
     rulebook = { updated: upd, html: marked.parse(md.replace(/^# .*\nLast updated:.*\n/, "")) as string, proposed: [] };
   } catch {}
 
-  const currentScored = seasons[current.season]?.standings?.length > 0;
-  const latestScored = Object.keys(seasons).sort().pop();
+  const currentScored = seasonDatas.some(
+    (sd) => sd.leagueId === LEAGUE_ID && Object.keys(sd.rowsByWeek).length > 0,
+  );
+  const withRecaps = Object.keys(seasons).filter((k) => (seasons[k].recaps || []).length > 0);
+  const latestScored = (withRecaps.length ? withRecaps : Object.keys(seasons)).sort().pop();
   const recapSeason = latestScored;
   const recapWeek = latestScored ? Math.max(0, ...(seasons[latestScored].recaps || []).map((r: any) => r.week)) : 0;
   const bundle = {
