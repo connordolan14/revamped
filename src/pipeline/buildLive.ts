@@ -128,7 +128,7 @@ function powerShape(rowsByWeek: Record<string, MatchRow[]>, teams: TeamInfo[], r
       // league and the ranking collapses to roster strength (the live one).
       const s = sByR.get(t.rosterId);
       return { rosterId: t.rosterId, factors: {
-        wins: s?.wins ?? 0, streak: s?.streak ?? 0, rosterScore: rosterScores.get(t.rosterId) ?? 0,
+        wins: s?.h2hWins ?? 0, streak: s?.streak ?? 0, rosterScore: rosterScores.get(t.rosterId) ?? 0,
         ovw: s?.ovw ?? 0, consistency: consistency(s), avgPF: s?.avgPF ?? 0,
       } };
     });

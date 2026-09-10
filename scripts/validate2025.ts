@@ -109,7 +109,7 @@ const tf: TeamFactors[] = F.map((f) => {
   return {
     rosterId: f.rosterId,
     factors: {
-      wins: f.sheetWins,
+      wins: f.h2hWins, // power factor = h2h matchup wins only, not the 1.5-scale total
       streak: 0, // final-week streak not in fixture; neutralized
       rosterScore: 0, // external; neutral here
       ovw: a.ovw,

@@ -4,8 +4,9 @@
 // are ordered by that score (lowest = strongest). Trend = movement vs last week.
 //
 // The six factors (all ranked high-value = rank 1, i.e. descending):
-//   wins        standings win total: per week, 1 for the h2h matchup win + 0.5
-//               for a top-6 scoring finish (so 0 / 0.5 / 1 / 1.5 a week)
+//   wins        head-to-head matchup wins only — a count of weeks the team won
+//               its h2h matchup (the top-6 scoring bonus is NOT included here,
+//               though it does count toward the standings win total)
 //   streak      signed active streak by h2h matchup result only, top-6 bonus
 //               ignored (+3 = 3-game win streak, -2 = 2-game skid)
 //   rosterScore SF TE-premium starter value: top2 QB + top3 RB + top4 WR + top1 TE
