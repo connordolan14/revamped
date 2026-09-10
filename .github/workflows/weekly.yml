@@ -13,6 +13,10 @@ on:
         description: "Also render + email the weekly write-up"
         type: boolean
         default: false
+      force_deploy:
+        description: "Fire the Vercel deploy hook even if the data didn't change"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -71,7 +75,7 @@ jobs:
           fi
 
       - name: Trigger Vercel deploy
-        if: steps.commit.outputs.changed == 'true'
+        if: steps.commit.outputs.changed == 'true' || (github.event_name == 'workflow_dispatch' && inputs.force_deploy)
         env:
           VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
         run: |
