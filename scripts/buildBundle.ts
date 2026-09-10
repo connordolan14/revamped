@@ -143,8 +143,7 @@ const history = {
 };
 
 // weekly recaps + 2026 schedule
-const nameByRoster = new Map(teams.map((t) => [t.rosterId, t.teamName]));
-const recaps2025 = computeRecaps("2025", matchups2025, nameByRoster);
+const recaps2025 = computeRecaps("2025", matchups2025);
 function scheduleWeeks(rowsByWeek: Record<string, { r: number; m: number }[]>) {
   return Object.entries(rowsByWeek).map(([wk, rows]) => {
     const byM = new Map<number, number[]>();

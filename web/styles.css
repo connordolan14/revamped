@@ -303,6 +303,10 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 .mini-val { font-variant-numeric:tabular-nums; font-size:13px; }
 .recap-lines p { font-size:14px; line-height:1.7; margin:0 0 8px; color:var(--ink-2); }
 .recap-lines strong { color:var(--ink); font-weight:600; }
+.ftr-list { margin:0; padding:0 0 0 18px; list-style:none; }
+.ftr-list li { position:relative; font-size:13px; line-height:1.6; margin:0 0 6px; color:var(--ink-2); }
+.ftr-list li::before { content:"·"; position:absolute; left:-13px; color:var(--muted); font-weight:700; }
+.ftr-list strong { color:var(--ink); font-weight:600; }
 .match-row { display:grid; grid-template-columns:1fr 56px 1fr; gap:8px; align-items:center; padding:11px 0; }
 .match-row + .match-row { border-top:1px solid var(--hair); }
 .match-side { display:flex; align-items:center; gap:8px; min-width:0; color:var(--ink); }

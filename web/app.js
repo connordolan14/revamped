@@ -93,9 +93,25 @@ function pageHome() {
     box.innerHTML = "";
     const r = recaps.find((x) => x.week === week);
     if (!r) { box.append(h("div", { class: "callout", style: "text-align:left" }, h("strong", {}, `Week ${week} — no recap available yet.`), `The Week ${week} recap and matchups post here after the games.`)); return; }
+    // Prose comes from the generated article; a week without one shows the
+    // matchups alone rather than an auto-written stand-in.
     const write = h("div", { class: "card pad" });
-    write.append(h("div", { style: "font-weight:700;font-size:16px;margin-bottom:10px;letter-spacing:-.01em" }, r.headline));
-    const lines = h("div", { class: "recap-lines" }); r.lines.forEach((l) => lines.append(h("p", { html: mdInline(l) }))); write.append(lines);
+    if (r.article) {
+      write.append(h("div", { style: "font-weight:700;font-size:16px;margin-bottom:10px;letter-spacing:-.01em" }, r.article.title));
+      const lines = h("div", { class: "recap-lines" });
+      r.article.body.forEach((p) => lines.append(h("p", { html: mdInline(p) })));
+      write.append(lines);
+      if (r.article.forTheRecord?.length) {
+        write.append(h("div", { class: "mini-title", style: "margin:14px 0 6px" }, "For the record"));
+        const ul = h("ul", { class: "ftr-list" });
+        r.article.forTheRecord.forEach((t) => ul.append(h("li", { html: mdInline(t) })));
+        write.append(ul);
+      }
+    } else {
+      write.append(h("div", { class: "callout", style: "text-align:left;margin:0" },
+        h("strong", {}, `The Week ${week} write-up is not up yet.`),
+        "Scores are final below. The column posts once it's written."));
+    }
     const mcard = h("div", { class: "card pad" }, h("div", { class: "mini-title", style: "margin-bottom:6px" }, "Matchups"));
     const top6 = new Set(r.topSix);
     r.games.forEach((g) => {

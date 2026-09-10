@@ -1,6 +1,9 @@
-// Weekly recap engine. From one week's matchup rows it derives the games, the
-// top-6 bonus group + cutline, high/low, blowout/nailbiter, and a short auto
-// narrative. Used for the homepage weekly recap (past week, updates each Tue).
+// Weekly matchup facts for the homepage recap card: the games, the top-6 bonus
+// group and cutline, and the week's high and low.
+//
+// This module is deterministic structure only. The recap's prose comes from the
+// generated article in data/recaps/ (see recapSchema.ts); there is no
+// auto-written narrative fallback.
 import { MatchRow } from "./history.js";
 
 export interface RecapGame { a: number; b: number; aP: number; bP: number; w: number | null; margin: number; }
@@ -8,12 +11,10 @@ export interface WeekRecap {
   season: string; week: number;
   games: RecapGame[]; topSix: number[]; cutline: number;
   high: { r: number; p: number }; low: { r: number; p: number };
-  headline: string; lines: string[];
 }
 
-export function computeRecaps(season: string, weeks: Record<string, MatchRow[]>, nameByRoster: Map<number, string>): WeekRecap[] {
+export function computeRecaps(season: string, weeks: Record<string, MatchRow[]>): WeekRecap[] {
   const out: WeekRecap[] = [];
-  const nm = (r: number) => nameByRoster.get(r) || `Team ${r}`;
   for (const [wk, rows] of Object.entries(weeks)) {
     const week = Number(wk);
     const sorted = [...rows].sort((a, b) => b.p - a.p);
@@ -30,15 +31,7 @@ export function computeRecaps(season: string, weeks: Record<string, MatchRow[]>,
       games.push({ a: x.r, b: y.r, aP: +x.p.toFixed(2), bP: +y.p.toFixed(2), w: x.p === y.p ? null : x.r, margin: +(x.p - y.p).toFixed(2) });
     }
     games.sort((a, b) => b.aP - a.aP);
-    const blowout = [...games].sort((a, b) => b.margin - a.margin)[0];
-    const nail = [...games].sort((a, b) => a.margin - b.margin)[0];
-    const lines: string[] = [];
-    lines.push(`**${nm(high.r)}** led the week with **${high.p}**.`);
-    if (blowout) lines.push(`Biggest win: ${nm(blowout.a)} over ${nm(blowout.b)} by ${blowout.margin}.`);
-    if (nail && nail !== blowout) lines.push(`Closest game: ${nm(nail.a)} edged ${nm(nail.b)} by ${nail.margin}.`);
-    lines.push(`Top-6 bonus cutline: **${cutline}** — ${topSix.map(nm).join(", ")} banked the extra +0.5.`);
-    if (low) lines.push(`Low man: ${nm(low.r)} at ${low.p}.`);
-    out.push({ season, week, games, topSix, cutline, high, low, headline: `Week ${week}: ${nm(high.r)} tops the slate at ${high.p}`, lines });
+    out.push({ season, week, games, topSix, cutline, high, low });
   }
   return out.sort((a, b) => a.week - b.week);
 }

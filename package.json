@@ -13,13 +13,22 @@
     "standalone": "node scripts/buildStandalone.mjs",
     "shots": "node scripts/shoot.mjs",
     "typecheck": "tsc --noEmit",
-    "weekly": "npm run build:live && npm run render:email && npm run email"
+    "weekly": "npm run build:live && npm run render:email && npm run email",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "recap:context": "tsx src/pipeline/generateRecap.ts context",
+    "recap:persist": "tsx src/pipeline/generateRecap.ts persist",
+    "recap:research": "tsx src/pipeline/generateRecap.ts research",
+    "recap:status": "tsx src/pipeline/generateRecap.ts status"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "playwright": "^1.62.1",
     "tsx": "^4.23.12",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "marked": "^18.0.10"
