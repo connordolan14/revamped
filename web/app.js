@@ -1,4 +1,4 @@
-/* Revamped League — static SPA (dependency-free). Hash-routed.
+/* Revamped League — static SPA (dependency-free). History (clean-URL) routed.
    Data: window.__BUNDLE__ (inlined build) or ./data/bundle.json (deployed). */
 
 const $ = (sel, r = document) => r.querySelector(sel);
