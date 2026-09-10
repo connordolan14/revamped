@@ -5,7 +5,8 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { sleeper, fetchLeagueChain, SleeperUser, SleeperRoster } from "../core/sleeper.js";
-import { fetchDynastyValues, rosterValue } from "../core/fantasycalc.js";
+import { fetchDynastyValues } from "../core/fantasycalc.js";
+import { fetchStarterValues, starterStrength, nameKey } from "../core/rosterStrength.js";
 import { TeamWeek } from "../core/types.js";
 import { computeWeeklyResults, computeStandings } from "../core/standings.js";
 import { computePowerRankings, TeamFactors } from "../core/power.js";
@@ -195,13 +196,26 @@ async function main() {
   const chain = await fetchLeagueChain(LEAGUE_ID); // oldest → newest
   const current = chain[chain.length - 1];
   const values = await fetchDynastyValues();
-  const valueById = new Map(values.map((v) => [v.sleeperId, v]));
   const players = await sleeper.playersNfl().catch(() => ({} as Record<string, any>));
 
-  // roster strength (current league) → internal power factor only
+  // roster strength → the power-ranking roster factor. Sum of top-N-per-position
+  // starter value (QB2 / RB3 / WR4 / TE1) on SF TE-premium values, matching the
+  // league sheet. Falls back to the same method on FantasyCalc SF values if the
+  // SF TE+ sheet is unreachable.
   const rosters = await sleeper.rosters(LEAGUE_ID);
   const rosterScores = new Map<number, number>();
-  for (const r of rosters) rosterScores.set(r.roster_id, rosterValue(r.players, valueById));
+  let rosterStrengthSource = "sf-te-premium-starters";
+  try {
+    const starterValues = await fetchStarterValues();
+    for (const r of rosters) rosterScores.set(r.roster_id, starterStrength(r.players, players, starterValues));
+  } catch (e) {
+    // Keep the same top-N-per-position method, just on FantasyCalc SF values.
+    rosterStrengthSource = "fantasycalc-starters-fallback";
+    console.warn(`[rosterStrength] ${(e as Error).message} — falling back to FantasyCalc SF values`);
+    const fcMap = new Map<string, number>();
+    for (const v of values) fcMap.set(nameKey(v.name, v.position), v.value);
+    for (const r of rosters) rosterScores.set(r.roster_id, starterStrength(r.players, players, fcMap));
+  }
 
   // fetch every season's data
   const seasonDatas: SeasonData[] = [];
@@ -369,7 +383,10 @@ async function main() {
     history: { seasons: historySeasons, champsByRoster, trophiesByRoster, records: computeRecords(allMatchups as any), recordPlayerWeek, allTime: hist.byRoster, matchups: allMatchups },
     schedule,
     rulebook,
-    meta: { note: currentScored ? "" : "Preseason — 2026 standings/power/transactions light up at Week 1." },
+    meta: {
+      note: currentScored ? "" : "Preseason — 2026 standings/power/transactions light up at Week 1.",
+      rosterStrengthSource,
+    },
   };
 
   mkdirSync(join(process.cwd(), "web/data"), { recursive: true });
