@@ -98,13 +98,14 @@ check("OVW league sum = 14*66", ovwSum === NWEEKS * 66, `got ${ovwSum}`);
 const topSum = [...agg.values()].reduce((s, a) => s + a.top, 0);
 check("Top finishes league sum = 14*6", topSum === NWEEKS * 6, `got ${topSum}`);
 
-// --- Power model: run with the 5 mechanical factors we can derive from the
-// sheet (rosterScore left neutral) and report order vs sheet. Exact 2025 power
-// order also depends on the external roster-rank factor, sourced from
-// FantasyCalc for live seasons. ---
-console.log("\nPower model (5 mechanical factors; rosterScore neutral):");
+// --- Power model: run with the 4 mechanical factors we can derive from the
+// sheet (streak and rosterScore left neutral — final-week streak isn't in the
+// fixture, rosterScore is external). Reports order vs sheet. ---
+console.log("\nPower model (wins/ovw/consistency/avgPF; streak + rosterScore neutral):");
+const leaguePPG = mean(F.flatMap((f) => f.scores));
 const tf: TeamFactors[] = F.map((f) => {
   const a = agg.get(f.rosterId)!;
+  const dev = stdevSample(f.scores);
   return {
     rosterId: f.rosterId,
     factors: {
@@ -112,7 +113,8 @@ const tf: TeamFactors[] = F.map((f) => {
       streak: 0, // final-week streak not in fixture; neutralized
       rosterScore: 0, // external; neutral here
       ovw: a.ovw,
-      consistency: -stdevPop(f.scores),
+      // Season Scoring Consistency: (avg - 3*dev) / (0.75 * league PPG)
+      consistency: dev === 0 ? 1 : (mean(f.scores) - 3 * dev) / (0.75 * leaguePPG),
       avgPF: mean(f.scores),
     },
   };
@@ -126,7 +128,7 @@ for (const p of pr) {
   if (Math.abs(p.rank - sheetR) <= 1) within1++;
   console.log(`  #${p.rank} ${handleById.get(p.rosterId)!.padEnd(14)} score=${round(p.score,2)}  (sheet #${sheetR})`);
 }
-console.log(`  within ±1 of sheet power rank: ${within1}/12 (rosterScore excluded)`);
+console.log(`  within ±1 of sheet power rank: ${within1}/12 (streak + rosterScore excluded)`);
 
 console.log(`\n=== RESULT: ${pass} passed, ${fail} failed ===`);
 if (fail > 0) process.exit(1);

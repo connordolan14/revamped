@@ -2,6 +2,17 @@
 // each team is ranked 1..N on six factors, each factor rank is multiplied by a
 // per-factor weight, the weighted ranks are averaged into a score, and teams
 // are ordered by that score (lowest = strongest). Trend = movement vs last week.
+//
+// The six factors (all ranked high-value = rank 1, i.e. descending):
+//   wins        half-win standings total (h2h result + top-6 weekly bonus)
+//   streak      signed active streak (+3 = 3-game win streak, -2 = 2-game skid)
+//   rosterScore SF TE-premium starter value: top2 QB + top3 RB + top4 WR + top1 TE
+//   ovw         season "all-play" wins: each week, (teams you outscored); summed
+//   consistency (teamAvg - 3*teamDev) / (0.75 * league PPG); -99 before a team
+//               has 2 games, 1 if the team's weekly stdev is exactly 0
+//   avgPF       mean points scored per week
+// Pre-Week-1 every factor except rosterScore ties across the league, so the
+// ranking is roster strength alone until games are played.
 
 import { PowerFactorSet, PowerRanking } from "./types.js";
 import { rankDesc } from "./stats.js";
