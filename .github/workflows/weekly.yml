@@ -32,11 +32,11 @@ jobs:
       LEAGUE_ID: ${{ vars.LEAGUE_ID || '1312251123628789760' }}
       SEND_EMAIL: ${{ github.event.schedule == '0 13 * * 2' || (github.event_name == 'workflow_dispatch' && inputs.send_email) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
