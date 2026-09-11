@@ -11,7 +11,8 @@ import { computeHistory, computeRecords, SeasonInput, MatchRow } from "../core/h
 import { round } from "../core/stats.js";
 import { readFileSync } from "node:fs";
 import { marked } from "marked";
-import { buildBundleDocument, buildSeasonBundle, BundleTeam } from "./bundle.js";
+import { buildBundleDocument, buildSeasonBundle, BundleTeam, powerShape } from "./bundle.js";
+import { loadPowerSnapshots, PowerSnapshot, savePowerSnapshot } from "./powerHistory.js";
 
 const LEAGUE_ID = process.env.LEAGUE_ID || "1312251123628789760";
 const GEN_TS = process.env.GEN_TS || new Date().toISOString();
@@ -202,7 +203,7 @@ async function main() {
   for (const sd of seasonDatas) {
     const isCurrent = sd.leagueId === LEAGUE_ID;
     const moves = isCurrent ? movesByRoster : undefined;
-    const seasonBundle = buildSeasonBundle({
+    let seasonBundle = buildSeasonBundle({
       season: sd.season,
       complete: sd.complete,
       rowsByWeek: sd.rowsByWeek,
@@ -210,6 +211,35 @@ async function main() {
       rosterScores: isCurrent ? rosterScores : new Map(),
       movesByRoster: moves,
     });
+    // A score can look complete before Monday Night Football ends. Archive only
+    // weeks Sleeper has moved past, then calculate that exact week's view even
+    // if the live bundle already contains partial data from the following week.
+    const completedWeeks = Object.keys(sd.rowsByWeek)
+      .map(Number)
+      .filter((week) => Number.isFinite(week) && week < Number(state.week));
+    if (isCurrent && completedWeeks.length) {
+      const week = Math.max(...completedWeeks);
+      const teamByRoster = new Map(sd.teams.map((team) => [team.rosterId, team]));
+      const snapshotPower = powerShape(sd.rowsByWeek, sd.teams, rosterScores, week);
+      const snapshot: PowerSnapshot = {
+        season: sd.season,
+        week,
+        capturedAt: new Date().toISOString(),
+        leagueId: sd.leagueId,
+        rankings: snapshotPower.map((ranking) => ({
+          rosterId: ranking.rosterId,
+          ownerId: teamByRoster.get(ranking.rosterId)?.ownerId ?? "",
+          handle: ranking.handle,
+          teamName: ranking.teamName,
+          avatar: ranking.avatar,
+          rank: ranking.rank,
+          score: ranking.score,
+        })),
+      };
+      const saved = savePowerSnapshot(snapshot);
+      if (saved.created) console.log(`Saved power-ranking snapshot ${sd.season} week ${week}.`);
+      seasonBundle = { ...seasonBundle, powerHistory: loadPowerSnapshots(sd.season) };
+    }
     const standings = seasonBundle.standings;
     seasons[sd.season] = seasonBundle;
     // Preseason current league: standings + power only, no history/playoff rows.

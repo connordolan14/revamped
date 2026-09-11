@@ -9,6 +9,7 @@ import { computeRecaps, WeekRecap } from "../core/recap.js";
 import { loadSeasonRecaps } from "../core/recapStore.js";
 import { MatchRow } from "../core/history.js";
 import { round } from "../core/stats.js";
+import { loadPowerSnapshots } from "./powerHistory.js";
 
 export interface BundleTeam {
   rosterId: number;
@@ -101,8 +102,9 @@ export function powerShape(
   rowsByWeek: Record<string, MatchRow[]>,
   teams: BundleTeam[],
   rosterScores: Map<number, number>,
+  throughWeek?: number,
 ) {
-  const maxWeek = Math.max(0, ...toTeamWeeks(rowsByWeek).map((row) => row.week));
+  const maxWeek = throughWeek ?? Math.max(0, ...toTeamWeeks(rowsByWeek).map((row) => row.week));
   const byRoster = new Map(teams.map((team) => [team.rosterId, team]));
   const rosterIds = teams.map((team) => team.rosterId);
   const rankAt = (week: number) => powerAt(rowsByWeek, rosterIds, rosterScores, week).power;
@@ -154,6 +156,7 @@ export function buildSeasonBundle(input: SeasonBundleInput) {
     standings: standingsShape(input.rowsByWeek, input.teams, input.movesByRoster),
     power: powerShape(input.rowsByWeek, input.teams, input.rosterScores),
     weeklyScores: weeklyMatrix(input.rowsByWeek, input.teams),
+    powerHistory: loadPowerSnapshots(input.season, input.root),
     recaps: attachArticles(
       input.season,
       computeRecaps(input.season, input.rowsByWeek),

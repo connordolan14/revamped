@@ -13,6 +13,7 @@ layers them over that snapshot.
 src/core/          Portable engine (half-win standings, 6-factor power model) — validated vs 2025
 src/pipeline/      buildLive (Sleeper+FantasyCalc → bundle.json), writeup, email
 src/data/          League identity + 2025 fixtures
+data/power-rankings/  Append-only weekly power-ranking snapshots
 web/               The static site (index.html, styles.css, app.js) + web/data/bundle.json
 scripts/           validate2025, buildBundle (offline), render images, screenshots
 .github/workflows/ weekly.yml — daily data refresh (+ Tuesday write-up email)
