@@ -35,8 +35,13 @@ Great week.
 The production version of this section should contain 3 to 5 facts that were NOT already used above.
 
 Good Week 8 candidates include:
-- BrendanBall03 landed exactly on the 118.75 weekly top-six cutline.
-- All six H2H winners were also exactly the six highest-scoring teams that week.
+- The entire 4-3 class went 4-0 this week: New England Keys, Jayden’s Blue Balls, jtyurconic2 and Mark 2.0 all moved to 5-3. Both teams that entered 6-1 lost. - Six teams now sit at either 6-2 or 5-3, which is a much more annoying standings table than we had seven days ago.
+- Every single H2H winner also finished in the weekly top six. For one week, the bonus system managed to produce absolutely no arguments.
+- The Permanent Rebuild had five starters score fewer than three points. None of its ten starters reached 16. There are probably cleaner ways to get to 70.65, but not many.
+- New England Keys’ top four scorers combined for 120.25. If those four people had entered the league as their own team, they would have finished fifth in weekly scoring.
+- Patrick Mahomes scored 24.96 for Mark 2.0, while Josh Allen scored 23.22 for jtyurconic2. Two of the league’s most expensive dynasty assets combined for fewer points than Jonathan Taylor and Tucker Kraft, which is probably why dynasty rankings should occasionally be ignored for four hours on Sunday.
+- The Permanent Rebuild had four starters score 0.4 points or fewer. Combined: 0.8. There are individual carries worth more than that in some scoring formats.
+- Tua’s 24.2 bench points were more than the scoring output of several starting quarterbacks in the league that week, yet even moving all 24.2 into the lineup would not have gotten chrisrenna17 remotely close to 154.22. That's the useful kind of lineup regret: completely consequence-free.
 - Any standings, power-ranking, franchise-record, FAAB, or historical-H2H fact derived by the full site engine that adds new information.
 
 Do not duplicate:
