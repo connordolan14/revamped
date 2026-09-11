@@ -6,7 +6,7 @@ name: League data refresh
 on:
   schedule:
     - cron: "0 12 * * *"   # every day — refresh data + redeploy
-    - cron: "0 13 * * 2"   # Tuesday — also send the weekly write-up
+    - cron: "0 10 * * 2"   # Tuesday — 6 AM EDT / 5 AM EST; also send the weekly write-up
   workflow_dispatch:
     inputs:
       send_email:
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       LEAGUE_ID: ${{ vars.LEAGUE_ID || '1312251123628789760' }}
-      SEND_EMAIL: ${{ github.event.schedule == '0 13 * * 2' || (github.event_name == 'workflow_dispatch' && inputs.send_email) }}
+      SEND_EMAIL: ${{ github.event.schedule == '0 10 * * 2' || (github.event_name == 'workflow_dispatch' && inputs.send_email) }}
     steps:
       - uses: actions/checkout@v5
 
