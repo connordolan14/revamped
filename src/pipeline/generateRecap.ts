@@ -131,6 +131,9 @@ export function optionsFor(ctx: RecapContext, research?: { candidates: { id: str
       ...ctx.players.highestBench.map((b) => b.name),
       ...ctx.players.benchBlunders.flatMap((b) => [b.name, b.startedInstead ?? ""]),
       ...ctx.transactions.flatMap((t) => [...t.adds, ...t.drops].map((p) => p.player)),
+      // Proper nouns the research packet supplied are legitimately nameable.
+      ...(research?.candidates ?? []).flatMap((c: any) =>
+        String(c.description ?? "").match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b/g) ?? []),
     ].filter(Boolean),
   };
 }

@@ -126,11 +126,12 @@ Do not scatter model strings through the codebase.
 
 Count only main body paragraphs for the body target unless product requirements later decide otherwise.
 
-Recommended:
+Rule:
 - editorial target: 400–500
-- hard validator range: 350–550
+- hard validator range: 400–500
 
-The footer is outside the body count.
+The main body must be at least 400 words and at most 500. The "For the record"
+footer is outside the body count entirely.
 
 ## Banned-phrase validation
 

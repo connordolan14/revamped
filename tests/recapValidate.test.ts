@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { validateRecap, validateAgainstSchema, RecapArticle, ValidateOptions, RESEARCH_SCHEMA_PATH, PERSISTED_SCHEMA_PATH } from "../src/core/recapSchema.js";
-import { loadStyleRules } from "../src/core/styleRules.js";
+import { loadStyleRules, NOT_X_BUT_Y } from "../src/core/styleRules.js";
 
 const FACTS = new Set([
   "2025-w08-high-connordolan14-score",
@@ -21,11 +21,11 @@ const baseOpts = (over: Partial<ValidateOptions> = {}): ValidateOptions => ({
   ...over,
 });
 
-// ~380 words, inside the 350-550 hard range.
+// ~430 words, inside the 400-500 hard range.
 const filler = (n: number) => Array.from({ length: n }, (_, i) => `word${i}`).join(" ");
 const body = [
-  "New England Keys put 160.59 on the board, which was more than anyone else managed and very nearly double what the bottom of the league produced. " + filler(150),
-  "Woodys Toy Box benched C.J. Stroud for Elic Ayomanor and then lost by less than the difference between them. " + filler(200),
+  "New England Keys put 160.59 on the board, which was more than anyone else managed and very nearly double what the bottom of the league produced. " + filler(180),
+  "Woodys Toy Box benched C.J. Stroud for Elic Ayomanor and then lost by less than the difference between them. " + filler(215),
 ];
 
 const good = (over: Partial<RecapArticle> = {}): RecapArticle => ({
@@ -62,6 +62,24 @@ describe("style rules parsed from the writer prompt", () => {
   });
 });
 
+describe("negate-then-correct detection", () => {
+  it("catches the constructions section 42 bans", () => {
+    for (const s of [
+      "It's not a rebuild, it's a demolition.",
+      "This isn't bad luck. It is a lineup problem.",
+      "Not a rebuild, but a controlled demolition.",
+    ]) expect(NOT_X_BUT_Y.test(s)).toBe(true);
+  });
+
+  it("does not flag the mock-authority concessive section 8A recommends", () => {
+    for (const s of [
+      "I am not a fantasy scoring engineer, but 70.65 seems low.",
+      "I'm no breathing scientist, but that sounded wrong.",
+      "He is not the highest scorer, but he started.",
+    ]) expect(NOT_X_BUT_Y.test(s)).toBe(false);
+  });
+});
+
 describe("validateRecap", () => {
   it("accepts a clean article", () => {
     const r = validateRecap(good(), baseOpts());
@@ -79,10 +97,14 @@ describe("validateRecap", () => {
     expect(validateRecap(noFacts, baseOpts()).errors.some((e) => e.rule === "schema")).toBe(true);
   });
 
-  it("enforces the 350 to 550 word body range", () => {
+  it("enforces the 400 to 500 word body range", () => {
     // Two paragraphs so the schema's minItems passes and the length rule is reached.
     expect(validateRecap(good({ body: ["Too short.", "Also short."] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
-    expect(validateRecap(good({ body: [filler(400), filler(400)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
+    expect(validateRecap(good({ body: [filler(300), filler(300)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
+    // 399 and 501 are both out; the bounds are inclusive.
+    expect(validateRecap(good({ body: [filler(200), filler(199)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
+    expect(validateRecap(good({ body: [filler(250), filler(251)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
+    expect(validateRecap(good({ body: [filler(200), filler(200)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(false);
     expect(validateRecap(good(), baseOpts()).errors.some((e) => e.rule === "length")).toBe(false);
   });
 

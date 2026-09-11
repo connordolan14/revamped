@@ -1,0 +1,92 @@
+{
+  "season": 2025,
+  "week": 8,
+  "generated_at": "2026-09-11T01:00:01.489Z",
+  "source_data_hash": "e4c667efe40105f9",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "claude-code-session",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 8 Recap",
+    "body": [
+      "There are two kinds of 0-7 football teams. The first is the New York Jets, who went into Cincinnati on Sunday, gave up 38 points, scored 39 anyway, and left with the first win of their season. The second is The Permanent Rebuild, which scored 70.65 and appears to have spent the afternoon on something else entirely. That makes eight straight.",
+      "I'm no fantasy scoring engineer, but 70.65 seems low. Jonathan Taylor and Tucker Kraft combined for 67.95 between the two of them for New England Keys, which means a pair of players finished 2.70 short of beating dackerly36's entire ten man lineup without any assistance. The all play record for the week was 0-11, so there was nobody on the schedule who would have made it interesting either.",
+      "Keys had the opposite sort of Sunday, putting 160.59 on Injured Reserve's 84.19 for the largest margin anybody managed. Injured Reserve came into the week at 6-1 and has now lost two in a row, the second of which is going to require some explaining at work on Monday.",
+      "Keys also picked up Tyler Huntley off free agency during the week and started him that same Sunday for 16.74, which cost them nothing except the roster spot and about four minutes of effort.",
+      "jtyurconic2 produced the week's other enormous number, dropping 154.22 on chrisrenna17 and ending a three game losing streak in the process, which is one way to remind everybody you were 4-3 not very long ago.",
+      "chrisrenna17 responded by leaving Tua Tagovailoa and his 24.2 points on the bench, the highest bench score anybody had all week. Starting him would have been worth 4.78 in a game that ended up being lost by 47.22, so the decision managed to be both clearly wrong and entirely beside the point.",
+      "Mark 2.0 beat Jerking Goff, 129.63 to 99.35, with Saquon Barkley supplying almost a third of Goff's total by himself. Jayden's Blue Balls handled Green Egbukas & Ham, 129.32 to 99.91. Woodys Toy Box beat New York Mudbones, 118.98 to 105.12.",
+      "That last one deserves more attention than it is going to get, because Mudbones came into Sunday sitting first in the standings and first in the power rankings, lost to a team sitting eleventh, and did it while leaving 26.34 on their own bench, which was comfortably more than the margin they lost by.",
+      "It was also the closest game of the week.",
+      "For comparison, the Dodgers and Blue Jays played into the eighteenth inning on Monday night before Freddie Freeman finally ended Game 3 with a walk off homer. Six hours and thirty nine minutes of baseball, decided by a single run.",
+      "Ours came down to 13.86.",
+      "Anyway."
+    ],
+    "for_the_record": [
+      {
+        "text": "All six head to head winners were also exactly the six highest scoring teams of the week.",
+        "fact_ids": [
+          "2025-w08-coincidence-all-winners-top-six"
+        ]
+      },
+      {
+        "text": "Mark 2.0 spent 200 dollars of FAAB on Devin Singletary.",
+        "fact_ids": [
+          "2025-w08-faab-jbitterman99-200"
+        ]
+      },
+      {
+        "text": "BrendanBall03 picked up Samaje Perine off free agency for nothing and started him for 16.5 the same week.",
+        "fact_ids": [
+          "2025-w08-waiver-payoff-brendanball03-perine"
+        ]
+      },
+      {
+        "text": "jtyurconic2 climbed four spots in the power rankings to fourth, the largest move anybody made.",
+        "fact_ids": [
+          "2025-w08-power-jump-jtyurconic2-4"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2025-w08-low-dackerly36-score",
+      "2025-w08-losing-streak-dackerly36-l8",
+      "2025-w08-high-connordolan14-score",
+      "2025-w08-blowout-connordolan14-mhaanders-margin",
+      "2025-w08-waiver-payoff-connordolan14-huntley",
+      "2025-w08-blowout-jtyurconic2-chrisrenna17-margin",
+      "2025-w08-bench-chrisrenna17-tagovailoa",
+      "2025-w08-matchup-jbitterman99-thebearjew44-margin",
+      "2025-w08-matchup-hank1517-greenie0513-margin",
+      "2025-w08-matchup-dball11-ryanog-margin",
+      "2025-w08-lineup-regret-ryanog-cost-the-game"
+    ],
+    "external_context_used": [
+      "2025-w08-jets-first-win",
+      "2025-w08-world-series-18"
+    ],
+    "team_bits_used": [
+      {
+        "team": "The Permanent Rebuild",
+        "theme": "a rebuild with no building at the end of it"
+      },
+      {
+        "team": "New England Keys",
+        "theme": "free acquisitions that immediately pay"
+      },
+      {
+        "team": "New York Mudbones",
+        "theme": "first place beaten by its own bench"
+      }
+    ],
+    "opening_mechanism": "external setup, two kinds of 0-7 team",
+    "ending_mechanism": "external comparison then a short deflating payoff"
+  }
+}

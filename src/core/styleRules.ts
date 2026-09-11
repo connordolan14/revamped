@@ -68,8 +68,27 @@ export function loadStyleRules(root = process.cwd()): StyleRules {
 
 const dedupe = (xs: string[]) => [...new Set(xs.map((x) => x.toLowerCase()))];
 
-/** "It's not X, it's Y" / "This isn't X. It's Y." / "Not X, but Y." */
-export const NOT_X_BUT_Y = /\b(?:it(?:'|’)?s not|this isn(?:'|’)?t|not)\b[^.!?]{2,60}?,?\s*(?:it(?:'|’)?s|but)\b/i;
+/**
+ * The negate-then-correct construction banned by writer prompt section 42:
+ * "It's not X, it's Y." / "This isn't X. It's Y." / "Not X, but Y."
+ *
+ * Deliberately does NOT match a concessive like "I am not a fantasy scoring
+ * engineer, but 70.65 seems low", which is the mock-authority device section 8A
+ * explicitly recommends.
+ */
+const APOS = "(?:'|’)";
+/** "it" / "this" / "that" carrying a copula: it's, it is, this was, that's ... */
+const SUBJECT_COPULA = `(?:it|this|that)(?:${APOS}s|\\s+(?:is|was))?`;
+
+export const NOT_X_BUT_Y = new RegExp(
+  [
+    // negate, then correct: "it's not X, it's Y" / "this isn't X. It is Y"
+    `\\b${SUBJECT_COPULA}\\s*(?:not|isn${APOS}?t|wasn${APOS}?t)\\b[^.!?]{2,60}[.,]\\s*${SUBJECT_COPULA}\\b`,
+    // sentence-initial "Not X, but Y"
+    `(?:^|[.!?]\\s+)Not\\s+[^.!?]{2,60},\\s*but\\b`,
+  ].join("|"),
+  "i",
+);
 
 /** Scores written as a hyphenated pair, e.g. "129.63-99.35". */
 export const HYPHENATED_SCORE = /\d+\.\d+\s*[-‐-―]\s*\d+\.\d+/;

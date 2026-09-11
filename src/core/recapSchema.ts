@@ -56,7 +56,7 @@ export interface ValidateOptions {
   knownTeamNames?: string[];
   knownHandles?: string[];
   knownPlayerNames?: string[];
-  /** implementation-notes.md: editorial target 400-500, hard range 350-550. */
+  /** Body only, footer excluded. Hard range 400-500. */
   minWords?: number;
   maxWords?: number;
   minForTheRecord?: number;
@@ -69,7 +69,7 @@ export interface ValidateOptions {
 }
 
 const DEFAULTS = {
-  minWords: 350, maxWords: 550,
+  minWords: 400, maxWords: 500,
   minForTheRecord: 3, maxForTheRecord: 5,
   maxExternalRefs: 2,
 };
