@@ -6,12 +6,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { decideGeneration, loadRecap, saveRecap, sourceHash, recapPath } from "../src/core/recapStore.js";
 import { validateRecap, PersistedRecap, RecapArticle } from "../src/core/recapSchema.js";
+import { historyBeforeWeek } from "../src/pipeline/generateRecap.js";
+import { MatchupEntry } from "../src/core/history.js";
 
 let root: string;
 beforeEach(() => { root = mkdtempSync(join(tmpdir(), "recap-gen-")); });
 afterEach(() => { rmSync(root, { recursive: true, force: true }); });
 
-const CONTEXT = { season: 2025, week: 8, scoring: { cutline: 118.75 } };
+const CONTEXT = { season: 2025, week: 8, scoring: { topSix: [8, 9, 11, 2, 6, 12] } };
 
 const article = (over: Partial<RecapArticle> = {}): RecapArticle => ({
   title: "Week 8 Recap",
@@ -78,7 +80,7 @@ describe("I. stat correction", () => {
     const published = sourceHash(CONTEXT);
     saveRecap(envelope(published), root);
 
-    const corrected = sourceHash({ ...CONTEXT, scoring: { cutline: 119.0 } });
+    const corrected = sourceHash({ ...CONTEXT, scoring: { topSix: [8, 9, 11, 2, 6, 7] } });
     expect(corrected).not.toBe(published);
 
     const d = decideGeneration(loadRecap(2025, 8, root), corrected);
@@ -146,5 +148,37 @@ describe("K. manual generation", () => {
     saveRecap(envelope(sourceHash(CONTEXT)), root);
     expect(decideGeneration(loadRecap(2025, 9, root), sourceHash(CONTEXT)).action).toBe("generate");
     expect(loadRecap(2025, 8, root)).not.toBeNull();
+  });
+});
+
+describe("historical context boundary", () => {
+  const game = (season: string, week: number, points: number): MatchupEntry => ({
+    season,
+    week,
+    rosterId: week,
+    points,
+    oppRosterId: null,
+    oppPoints: null,
+    result: null,
+    top6: true,
+    margin: null,
+  });
+
+  it("excludes the target week and future weeks when computing the all-time high", () => {
+    const history = [
+      game("2024", 14, 160),
+      game("2025", 7, 150),
+      game("2025", 8, 190),
+      game("2025", 10, 200),
+      game("2026", 1, 210),
+    ];
+
+    const result = historyBeforeWeek(history, "2025", 8);
+
+    expect(result.priorMeetings.map((entry) => [entry.season, entry.week])).toEqual([
+      ["2024", 14],
+      ["2025", 7],
+    ]);
+    expect(result.allTimeHighWeek).toEqual({ rosterId: 14, points: 160, season: "2024", week: 14 });
   });
 });

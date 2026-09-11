@@ -30,12 +30,6 @@ Expected weekly scoring order:
 11. Injured Reserve — 84.19
 12. The Permanent Rebuild — 70.65
 
-Expected top-six cutline:
-- 118.75
-
-Expected exact-cutline team:
-- BrendanBall03
-
 Expected largest margin:
 - New England Keys over Injured Reserve by 76.40
 

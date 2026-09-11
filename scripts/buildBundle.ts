@@ -4,13 +4,12 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { LEAGUE, TEAMS, AVATARS, teamByRoster, STANDINGS_2025_FINAL, handleToRoster } from "../src/data/league.js";
+import { LEAGUE, TEAMS, AVATARS, teamByRoster, STANDINGS_2025_FINAL } from "../src/data/league.js";
 import { TeamWeek } from "../src/core/types.js";
 import { computeWeeklyResults, computeStandings } from "../src/core/standings.js";
-import { computePowerRankings, TeamFactors } from "../src/core/power.js";
 import { computeHistory, computeRecords, SeasonInput, MatchRow, MatchupEntry } from "../src/core/history.js";
-import { computeRecaps } from "../src/core/recap.js";
 import { round } from "../src/core/stats.js";
+import { buildBundleDocument, buildSeasonBundle, scheduleWeeksFromRows } from "../src/pipeline/bundle.js";
 import { marked } from "marked";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -41,43 +40,20 @@ for (const s of std2025) {
 }
 console.log(mism === 0 ? "✓ 2025 standings match the sheet exactly (from live matchups)" : `⚠ ${mism} mismatches`);
 
-const standings2025 = std2025.map((s, i) => {
-  const t = teamByRoster.get(s.rosterId)!;
-  return {
-    rank: i + 1, rosterId: s.rosterId, handle: t.handle, teamName: t.teamName, avatar: AVATARS[t.ownerId] ?? null,
-    wins: s.wins, losses: s.losses, winPct: round(s.winPct, 3), h2hWins: s.h2hWins, h2hLosses: s.h2hLosses,
-    pf: round(s.pointsFor, 2), pa: round(s.pointsAgainst, 2), maxPF: round(s.high, 2), minPF: round(s.low, 2),
-    avgPF: round(s.avgPF, 2), stdev: round(s.stdev, 2), topFinishes: s.topFinishes, ovw: s.ovw,
-    streak: s.streakLabel, moves: null as number | null,
-  };
+// ---- canonical season payload ----
+// Historical fixture builds do not have an authoritative weekly roster-value
+// snapshot, so the existing neutral roster-score behavior is retained. The
+// other factors and all output fields now use exactly the same code as live.
+const season2025 = buildSeasonBundle({
+  season: "2025",
+  complete: true,
+  rowsByWeek: matchups2025,
+  teams,
+  rosterScores: new Map(),
+  root: ROOT,
 });
-
-// ---- power (roster factor neutral for a completed season) ----
-// Compute cumulative power through a given week so "last week" trend is real,
-// exactly like the sheet's week-over-week movement.
-function powerThrough(uptoWeek: number) {
-  const wk = weeks2025.filter((w) => w.week <= uptoWeek);
-  const st = computeStandings(computeWeeklyResults(wk));
-  const byR = new Map(st.map((s) => [s.rosterId, s]));
-  const tf: TeamFactors[] = teams.map((t) => {
-    const s = byR.get(t.rosterId)!;
-    return { rosterId: t.rosterId, factors: { wins: s.wins, streak: s.streak, rosterScore: 0, ovw: s.ovw, consistency: -s.stdev, avgPF: s.avgPF } };
-  });
-  return computePowerRankings(tf);
-}
-const prevRankMap = new Map(powerThrough(13).map((p) => [p.rosterId, p.rank]));
-const power2025 = powerThrough(14).map((p) => {
-  const t = teamByRoster.get(p.rosterId)!;
-  const prev = prevRankMap.get(p.rosterId) ?? null;
-  return { rosterId: p.rosterId, handle: t.handle, teamName: t.teamName, avatar: AVATARS[t.ownerId] ?? null,
-    rank: p.rank, prevRank: prev, trend: prev == null ? null : prev - p.rank, score: round(p.score, 2) };
-});
-
-const weeklyMatrix2025 = teams.map((t) => {
-  const scores = new Array(14).fill(0);
-  for (const [wk, rows] of Object.entries(matchups2025)) { const r = rows.find((x) => x.r === t.rosterId); if (r) scores[Number(wk) - 1] = r.p; }
-  return { rosterId: t.rosterId, handle: t.handle, teamName: t.teamName, scores };
-});
+const standings2025 = season2025.standings;
+const power2025 = season2025.power;
 
 // ---- history (all-time; 2025 only so far) ----
 const finishByRoster: Record<number, number> = {};
@@ -142,23 +118,16 @@ const history = {
   matchups: allMatchups,
 };
 
-// weekly recaps + 2026 schedule
-const recaps2025 = computeRecaps("2025", matchups2025);
-function scheduleWeeks(rowsByWeek: Record<string, { r: number; m: number }[]>) {
-  return Object.entries(rowsByWeek).map(([wk, rows]) => {
-    const byM = new Map<number, number[]>();
-    for (const r of rows) { if (!byM.has(r.m)) byM.set(r.m, []); byM.get(r.m)!.push(r.r); }
-    return { week: Number(wk), games: [...byM.values()].filter((p) => p.length === 2).map((p) => ({ a: p[0], b: p[1] })) };
-  }).sort((a, b) => a.week - b.week);
-}
-const schedule = { season: "2026", playoffStart: 15, weeks: scheduleWeeks(schedule2026) };
+// 2026 schedule
+const schedule = { season: "2026", playoffStart: 15, weeks: scheduleWeeksFromRows(schedule2026) };
 
-const bundle = {
+const bundle = buildBundleDocument({
   generatedAt: null,
   league: LEAGUE,
   state: { season: "2026", week: 2, seasonType: "pre", inSeason: false, recapSeason: "2025", recapWeek: 14 },
   teams,
-  seasons: { "2025": { complete: true, standings: standings2025, power: power2025, weeklyScores: weeklyMatrix2025, recaps: recaps2025 } },
+  players: {},
+  seasons: { "2025": season2025 },
   transactions: [],
   history,
   schedule,
@@ -168,9 +137,8 @@ const bundle = {
     proposed: [] as { title: string; note?: string }[],
   },
   meta: { note: "Preseason — 2026 standings/power/transactions light up at Week 1. Homepage recap shows the 2025 finale until then." },
-};
+});
 
 mkdirSync(join(ROOT, "web/data"), { recursive: true });
 writeFileSync(join(ROOT, "web/data/bundle.json"), JSON.stringify(bundle));
-writeFileSync(join(ROOT, "public/data/bundle.json"), JSON.stringify(bundle, null, 2));
 console.log(`Wrote bundle. 2025 champ New England Keys; power #1 ${power2025[0].handle}; history teams ${Object.keys(hist.byRoster).length}; matchup log ${hist.matchups.length}`);

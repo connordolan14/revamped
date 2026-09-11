@@ -30,7 +30,7 @@ Create a new **private** repo and push this folder to it (any name, e.g.
 
 ### 2. Deploy the site on Vercel
 - vercel.com → **Add New… → Project** → import the GitHub repo.
-- Framework preset: **Other**. Build command: empty. **Output directory: `web`**.
+- Framework preset: **Other**. Build command: `npm run build`. **Output directory: `dist`**.
 - Deploy. You'll get a `*.vercel.app` URL — the site is live.
 
 ### 3. Point revampedleague.com (Cloudflare → Vercel)
@@ -78,6 +78,9 @@ npm ci
 npm run validate        # engine checks vs 2025
 npm run build:live      # pull live data → web/data/bundle.json   (needs internet)
 npm run build:bundle    # OR rebuild the offline preview bundle from fixtures
+npm run build           # assemble the deployable static site in dist/
+npm run smoke           # open every route in a local browser smoke test
+npm run check           # lint, type-check, test, validate, build, and smoke
 npm run standalone      # → web/standalone.html (single self-contained file)
 npm run shots           # screenshot every page (desktop + mobile) into shots/
 npx serve web           # preview the site at localhost

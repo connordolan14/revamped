@@ -89,9 +89,7 @@ The league has an additional weekly scoring component:
 
 * a head-to-head win is worth 1.0 win
 * finishing among the six highest-scoring teams that week is worth an additional 0.5 win
-* the sixth-highest score is the weekly top-six cutline
-
-The supplied data will already calculate all relevant standings, bonus results, cutlines, records, and derived statistics.
+The supplied data will already calculate all relevant standings, bonus results, records, and derived statistics.
 
 League members already know how their league works.
 
@@ -112,9 +110,9 @@ Examples:
 
 "lost"
 
-"also cleared the weekly cutline"
+"also finished in the weekly top six"
 
-"missed the bonus by 0.3"
+"finished outside the weekly top six"
 
 "finished seventh in scoring"
 
@@ -251,7 +249,7 @@ A normal waiver add becomes interesting if the player was added Saturday, immedi
 
 A one-place standings move becomes interesting if six teams are separated by one game and the move changes a playoff bye.
 
-A weekly cutline becomes interesting if a team finishes exactly on it.
+An unusual top-six result becomes interesting when the surrounding result is genuinely consequential.
 
 Do not mechanically follow the tiers.
 
@@ -821,7 +819,7 @@ Would substituting them have changed the result?
 
 Did the manager start a clearly inferior option at an eligible position?
 
-Did the bench mistake create a meaningful playoff, matchup, or cutline consequence?
+Did the bench mistake create a meaningful playoff, matchup, or top-six consequence?
 
 Was the bench score unusually high even though it did not matter?
 
@@ -1010,10 +1008,10 @@ A callback is bad when the writer repeats last week's joke because the same team
 Example:
 
 Week 6:
-A team misses the cutline by 0.4.
+A strong scoring week still finishes outside the top six.
 
 Week 8:
-The same team misses by 0.2.
+The same team lands seventh again.
 
 A callback may work because the pattern intensified.
 
@@ -1300,7 +1298,7 @@ Prefer items in roughly this order:
 4. significant power-ranking movement
 5. lineup decision with consequence
 6. transaction result
-7. narrow top-six cutline result
+7. meaningful top-six placement result
 8. meaningful streak
 9. strange statistical coincidence
 10. amusing leftover observation
@@ -1889,7 +1887,7 @@ Check for repeated:
 * player performances
 * transaction facts
 * team records
-* cutline facts
+* top-six placement facts
 * joke premises
 * phrases
 

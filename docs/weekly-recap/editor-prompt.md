@@ -39,7 +39,7 @@ Verify:
 - transaction timing
 - historical claims
 - standings/power movement
-- cutline claims
+- top-six placement claims
 - all-play claims
 
 Never invent a correction.

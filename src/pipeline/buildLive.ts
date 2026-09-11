@@ -7,19 +7,16 @@ import { join } from "node:path";
 import { sleeper, fetchLeagueChain, SleeperUser, SleeperRoster } from "../core/sleeper.js";
 import { fetchDynastyValues } from "../core/fantasycalc.js";
 import { fetchStarterValues, starterStrength, nameKey } from "../core/rosterStrength.js";
-import { computeWeeklyResults, computeStandings } from "../core/standings.js";
-import { powerAt, toTeamWeeks } from "../core/powerAtWeek.js";
 import { computeHistory, computeRecords, SeasonInput, MatchRow } from "../core/history.js";
-import { computeRecaps, WeekRecap } from "../core/recap.js";
-import { loadSeasonRecaps } from "../core/recapStore.js";
 import { round } from "../core/stats.js";
 import { readFileSync } from "node:fs";
 import { marked } from "marked";
+import { buildBundleDocument, buildSeasonBundle, BundleTeam } from "./bundle.js";
 
 const LEAGUE_ID = process.env.LEAGUE_ID || "1312251123628789760";
 const GEN_TS = process.env.GEN_TS || new Date().toISOString();
 
-interface TeamInfo { rosterId: number; ownerId: string; handle: string; teamName: string; avatar: string | null; }
+type TeamInfo = BundleTeam;
 
 function teamsFromLeague(users: SleeperUser[], rosters: SleeperRoster[]): TeamInfo[] {
   const byId = new Map(users.map((u) => [u.user_id, u]));
@@ -72,83 +69,6 @@ async function fetchSeason(leagueId: string, season: string, complete: boolean, 
     }
   }
   return { season, leagueId, complete, rowsByWeek, teams, playerBest };
-}
-
-/**
- * Merge the persisted, generated article for each week onto the deterministic
- * matchup structure. Weeks without a generated recap carry no prose — the site
- * shows its "not written yet" state rather than an auto-written stand-in.
- */
-function attachArticles(season: string, recaps: WeekRecap[]) {
-  const byWeek = new Map(loadSeasonRecaps(season).map((r) => [r.week, r.recap]));
-  return recaps.map((r) => {
-    const a = byWeek.get(r.week);
-    // Only the rendered fields cross into the bundle. Fact IDs, prompt versions,
-    // model ids and source hashes stay server-side.
-    return a
-      ? { ...r, article: { title: a.title, body: a.body, forTheRecord: a.for_the_record.map((f) => f.text) } }
-      : r;
-  });
-}
-
-function standingsShape(rowsByWeek: Record<string, MatchRow[]>, teams: TeamInfo[], movesByRoster?: Map<number, number>) {
-  const std = computeStandings(computeWeeklyResults(toTeamWeeks(rowsByWeek)));
-  const byR = new Map(teams.map((t) => [t.rosterId, t]));
-  // Preseason: no scored weeks yet — show every current team at 0–0.
-  const rowsSrc = std.length
-    ? std
-    : [...teams].sort((a, b) => a.rosterId - b.rosterId).map((t) => ({
-        rosterId: t.rosterId, wins: 0, losses: 0, winPct: 0, h2hWins: 0, h2hLosses: 0,
-        pointsFor: 0, pointsAgainst: 0, high: 0, low: 0, avgPF: 0, stdev: 0,
-        topFinishes: 0, ovw: 0, streakLabel: "W0",
-      }));
-  return rowsSrc.map((s, i) => {
-    const t = byR.get(s.rosterId)!;
-    return {
-      rank: i + 1, rosterId: s.rosterId, handle: t.handle, teamName: t.teamName, avatar: t.avatar,
-      wins: s.wins, losses: s.losses, winPct: round(s.winPct, 3), h2hWins: s.h2hWins, h2hLosses: s.h2hLosses,
-      pf: round(s.pointsFor, 2), pa: round(s.pointsAgainst, 2), maxPF: round(s.high, 2), minPF: round(s.low, 2),
-      avgPF: round(s.avgPF, 2), stdev: round(s.stdev, 2), topFinishes: s.topFinishes, ovw: s.ovw,
-      streak: s.streakLabel, moves: movesByRoster ? (movesByRoster.get(s.rosterId) ?? 0) : null,
-    };
-  });
-}
-
-function powerShape(rowsByWeek: Record<string, MatchRow[]>, teams: TeamInfo[], rosterScores: Map<number, number>) {
-  const maxW = Math.max(0, ...toTeamWeeks(rowsByWeek).map((w) => w.week));
-  const byR = new Map(teams.map((t) => [t.rosterId, t]));
-  // Preseason: no standings rows yet — wins/streak/ovw/avgPF are 0 and
-  // consistency is -99 for everyone, so those five factors tie across the league
-  // and the ranking collapses to roster strength (the one live factor).
-  const rosterIds = teams.map((t) => t.rosterId);
-  const rankAt = (upto: number) => powerAt(rowsByWeek, rosterIds, rosterScores, upto).power;
-  const prev = maxW > 1 ? new Map(rankAt(maxW - 1).map((p) => [p.rosterId, p.rank])) : new Map();
-  return rankAt(maxW).map((p) => {
-    const prevRank = prev.get(p.rosterId) ?? null;
-    const t = byR.get(p.rosterId)!;
-    return { rosterId: p.rosterId, handle: t.handle, teamName: t.teamName, avatar: t.avatar, rank: p.rank, prevRank, trend: prevRank == null ? null : prevRank - p.rank, score: round(p.score, 2) };
-  });
-}
-
-function weeklyMatrix(rowsByWeek: Record<string, MatchRow[]>, teams: TeamInfo[]) {
-  const maxW = Math.max(0, ...Object.keys(rowsByWeek).map(Number));
-  return teams.map((t) => {
-    const scores = new Array(maxW).fill(0);
-    for (const [wk, rows] of Object.entries(rowsByWeek)) { const r = rows.find((x) => x.r === t.rosterId); if (r) scores[Number(wk) - 1] = r.p; }
-    return { rosterId: t.rosterId, handle: t.handle, teamName: t.teamName, scores };
-  });
-}
-
-async function championOf(leagueId: string, teams: TeamInfo[]) {
-  try {
-    const wb: any[] = await (await fetch(`https://api.sleeper.app/v1/league/${leagueId}/winners_bracket`)).json();
-    const byR = new Map(teams.map((t) => [t.rosterId, t]));
-    const f = wb.find((m) => m.p === 1), third = wb.find((m) => m.p === 3);
-    return {
-      champion: f ? byR.get(f.w) ?? null : null, runnerUp: f ? byR.get(f.l) ?? null : null,
-      third: third ? byR.get(third.w) ?? null : null,
-    };
-  } catch { return { champion: null, runnerUp: null, third: null }; }
 }
 
 async function fetchJson(url: string): Promise<any> { try { return await (await fetch(url)).json(); } catch { return null; } }
@@ -282,17 +202,16 @@ async function main() {
   for (const sd of seasonDatas) {
     const isCurrent = sd.leagueId === LEAGUE_ID;
     const moves = isCurrent ? movesByRoster : undefined;
-    const standings = standingsShape(sd.rowsByWeek, sd.teams, moves);
-    const nameByRoster = new Map(sd.teams.map((t) => [t.rosterId, t.teamName]));
-    seasons[sd.season] = {
+    const seasonBundle = buildSeasonBundle({
+      season: sd.season,
       complete: sd.complete,
-      standings,
-      power: powerShape(sd.rowsByWeek, sd.teams, isCurrent ? rosterScores : new Map()),
-      weeklyScores: weeklyMatrix(sd.rowsByWeek, sd.teams),
-      // Matchup structure only. Editorial prose is merged in below from the
-      // persisted, generated recaps in data/recaps/.
-      recaps: attachArticles(sd.season, computeRecaps(sd.season, sd.rowsByWeek)),
-    };
+      rowsByWeek: sd.rowsByWeek,
+      teams: sd.teams,
+      rosterScores: isCurrent ? rosterScores : new Map(),
+      movesByRoster: moves,
+    });
+    const standings = seasonBundle.standings;
+    seasons[sd.season] = seasonBundle;
     // Preseason current league: standings + power only, no history/playoff rows.
     if (!Object.keys(sd.rowsByWeek).length) continue;
     const finishByRoster: Record<number, number> = {};
@@ -371,7 +290,7 @@ async function main() {
   const latestScored = (withRecaps.length ? withRecaps : Object.keys(seasons)).sort().pop();
   const recapSeason = latestScored;
   const recapWeek = latestScored ? Math.max(0, ...(seasons[latestScored].recaps || []).map((r: any) => r.week)) : 0;
-  const bundle = {
+  const bundle = buildBundleDocument({
     generatedAt: GEN_TS,
     league: {
       name: current.name, currentLeagueId: LEAGUE_ID, season: current.season, numTeams: current.total_rosters,
@@ -390,7 +309,7 @@ async function main() {
       note: currentScored ? "" : "Preseason — 2026 standings/power/transactions light up at Week 1.",
       rosterStrengthSource,
     },
-  };
+  });
 
   mkdirSync(join(process.cwd(), "web/data"), { recursive: true });
   writeFileSync(join(process.cwd(), "web/data/bundle.json"), JSON.stringify(bundle));

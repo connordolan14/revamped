@@ -86,8 +86,6 @@ export interface RecapFact {
 export interface RecapMatchupSide {
   rosterId: number; teamName: string; handle: string;
   points: number; scoreRank: number; madeTopSix: boolean;
-  /** Distance from the top-six cutline. Positive = cleared it. */
-  cutlineDelta: number;
   allPlayWins: number; allPlayLosses: number;
   h2hRecordBefore: string | null; h2hRecordAfter: string;
   standingsPositionBefore: number | null; standingsPositionAfter: number;
@@ -132,11 +130,7 @@ export interface RecapContext {
     ranked: { rosterId: number; teamName: string; points: number; rank: number }[];
     high: { rosterId: number; teamName: string; points: number };
     low: { rosterId: number; teamName: string; points: number };
-    cutline: number;
     topSix: number[];
-    /** Closest team above the cutline and closest below it. */
-    justMade: { rosterId: number; teamName: string; points: number; margin: number } | null;
-    justMissed: { rosterId: number; teamName: string; points: number; margin: number } | null;
   };
   allPlay: { rosterId: number; teamName: string; beaten: number; record: string }[];
   standings: { before: RecapStandingRow[]; after: RecapStandingRow[]; moves: { rosterId: number; teamName: string; from: number; to: number; delta: number }[] };
@@ -144,7 +138,7 @@ export interface RecapContext {
   playoffPicture: {
     inside: number[]; outside: number[]; byes: number[];
     enteredField: number[]; leftField: number[];
-    cutlineRecord: string | null;
+    lastPlayoffRecord: string | null;
   };
   streaks: { rosterId: number; teamName: string; streak: number; label: string }[];
   players: {
@@ -218,7 +212,7 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
   const rows = rowsByWeek[String(week)] ?? [];
   if (!rows.length) throw new Error(`No scored rows for ${season} week ${week}`);
 
-  /* ----- weekly scoring, cutline, all-play ----- */
+  /* ----- weekly scoring, top-six placement, all-play ----- */
   const weekResults = computeWeeklyResults(
     toTeamWeeks({ [String(week)]: rows }),
   );
@@ -228,13 +222,6 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
     .map((r, i) => ({ rosterId: r.r, teamName: name(r.r), points: r2(r.p), rank: i + 1 }));
   const topSixCount = Math.floor(rows.length / 2);
   const topSix = ranked.slice(0, topSixCount).map((r) => r.rosterId);
-  const cutline = r2(ranked[topSixCount - 1]?.points ?? 0);
-  const justMade = ranked[topSixCount - 1]
-    ? { ...pick(ranked[topSixCount - 1]), margin: r2(ranked[topSixCount - 1].points - (ranked[topSixCount]?.points ?? 0)) }
-    : null;
-  const justMissed = ranked[topSixCount]
-    ? { ...pick(ranked[topSixCount]), margin: r2(cutline - ranked[topSixCount].points) }
-    : null;
 
   const allPlay = ranked.map((r) => {
     const beaten = resByR.get(r.rosterId)?.beatenCount ?? 0;
@@ -274,7 +261,6 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
     return {
       rosterId: r.r, teamName: name(r.r), handle: byR.get(r.r)?.handle ?? "",
       points: r2(r.p), scoreRank: rankByR.get(r.r) ?? 0, madeTopSix: topSix.includes(r.r),
-      cutlineDelta: r2(r.p - cutline),
       allPlayWins: beaten, allPlayLosses: rows.length - 1 - beaten,
       h2hRecordBefore: before?.h2hRecord ?? null, h2hRecordAfter: after.h2hRecord,
       standingsPositionBefore: before?.rank ?? null, standingsPositionAfter: after.rank,
@@ -305,7 +291,7 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
     byes: standingsAfter.slice(0, input.byeTeams).map((s) => s.rosterId),
     enteredField: fieldAfter.filter((r) => standingsBefore.length > 0 && !fieldBefore.includes(r)),
     leftField: fieldBefore.filter((r) => !fieldAfter.includes(r)),
-    cutlineRecord: standingsAfter[input.playoffTeams - 1]?.record ?? null,
+    lastPlayoffRecord: standingsAfter[input.playoffTeams - 1]?.record ?? null,
   };
 
   /* ----- streaks ----- */
@@ -323,7 +309,6 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
     marginByR.set(m.b.rosterId, -m.margin);
   }
   const highestBench: RecapContext["players"]["highestBench"] = [];
-  const pointsByR = new Map(rows.map((r) => [r.r, r.p]));
   for (const pw of input.playerWeeks ?? []) {
     const tn = name(pw.rosterId);
     for (const p of [...pw.started].sort((a, b) => b.points - a.points).slice(0, 2)) {
@@ -356,8 +341,12 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
       const net = swap ? swap.gain : 0;
       // Would starting him have flipped the head-to-head, or the top-six bonus?
       const flipsH2h = deficit < 0 && net > Math.abs(deficit);
-      const teamPts = pointsByR.get(pw.rosterId) ?? 0;
-      const flipsTopSix = !topSix.includes(pw.rosterId) && teamPts + net > cutline;
+      const projectedTopSix = [...rows]
+        .map((row) => ({ rosterId: row.r, points: row.p + (row.r === pw.rosterId ? net : 0) }))
+        .sort((a, b) => b.points - a.points)
+        .slice(0, topSixCount)
+        .some((row) => row.rosterId === pw.rosterId);
+      const flipsTopSix = !topSix.includes(pw.rosterId) && net > 0 && projectedTopSix;
       highestBench.push({
         rosterId: pw.rosterId, teamName: tn, playerId: top.playerId, name: top.name,
         position: top.position, points: r2(top.points),
@@ -436,11 +425,11 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
 
     if (m.b.madeTopSix && m.winnerRosterId === m.a.rosterId) {
       add("high-scoring-loss", `${slugOf(m.b.rosterId)}-top-six`, 7.2,
-        `${m.b.teamName} made the top-six bonus and still lost its matchup.`, [m.b.rosterId], { points: m.b.points, cutline });
+        `${m.b.teamName} made the top-six bonus and still lost its matchup.`, [m.b.rosterId], { points: m.b.points, score_rank: m.b.scoreRank });
     }
     if (!m.a.madeTopSix && m.winnerRosterId === m.a.rosterId) {
       add("low-scoring-win", `${slugOf(m.a.rosterId)}-missed-bonus`, 6.5,
-        `${m.a.teamName} won its matchup but missed the top-six bonus.`, [m.a.rosterId], { points: m.a.points, cutline });
+        `${m.a.teamName} won its matchup but missed the top-six bonus.`, [m.a.rosterId], { points: m.a.points, score_rank: m.a.scoreRank });
     }
   }
 
@@ -450,17 +439,6 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
     add("coincidence", "all-winners-top-six", 8.5,
       `All ${winners.length} head-to-head winners were also the ${topSixCount} highest-scoring teams.`,
       winners, { winner_roster_ids: winners, top_six: topSix });
-  }
-
-  if (justMade && justMade.margin <= 5) {
-    add("cutline", `${slugOf(justMade.rosterId)}-exact`, 7.6,
-      `${justMade.teamName} took the last bonus spot by ${justMade.margin}.`, [justMade.rosterId],
-      { cutline, margin: justMade.margin, points: justMade.points });
-  }
-  if (justMissed && justMissed.margin <= 5) {
-    add("cutline", `${slugOf(justMissed.rosterId)}-miss`, 7.6,
-      `${justMissed.teamName} missed the top-six bonus by ${justMissed.margin}.`, [justMissed.rosterId],
-      { cutline, margin: justMissed.margin, points: justMissed.points });
   }
 
   const leagueBench = highestBench[0];
@@ -554,7 +532,7 @@ export function buildRecapContext(input: RecapContextInput): RecapContext {
     },
     teams: teams.map((t) => ({ ...t, slug: teamSlug(t.handle) })),
     matchups,
-    scoring: { ranked, high: pick(hi), low: pick(lo), cutline, topSix, justMade, justMissed },
+    scoring: { ranked, high: pick(hi), low: pick(lo), topSix },
     allPlay,
     standings: { before: standingsBefore, after: standingsAfter, moves: rankDeltas(standingsBefore, standingsAfter, byR) },
     power: { before: powBefore.map(powRow), after: powAfter.map(powRow), moves: rankDeltas(powBefore.map(powRow), powAfter.map(powRow), byR) },

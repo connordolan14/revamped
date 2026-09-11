@@ -24,19 +24,17 @@ const routes = [
 ];
 const browser = await chromium.launch({ executablePath: process.env.PW || undefined });
 const errors = [];
-for (const theme of ["dark"]) {
-  for (const [w, name] of [[1280, "desktop"], [390, "mobile"]]) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, deviceScaleFactor: 2 });
-    const page = await ctx.newPage();
-    page.on("console", (m) => { if (m.type() === "error") errors.push(`[${name}] ${m.text()}`); });
-    page.on("pageerror", (e) => errors.push(`[${name}] PAGEERR ${e.message}`));
-    for (const [rn, path] of routes) {
-      await page.goto(`http://localhost:4599${path}`, { waitUntil: "networkidle" });
-      await page.waitForTimeout(250);
-      await page.screenshot({ path: join(OUT, `${name}-${rn}.png`), fullPage: true });
-    }
-    await ctx.close();
+for (const [w, name] of [[1280, "desktop"], [390, "mobile"]]) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, deviceScaleFactor: 2 });
+  const page = await ctx.newPage();
+  page.on("console", (m) => { if (m.type() === "error") errors.push(`[${name}] ${m.text()}`); });
+  page.on("pageerror", (e) => errors.push(`[${name}] PAGEERR ${e.message}`));
+  for (const [rn, path] of routes) {
+    await page.goto(`http://localhost:4599${path}`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: join(OUT, `${name}-${rn}.png`), fullPage: true });
   }
+  await ctx.close();
 }
 await browser.close();
 server.close();

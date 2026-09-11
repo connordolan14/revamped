@@ -3,7 +3,7 @@
 // Run: npm run validate
 
 import { TeamWeek } from "../src/core/types.js";
-import { computeWeeklyResults, computeStandings } from "../src/core/standings.js";
+import { computeWeeklyResults } from "../src/core/standings.js";
 import { computePowerRankings, TeamFactors } from "../src/core/power.js";
 import { mean, stdevPop, stdevSample, round } from "../src/core/stats.js";
 

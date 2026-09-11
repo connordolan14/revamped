@@ -50,7 +50,7 @@ Include:
 - bye spots
 - regular-season length
 - scoring-format description only if needed
-- weekly cutline
+- number of weekly top-scoring teams that receive the bonus
 - weeks remaining
 
 ## Team identity
@@ -102,7 +102,6 @@ Each team-side object should support:
 - power_rank_delta
 - all_play_wins_week
 - all_play_losses_week
-- cutline_delta
 - made_top_six
 - active_h2h_streak_before/after
 - playoff_position_before/after
@@ -123,8 +122,7 @@ Do not invent missing historical data.
 | winner | compare final matchup scores |
 | margin | winner score minus loser score |
 | weekly scoring rank | rank all 12 team scores descending |
-| top-six cutline | sixth-highest final team score |
-| cutline delta | team score minus cutline |
+| top-six finish | rank all final team scores descending and take the first six |
 | weekly all-play record | compare team score with each of other 11 scores |
 | H2H record before | existing stats engine through week N-1 |
 | H2H record after | existing stats engine through week N |

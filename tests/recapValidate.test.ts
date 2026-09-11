@@ -206,15 +206,8 @@ describe("published schemas are honoured directly", () => {
     expect(validateAgainstSchema(packet, RESEARCH_SCHEMA_PATH).length).toBeGreaterThan(0);
   });
 
-  it("validates a persisted envelope against persisted-recap-schema.json", () => {
-    const env = {
-      season: 2025, week: 8,
-      generated_at: "2025-10-28T12:00:00.000Z",
-      source_data_hash: "abc123",
-      prompt_versions: { research: "recap-research-v1", writer: "recap-writer-v1", editor: "recap-editor-v1" },
-      models: { research: "m", writer: "m", editor: "m" },
-      recap: good(),
-    };
+  it("validates the unpublished Week 8 test run against persisted-recap-schema.json", () => {
+    const env = JSON.parse(readFileSync("fixtures/weekly-recap/2025-week-08/persisted-recap.json", "utf8"));
     expect(validateAgainstSchema(env, PERSISTED_SCHEMA_PATH)).toEqual([]);
     const missing: any = { ...env }; delete missing.source_data_hash;
     expect(validateAgainstSchema(missing, PERSISTED_SCHEMA_PATH).length).toBeGreaterThan(0);

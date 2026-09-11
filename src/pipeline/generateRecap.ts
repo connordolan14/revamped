@@ -30,7 +30,7 @@ import {
   validateRecap, validateAgainstSchema, RecapArticle, PersistedRecap, RESEARCH_SCHEMA_PATH, PERSISTED_SCHEMA_PATH,
 } from "../core/recapSchema.js";
 import { loadRecap, saveRecap, sourceHash, recentRecapContext, recapPath, decideGeneration } from "../core/recapStore.js";
-import { MatchRow } from "../core/history.js";
+import { computeRecords, MatchRow, MatchupEntry } from "../core/history.js";
 
 const LEAGUE_ID = process.env.LEAGUE_ID || "1312251123628789760";
 export const CONTEXT_DIR = "data/recaps/context";
@@ -48,6 +48,26 @@ export const MODELS = {
   writer: process.env.RECAP_WRITER_MODEL || "claude-code-session",
   editor: process.env.RECAP_EDITOR_MODEL || "claude-code-session",
 };
+
+type HistoricalMatchup = MatchupEntry & { isPlayoff?: boolean };
+
+/** Build historical recap context using only games completed before the target week. */
+export function historyBeforeWeek(
+  matchups: HistoricalMatchup[],
+  season: string,
+  week: number,
+) {
+  const targetSeason = Number(season);
+  const priorMeetings = matchups.filter((game) => {
+    const gameSeason = Number(game.season);
+    return gameSeason < targetSeason || (gameSeason === targetSeason && game.week < week);
+  });
+  const high = computeRecords(priorMeetings).highestWeek;
+  const allTimeHighWeek = high
+    ? { rosterId: high.rosterId, points: high.value, season: high.season, week: high.week! }
+    : null;
+  return { priorMeetings, allTimeHighWeek };
+}
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
@@ -91,11 +111,11 @@ export async function fetchWeekContext(season: string, week: number): Promise<Re
   let allTimeHighWeek: any = null;
   try {
     const bundle = JSON.parse(readFileSync(join(process.cwd(), "web/data/bundle.json"), "utf8"));
-    priorMeetings = (bundle.history?.matchups ?? []).filter(
-      (g: any) => g.season < season || (g.season === season && g.week < week),
-    );
-    const hi = bundle.history?.records?.highestWeek;
-    if (hi) allTimeHighWeek = { rosterId: hi.rosterId, points: hi.value, season: hi.season, week: hi.week };
+    ({ priorMeetings, allTimeHighWeek } = historyBeforeWeek(
+      bundle.history?.matchups ?? [],
+      season,
+      week,
+    ));
   } catch { /* bundle is optional context */ }
 
   const trimmed: Record<string, { n: string; p: string; t?: string | null }> = {};

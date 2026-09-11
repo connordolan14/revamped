@@ -51,7 +51,6 @@ export function computePowerRankings(
   prevRankByRoster: Map<number, number> = new Map(),
   multipliers: Record<FactorKey, number> = DEFAULT_MULTIPLIERS,
 ): PowerRanking[] {
-  const ids = teams.map((t) => t.rosterId);
   // Rank each factor (higher value = better = rank 1).
   const factorRankArrays: Record<FactorKey, number[]> = {} as any;
   for (const k of FACTOR_KEYS) {

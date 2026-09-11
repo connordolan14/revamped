@@ -4,6 +4,10 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "lint": "eslint eslint.config.js scripts web/app.js && tsc --noEmit --noUnusedLocals --noUnusedParameters",
+    "build": "node scripts/buildProduction.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run validate && npm run build && npm run smoke",
     "validate": "tsx scripts/validate2025.ts",
     "build:bundle": "tsx scripts/buildBundle.ts",
     "build:live": "tsx src/pipeline/buildLive.ts",
@@ -22,9 +26,12 @@
     "recap:status": "tsx src/pipeline/generateRecap.ts status"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^26.2.0",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
     "playwright": "^1.62.1",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2",

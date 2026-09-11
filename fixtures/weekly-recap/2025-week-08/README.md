@@ -9,6 +9,7 @@ Context window: Tuesday, October 21 through Monday, October 27, 2025
 - `expected-facts.json`: deterministic truth table
 - `external-context.json`: sample curated external context
 - `approved-recap.md`: editorial reference, never an exact-output assertion
+- `persisted-recap.json`: the unpublished test-run envelope used for schema regression
 - `raw-sleeper/`: location for exact API payloads
 
 ## Sleeper endpoints

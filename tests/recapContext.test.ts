@@ -106,13 +106,13 @@ describe("2025 week 8 golden context", () => {
     expect(ctx.league.weeksRemaining).toBe(6);
   });
 
-  it("reproduces the high, low and cutline", () => {
+  it("reproduces the high, low and top-six group", () => {
     expect(ctx.scoring.high.points).toBe(160.59);
     expect(ctx.scoring.high.teamName).toBe("New England Keys");
     expect(ctx.scoring.low.points).toBe(70.65);
     expect(ctx.scoring.low.teamName).toBe("The Permanent Rebuild");
-    expect(ctx.scoring.cutline).toBe(118.75);
     expect(ctx.scoring.topSix).toHaveLength(6);
+    expect(ctx.scoring.topSix).toEqual([8, 9, 11, 2, 6, 12]);
   });
 
   it("computes all-play records that sum to the league total", () => {

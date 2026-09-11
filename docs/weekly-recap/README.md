@@ -49,7 +49,7 @@ At minimum support:
 - H2H record before and after the week
 - standings position before and after, if already available from the engine
 - power ranking before and after
-- top-six cutline and each team's distance from it
+- weekly score rank and top-six bonus result
 - weekly all-play record/rank
 - meaningful active streaks
 - playoff and bye-position movement
@@ -74,7 +74,6 @@ Examples:
 - `2025-w08-team-permanent-rebuild-score`
 - `2025-w08-bench-chrisrenna17-tua`
 - `2025-w08-add-keys-huntley`
-- `2025-w08-cutline-brendan-exact`
 - `2025-w08-all-winners-top-six`
 
 Fact IDs let the writer/editor report which facts were used and allow the code to detect obvious body/footer duplication.
@@ -96,8 +95,7 @@ Candidate categories may include:
 - weekly high/low
 - league/franchise scoring record
 - near record
-- narrow top-six miss/escape
-- exact cutline
+- unusual top-six bonus result
 - all-play injustice/luck
 - winning/losing streak
 - streak ending
