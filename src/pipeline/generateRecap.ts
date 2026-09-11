@@ -82,6 +82,16 @@ export const researchPath = (season: string | number, week: number, root = proce
 
 /** Pull everything the context builder needs for one week of one season. */
 export async function fetchWeekContext(season: string, week: number): Promise<RecapContext> {
+  // A score can look non-zero before Monday Night Football ends. Only the
+  // current season needs this check: any week of a past season is already over.
+  const state = await sleeper.state();
+  if (season === state.season && week >= Number(state.week)) {
+    throw new Error(
+      `${season} week ${week} is not finished yet (Sleeper's current week is ${state.week}). ` +
+      `Wait until the week completes before running recap:context.`,
+    );
+  }
+
   const chain = await fetchLeagueChain(LEAGUE_ID);
   const lg = chain.find((l) => l.season === season);
   if (!lg) throw new Error(`No league in the chain for season ${season}`);
