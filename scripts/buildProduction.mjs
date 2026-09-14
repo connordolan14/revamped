@@ -17,7 +17,7 @@ if (!bundle.seasons || Object.keys(bundle.seasons).length === 0) {
 
 rmSync(output, { recursive: true, force: true });
 mkdirSync(join(output, "data"), { recursive: true });
-for (const file of ["index.html", "styles.css", "app.js"]) {
+for (const file of ["index.html", "styles.css", "app.js", "logo.png", "favicon.png"]) {
   copyFileSync(join(source, file), join(output, file));
 }
 copyFileSync(join(source, "data", "bundle.json"), join(output, "data", "bundle.json"));

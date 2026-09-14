@@ -7,8 +7,12 @@ let html = readFileSync(join(W, "index.html"), "utf8");
 const css = readFileSync(join(W, "styles.css"), "utf8");
 const js = readFileSync(join(W, "app.js"), "utf8");
 const bundle = readFileSync(join(W, "data", "bundle.json"), "utf8");
+const logoDataUri = `data:image/png;base64,${readFileSync(join(W, "logo.png")).toString("base64")}`;
+const faviconDataUri = `data:image/png;base64,${readFileSync(join(W, "favicon.png")).toString("base64")}`;
 
 html = html.replace('<link rel="stylesheet" href="/styles.css" />', `<style>\n${css}\n</style>`);
+html = html.replace('href="/favicon.png"', `href="${faviconDataUri}"`);
+html = html.replace('src="/logo.png"', `src="${logoDataUri}"`);
 html = html.replace(
   '<script src="/app.js"></script>',
   `<script>window.__BUNDLE__ = ${bundle};</script>\n<script>\n${js}\n</script>`,
