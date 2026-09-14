@@ -40,12 +40,6 @@ interface SeasonData {
   playerBest: Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>;
 }
 
-// A week only "counts" once every roster has posted a full score. Below this
-// floor the week is still in progress (or hasn't started) — folding partial
-// totals into standings/power would badly distort them. Lowest real weekly
-// score on record is ~50, so 40 clears every finished week.
-const WEEK_COMPLETE_FLOOR = 40;
-
 async function fetchSeason(leagueId: string, season: string, complete: boolean, regWeeks: number, teams: TeamInfo[], players: Record<string, any>, liveWeek = Number.POSITIVE_INFINITY): Promise<SeasonData> {
   const rowsByWeek: Record<string, MatchRow[]> = {};
   const playerBest = new Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>();
@@ -53,8 +47,9 @@ async function fetchSeason(leagueId: string, season: string, complete: boolean, 
     let ms; try { ms = await sleeper.matchups(leagueId, w); } catch { continue; }
     if (!ms || !ms.length) continue;
     if (!ms.some((m) => (m.points ?? 0) > 0)) break;
-    // The live NFL week (and beyond) is only folded in once it's fully scored.
-    if (w >= liveWeek && !ms.every((m) => (m.points ?? 0) >= WEEK_COMPLETE_FLOOR)) break;
+    // The live NFL week (and beyond) is only folded in once Sleeper's own state
+    // has moved past it — a score can look "done" while MNF is still playing.
+    if (w >= liveWeek) break;
     rowsByWeek[String(w)] = ms.map((m) => ({ r: m.roster_id, m: m.matchup_id ?? 0, p: m.points ?? 0 }));
     for (const m of ms) {
       const pp = m.players_points || {};
