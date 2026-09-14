@@ -177,6 +177,12 @@ tbody tr:last-child td { border-bottom: 0; }
 tbody tr { transition: background .12s ease; }
 tbody tr:hover td { background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
 td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center; }
+/* standings table: freeze team name while scrolling horizontally on mobile */
+@media (max-width: 860px) {
+  .standings-tbl thead th.l { position: sticky; left: 0; z-index: 3; background: var(--surface-2); }
+  .standings-tbl tbody td.l { position: sticky; left: 0; z-index: 2; background: var(--surface); box-shadow: 2px 0 6px -2px rgba(0,0,0,.35); }
+  .standings-tbl tbody tr:hover td.l { background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
+}
 .team-cell { display: flex; align-items: center; gap: 10px; text-align: left; }
 .team-cell .nm { font-weight: 600; color: var(--ink); }
 .team-cell .hd { color: var(--muted); font-size: 11.5px; }
@@ -271,7 +277,7 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 /* homepage two-column + recap */
 .home-cols { display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start; margin-bottom:8px; }
 @media (max-width:860px){ .home-cols { grid-template-columns:1fr; } }
-.recap-cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+.recap-cols { display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start; }
 @media (max-width:860px){ .recap-cols { grid-template-columns:1fr; } }
 .mini-stats { display:flex; gap:6px; align-items:baseline; justify-content:flex-end; }
 .mini-stats .st { display:inline-block; text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
@@ -280,8 +286,8 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 .rec-grid { display:inline-grid; grid-template-columns:34px 9px 34px; align-items:baseline; font-variant-numeric:tabular-nums; font-weight:600; font-size:13px; color:var(--ink); }
 .rec-grid .rw { text-align:right; } .rec-grid .rh { text-align:center; color:var(--muted); } .rec-grid .rl { text-align:left; }
 /* schedule — one box per week, two boxes per row */
-.weeks-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
-@media (max-width:760px){ .weeks-grid { grid-template-columns:1fr; } }
+.weeks-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; align-items:start; }
+@media (max-width:760px){ .weeks-grid { grid-template-columns:minmax(0,1fr); } }
 .game-cell { display:flex; align-items:center; gap:6px; background:var(--surface-2); border:1px solid var(--hair); border-radius:var(--r-sm); padding:9px 11px; font-size:13px; transition: border-color .12s; }
 .game-cell + .game-cell { margin-top:6px; }
 .game-cell .gt { display:flex; align-items:center; gap:8px; min-width:0; flex:1; color:var(--ink); }
@@ -303,6 +309,7 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 .mini-val { font-variant-numeric:tabular-nums; font-size:13px; }
 .recap-lines p { font-size:14px; line-height:1.7; margin:0 0 8px; color:var(--ink-2); }
 .recap-lines strong { color:var(--ink); font-weight:600; }
+.ftr-title { font-size:15px; font-weight:700; letter-spacing:-0.01em; color:var(--ink); margin:16px 0 8px; }
 .ftr-list { margin:0; padding:0 0 0 18px; list-style:none; }
 .ftr-list li { position:relative; font-size:13px; line-height:1.6; margin:0 0 6px; color:var(--ink-2); }
 .ftr-list li::before { content:"·"; position:absolute; left:-13px; color:var(--muted); font-weight:700; }
@@ -315,16 +322,25 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 .match-side .pts { font-variant-numeric:tabular-nums; font-weight:700; font-size:14px; }
 .match-side.lose { color:var(--muted); } .match-side.lose .pts { font-weight:600; }
 .match-mid { text-align:center; color:var(--faint); font-size:11px; }
+/* weekly-recap matchups card — each team gets its own full-width row so names never truncate */
+.wk-match { padding:10px 0; display:flex; flex-direction:column; gap:7px; }
+.wk-match + .wk-match { border-top:1px solid var(--hair); }
+.wk-match-side { display:flex; align-items:center; gap:9px; min-width:0; color:var(--ink); }
+.wk-match-side.lose { color:var(--muted); }
+.wk-match-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:15px; font-weight:600; }
+.wk-match-pts { font-variant-numeric:tabular-nums; font-weight:700; font-size:16px; flex:0 0 auto; }
+.wk-match-side.lose .wk-match-pts { font-weight:600; }
+.wk-match-legend { display:flex; align-items:center; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--hair); font-size:12px; color:var(--muted); }
 .wk-select-row { display:flex; align-items:center; gap:10px; margin:2px 0 16px; }
+.wk-select-pair { display:flex; align-items:center; gap:10px; }
 
 /* standings playoff line */
 tr.playoff-line td { border-bottom:2px solid var(--accent-line); }
 
-/* bracket */
-.bracket { display:flex; gap:18px; overflow-x:auto; padding:4px 2px 10px; }
-.bround { display:flex; flex-direction:column; justify-content:space-around; gap:12px; min-width:196px; }
-.bround > .mini-title { text-align:center; margin-bottom:2px; }
-.bgame { background:var(--surface-2); border:1px solid var(--hair); border-radius:var(--r-sm); padding:8px 11px; box-shadow: var(--shadow-1); }
+/* bracket — shared grid so every round lines up with what actually feeds it */
+.bracket-grid { display:grid; grid-template-columns:224px 32px 224px 32px 224px 224px; column-gap:0; row-gap:12px; overflow-x:auto; padding:4px 2px 14px; }
+.bracket-grid > .mini-title { text-align:center; align-self:start; }
+.bgame { background:var(--surface-2); border:1px solid var(--hair); border-radius:var(--r-sm); padding:8px 11px; box-shadow: var(--shadow-1); min-height:62px; display:flex; flex-direction:column; justify-content:center; }
 .bteam { display:flex; justify-content:space-between; gap:10px; padding:3px 0; font-size:13px; align-items:center; color:var(--ink-2); }
 .bteam .bt-n { display:flex; align-items:center; gap:7px; overflow:hidden; }
 .bteam .bt-n span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -334,6 +350,10 @@ tr.playoff-line td { border-bottom:2px solid var(--accent-line); }
 .bgame.bye { border-style:dashed; background:color-mix(in srgb, var(--surface-2) 55%, transparent); }
 .bseed { display:inline-block; min-width:15px; font-size:10px; color:var(--faint); text-align:center; font-variant-numeric:tabular-nums; }
 .byemsg { font-size:10px; margin-top:4px; padding-left:22px; color:var(--muted); }
+/* connector: a right-facing bracket (top+right+bottom border) joining a pair of
+   boxes, plus a short stub bridging the rest of the gutter to the next box. */
+.bconn { position:relative; width:16px; height:100%; border:2px solid var(--hair-strong); border-left:none; border-radius:0 8px 8px 0; align-self:stretch; }
+.bconn::after { content:""; position:absolute; top:50%; left:16px; width:16px; height:2px; background:var(--hair-strong); transform:translateY(-1px); }
 
 /* season trophies (league history) */
 .season-trophies { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:16px; }

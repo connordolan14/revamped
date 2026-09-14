@@ -58,7 +58,8 @@ function pageHome() {
   const sk = latestSeasonKey(); const s = B.seasons[sk];
   const wrap = h("div", {});
   wrap.append(pageHead("Revamped League"));
-  wrap.append(seasonNote());
+  const note = seasonNote();
+  if (note) wrap.append(note);
 
   // top: standings (left) + power (right)
   const stdCard = h("div", { class: "card pad" }, h("div", { class: "mini-title" }, "Standings"));
@@ -102,7 +103,7 @@ function pageHome() {
       r.article.body.forEach((p) => lines.append(h("p", { html: mdInline(p) })));
       write.append(lines);
       if (r.article.forTheRecord?.length) {
-        write.append(h("div", { class: "mini-title", style: "margin:14px 0 6px" }, "For the record"));
+        write.append(h("div", { class: "ftr-title" }, "For the record"));
         const ul = h("ul", { class: "ftr-list" });
         r.article.forTheRecord.forEach((t) => ul.append(h("li", { html: mdInline(t) })));
         write.append(ul);
@@ -116,11 +117,11 @@ function pageHome() {
     const top6 = new Set(r.topSix);
     r.games.forEach((g) => {
       const aWin = g.w === g.a, bWin = g.w === g.b;
-      mcard.append(h("div", { class: "match-row" },
-        h("div", { class: "match-side" + (aWin ? "" : " lose") }, avatar(TByR.get(g.a)?.avatar, nameOf(g.a), 22), h("span", { class: "nm2" }, nameOf(g.a)), top6.has(g.a) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "pts" }, fmt(g.aP, 1))),
-        h("div", { class: "match-mid" }, "def."),
-        h("div", { class: "match-side r" + (bWin ? "" : " lose") }, avatar(TByR.get(g.b)?.avatar, nameOf(g.b), 22), h("span", { class: "nm2" }, nameOf(g.b)), top6.has(g.b) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "pts" }, fmt(g.bP, 1)))));
+      mcard.append(h("div", { class: "wk-match" },
+        h("div", { class: "wk-match-side" + (aWin ? "" : " lose") }, avatar(TByR.get(g.a)?.avatar, nameOf(g.a), 26), h("span", { class: "wk-match-name" }, nameOf(g.a)), top6.has(g.a) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "wk-match-pts" }, fmt(g.aP, 1))),
+        h("div", { class: "wk-match-side" + (bWin ? "" : " lose") }, avatar(TByR.get(g.b)?.avatar, nameOf(g.b), 26), h("span", { class: "wk-match-name" }, nameOf(g.b)), top6.has(g.b) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "wk-match-pts" }, fmt(g.bP, 1)))));
     });
+    mcard.append(h("div", { class: "wk-match-legend" }, h("span", { class: "dot6" }), " = top-6 in weekly scoring"));
     box.append(h("div", { class: "recap-cols" }, write, mcard));
   }
   const def = recaps.length
@@ -128,7 +129,8 @@ function pageHome() {
     : weekOptions[0];
   sel.value = def; renderRecap(def);
 
-  wrap.append(recentActivity());
+  const activity = recentActivity();
+  if (activity) wrap.append(activity);
   return wrap;
 }
 
@@ -157,26 +159,38 @@ function recentActivity() {
 
 /* ---------- STANDINGS ---------- */
 function pageStandings() {
-  const sk = latestSeasonKey(); const s = B.seasons[sk];
   const wrap = h("div", {});
-  wrap.append(pageHead("Standings")); wrap.append(seasonNote());
-  wrap.append(h("div", { class: "seg", style: "margin-bottom:14px" }, h("button", { class: "active" }, sk + (s.complete ? " (final)" : B.state.inSeason ? ` · Week ${B.state.week}` : ""))));
-  const headers = [{ t: "#" }, { t: "Team", l: true }, { t: "Record" }, { t: "Win%" }, { t: "H2H" }, { t: "PF" }, { t: "PA" }, { t: "Max" }, { t: "Avg" }, { t: "Top-6" }, { t: "Moves" }, { t: "Streak" }];
-  const rows = s.standings.map((st) => h("tr", { class: st.rank === 6 ? "playoff-line" : "" },
-    h("td", { class: "rank" }, st.rank), h("td", { class: "l" }, teamCell(st, st.rank)),
-    h("td", { class: "tnum", style: "font-weight:600" }, `${st.wins}–${st.losses}`),
-    h("td", { class: "tnum muted" }, st.winPct.toFixed(3).replace(/^0/, "")),
-    h("td", { class: "tnum muted" }, `${st.h2hWins}–${st.h2hLosses}`),
-    h("td", { class: "tnum" }, fmt(st.pf, 1)), h("td", { class: "tnum muted" }, fmt(st.pa, 1)),
-    h("td", { class: "tnum" }, fmt(st.maxPF, 1)), h("td", { class: "tnum muted" }, fmt(st.avgPF, 1)),
-    h("td", { class: "tnum" }, st.topFinishes), h("td", { class: "tnum muted" }, st.moves == null ? "—" : st.moves),
-    h("td", { class: "tnum" }, streakText(st.streak))));
-  wrap.append(table(headers, rows));
-  wrap.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" }, "Line marks the 6-team playoff cut · Max = highest single week · Top-6 = weeks in the scoring-bonus group · Moves = transactions (live in-season)."));
-  if (s.weeklyScores.some((m) => m.scores.length)) {
-    wrap.append(h("div", { class: "section-title" }, "Weekly scoring — " + sk));
-    wrap.append(weeklyHeatmap(s.weeklyScores));
+  wrap.append(pageHead("Standings"));
+  const seasonKeys = Object.keys(B.seasons || {}).sort().reverse();
+  const seasonSel = h("select", { class: "team-select", style: "max-width:150px" }, seasonKeys.map((sk) => h("option", { value: sk }, sk)));
+  seasonSel.value = latestSeasonKey();
+  seasonSel.addEventListener("change", render);
+  wrap.append(h("div", { class: "wk-select-row", style: "margin-bottom:14px" }, h("span", { class: "muted", style: "font-size:13px" }, "Season"), seasonSel));
+  const box = h("div", {});
+  wrap.append(box);
+
+  function render() {
+    box.innerHTML = "";
+    const sk = seasonSel.value; const s = B.seasons[sk];
+    if (sk === B.state.season) { const note = seasonNote(); if (note) box.append(note); }
+    const headers = [{ t: "#" }, { t: "Team", l: true }, { t: "Record" }, { t: "Win%" }, { t: "H2H" }, { t: "PF" }, { t: "PA" }, { t: "Max" }, { t: "Avg" }, { t: "Top-6" }, { t: "Moves" }, { t: "Streak" }];
+    const rows = s.standings.map((st) => h("tr", { class: st.rank === 6 ? "playoff-line" : "" },
+      h("td", { class: "rank" }, st.rank), h("td", { class: "l" }, teamCell(st)),
+      h("td", { class: "tnum", style: "font-weight:600" }, `${st.wins}–${st.losses}`),
+      h("td", { class: "tnum muted" }, st.winPct.toFixed(3).replace(/^0/, "")),
+      h("td", { class: "tnum muted" }, `${st.h2hWins}–${st.h2hLosses}`),
+      h("td", { class: "tnum" }, fmt(st.pf, 1)), h("td", { class: "tnum muted" }, fmt(st.pa, 1)),
+      h("td", { class: "tnum" }, fmt(st.maxPF, 1)), h("td", { class: "tnum muted" }, fmt(st.avgPF, 1)),
+      h("td", { class: "tnum" }, st.topFinishes), h("td", { class: "tnum muted" }, st.moves == null ? "—" : st.moves),
+      h("td", { class: "tnum" }, streakText(st.streak))));
+    box.append(table(headers, rows, { cls: "standings-tbl" }));
+    box.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" }, "Line marks the 6-team playoff cut · Max = highest single week · Top-6 = weeks in the scoring-bonus group · Moves = transactions (live in-season)."));
+    if (s.weeklyScores.some((m) => m.scores.length)) {
+      box.append(h("div", { class: "section-title" }, "Weekly scoring — " + sk));
+      box.append(weeklyHeatmap(s.weeklyScores));
+    }
   }
+  render();
   return wrap;
 }
 const GREEN6 = ["#2fbf5b", "#28a54c", "#1f8c40", "#177535", "#12602c", "#0d4f25"];
@@ -228,14 +242,14 @@ function pageSchedule() {
 
   const teamsSorted = [...B.teams].sort((a, b) => a.teamName.localeCompare(b.teamName));
   const seasonSel = h("select", { class: "team-select", style: "max-width:150px" }, seasonKeys.map((s) => h("option", { value: s }, s)));
-  const teamSel = h("select", { class: "team-select" }, h("option", { value: "none" }, "No highlight"), teamsSorted.map((t) => h("option", { value: t.rosterId }, t.teamName)));
+  const teamSel = h("select", { class: "team-select", style: "max-width:120px" }, h("option", { value: "none" }, "None"), teamsSorted.map((t) => h("option", { value: t.rosterId }, t.teamName)));
   const box = h("div", { style: "margin-top:14px" });
   let highlight = null;
   seasonSel.addEventListener("change", render);
   teamSel.addEventListener("change", () => { highlight = teamSel.value === "none" ? null : Number(teamSel.value); render(); });
   wrap.append(h("div", { class: "wk-select-row", style: "flex-wrap:wrap" },
-    h("span", { class: "muted", style: "font-size:13px" }, "Season"), seasonSel,
-    h("span", { class: "muted", style: "font-size:13px;margin-left:8px" }, "Highlight"), teamSel));
+    h("div", { class: "wk-select-pair" }, h("span", { class: "muted", style: "font-size:13px" }, "Season"), seasonSel),
+    h("div", { class: "wk-select-pair" }, h("span", { class: "muted", style: "font-size:13px" }, "Highlight"), teamSel)));
   wrap.append(box);
 
   function gtSide(rid, right, pts, win) {
@@ -283,11 +297,6 @@ function recTeams(ids) {
     h("div", { class: "bteam" + (multi ? (it.win ? " bw" : " bl") : "") },
       h("div", { class: "bt-n" }, avatar(TByR.get(it.rid)?.avatar, nameOf(it.rid), 16), h("span", {}, nameOf(it.rid))))));
 }
-function bracketColumn(title, games, seedOf) {
-  const col = h("div", { class: "bround" }, h("div", { class: "mini-title" }, title));
-  games.forEach((g) => { if (g) col.append(bGameBox(g, seedOf)); });
-  return col;
-}
 const TROPHY_META = [
   ["champion", "🏆", "Champion"], ["runnerUp", "🥈", "Runner-Up"], ["third", "🥉", "3rd Place"],
   ["toiletBowl", "🚽", "Toilet Bowl"], ["deadLast", "💩", "Dead Last (Reg.)"],
@@ -317,17 +326,33 @@ function pageHistory() {
     const b = season.bracket;
     const byes = new Set(b.byes || []);
     const feeder = (t) => byes.has(t) ? { bye: true, rid: t } : { game: (b.round1 || []).find((g) => g.w === t) || null, rid: t };
-    // Quarterfinal column includes the bye teams as their own boxes, ordered so each
-    // pair of boxes feeds the semifinal below it → a proper 8→4→2 bracket.
-    const qfCol = h("div", { class: "bround" }, h("div", { class: "mini-title" }, "Quarterfinals"));
+    // Quarterfinal slots include the bye teams as their own boxes, ordered so each
+    // pair of slots feeds the semifinal box drawn between them → a proper 4→2→1 bracket
+    // laid out on a shared grid so every round lines up with what actually feeds it.
+    const qfItems = [];
     (b.semis || []).forEach((s) => [feeder(s.a), feeder(s.b)].forEach((it) => {
-      qfCol.append(it.bye ? bByeBox(it.rid, seedOf) : (it.game ? bGameBox(it.game, seedOf) : h("div", { class: "bgame" }, bTeamRow(it.rid, 0, true, seedOf))));
+      qfItems.push(it.bye ? bByeBox(it.rid, seedOf) : (it.game ? bGameBox(it.game, seedOf) : h("div", { class: "bgame" }, bTeamRow(it.rid, 0, true, seedOf))));
     }));
-    const bracket = h("div", { class: "bracket" }, qfCol,
-      bracketColumn("Semifinals", b.semis, seedOf),
-      bracketColumn("Championship", [b.final], seedOf),
-      bracketColumn("3rd place", [b.third], seedOf));
-    wrap.append(h("div", { class: "card pad", style: "margin-bottom:8px" }, h("div", { class: "mini-title", style: "margin-bottom:10px" }, "Playoff bracket · seeds shown · top 2 seeds bye"), bracket));
+    const semiItems = (b.semis || []).filter(Boolean).map((s) => bGameBox(s, seedOf));
+    const rows = qfItems.length || 1;
+    const grid = h("div", { class: "bracket-grid" });
+    const place = (el, col, rowStart, rowSpan, center) => {
+      el.style.gridColumn = String(col);
+      el.style.gridRow = rowSpan > 1 ? `${rowStart} / span ${rowSpan}` : String(rowStart);
+      if (center) el.style.alignSelf = "center";
+      grid.append(el);
+    };
+    place(h("div", { class: "mini-title" }, "Quarterfinals"), 1, 1, 1);
+    place(h("div", { class: "mini-title" }, "Semifinals"), 3, 1, 1);
+    place(h("div", { class: "mini-title" }, "Championship"), 5, 1, 1);
+    place(h("div", { class: "mini-title" }, "3rd Place"), 6, 1, 1);
+    qfItems.forEach((el, i) => place(el, 1, i + 2, 1));
+    for (let p = 0; p < rows / 2; p++) place(h("div", { class: "bconn" }), 2, p * 2 + 2, 2);
+    semiItems.forEach((el, i) => place(el, 3, i * 2 + 2, 2, true));
+    if (semiItems.length) place(h("div", { class: "bconn wide" }), 4, 2, rows);
+    if (b.final) place(bGameBox(b.final, seedOf), 5, 2, rows, true);
+    if (b.third) { const third = bGameBox(b.third, seedOf); third.style.marginLeft = "20px"; place(third, 6, 2, rows, true); }
+    wrap.append(h("div", { class: "card pad", style: "margin-bottom:8px" }, h("div", { class: "mini-title", style: "margin-bottom:10px" }, "Playoff bracket"), grid));
   }
 
   // all-time records
