@@ -45,6 +45,7 @@ export function standingsShape(
   rowsByWeek: Record<string, MatchRow[]>,
   teams: BundleTeam[],
   movesByRoster?: Map<number, number>,
+  faabLeftByRoster?: Map<number, number>,
 ) {
   const computed = computeStandings(computeWeeklyResults(toTeamWeeks(rowsByWeek)));
   const byRoster = new Map(teams.map((team) => [team.rosterId, team]));
@@ -94,6 +95,7 @@ export function standingsShape(
       ovw: standing.ovw,
       streak: standing.streakLabel,
       moves: movesByRoster ? (movesByRoster.get(standing.rosterId) ?? 0) : null,
+      faabLeft: faabLeftByRoster ? (faabLeftByRoster.get(standing.rosterId) ?? null) : null,
     };
   });
 }
@@ -147,13 +149,14 @@ export interface SeasonBundleInput {
   teams: BundleTeam[];
   rosterScores: Map<number, number>;
   movesByRoster?: Map<number, number>;
+  faabLeftByRoster?: Map<number, number>;
   root?: string;
 }
 
 export function buildSeasonBundle(input: SeasonBundleInput) {
   return {
     complete: input.complete,
-    standings: standingsShape(input.rowsByWeek, input.teams, input.movesByRoster),
+    standings: standingsShape(input.rowsByWeek, input.teams, input.movesByRoster, input.faabLeftByRoster),
     power: powerShape(input.rowsByWeek, input.teams, input.rosterScores),
     weeklyScores: weeklyMatrix(input.rowsByWeek, input.teams),
     powerHistory: loadPowerSnapshots(input.season, input.root),

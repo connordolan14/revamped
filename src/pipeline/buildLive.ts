@@ -166,6 +166,7 @@ async function main() {
 
   // transactions (current league) → list + per-roster counts for standings.moves
   const movesByRoster = new Map<number, number>();
+  const faabSpentByRoster = new Map<number, number>();
   const transactions: any[] = [];
   const upto = Math.max(1, state.week);
   for (let w = 1; w <= upto + 1; w++) {
@@ -174,6 +175,13 @@ async function main() {
       for (const tx of txs || []) {
         if (tx.status !== "complete") continue;
         for (const rid of tx.roster_ids || []) movesByRoster.set(rid, (movesByRoster.get(rid) ?? 0) + 1);
+        const bid = tx.settings?.waiver_bid;
+        if (bid) for (const rid of tx.roster_ids || []) faabSpentByRoster.set(rid, (faabSpentByRoster.get(rid) ?? 0) + bid);
+        // FAAB can also change hands as part of a trade.
+        for (const wb of tx.waiver_budget || []) {
+          faabSpentByRoster.set(wb.sender, (faabSpentByRoster.get(wb.sender) ?? 0) + wb.amount);
+          faabSpentByRoster.set(wb.receiver, (faabSpentByRoster.get(wb.receiver) ?? 0) - wb.amount);
+        }
         for (const pid of [...Object.keys(tx.adds || {}), ...Object.keys(tx.drops || {})]) addPlayer(pid);
         transactions.push({
           id: tx.transaction_id, type: tx.type, week: w, created: tx.created, rosterIds: tx.roster_ids,
@@ -185,6 +193,10 @@ async function main() {
     } catch {}
   }
   transactions.sort((a, b) => b.created - a.created);
+  const waiverBudget = current.settings.waiver_budget ?? 0;
+  const faabLeftByRoster = new Map<number, number>(
+    rosters.map((r) => [r.roster_id, waiverBudget - (faabSpentByRoster.get(r.roster_id) ?? 0)]),
+  );
 
   // seasons output (scored seasons only)
   const seasons: Record<string, any> = {};
@@ -205,6 +217,7 @@ async function main() {
       teams: sd.teams,
       rosterScores: isCurrent ? rosterScores : new Map(),
       movesByRoster: moves,
+      faabLeftByRoster: isCurrent ? faabLeftByRoster : undefined,
     });
     // A score can look complete before Monday Night Football ends. Archive only
     // weeks Sleeper has moved past, then calculate that exact week's view even
