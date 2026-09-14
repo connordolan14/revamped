@@ -145,13 +145,13 @@ function recentActivity() {
   tx.forEach((t, i) => {
     const adds = (t.adds || []).map((a) => a.player).filter(Boolean).join(", ");
     const drops = (t.drops || []).map((d) => d.player).filter(Boolean).join(", ");
-    card.append(h("div", { style: `display:flex;gap:10px;align-items:baseline;padding:9px 4px;font-size:13px${i ? ";border-top:1px solid var(--hair)" : ""}` },
+    card.append(h("div", { style: `display:flex;gap:10px;align-items:center;padding:9px 4px;font-size:13px${i ? ";border-top:1px solid var(--hair)" : ""}` },
       h("span", { class: "pill", style: "flex:none" }, TX_LABEL[t.type] || "Move"),
-      h("span", { style: "flex:1;min-width:0" },
-        h("strong", {}, (t.rosterIds || []).map(nameOf).join(" ↔ ") || "—"),
-        adds ? h("span", { style: "color:var(--up)" }, "  + " + adds) : null,
-        drops ? h("span", { class: "muted" }, (adds ? "  " : "  ") + "− " + drops) : null),
-      t.faab ? h("span", { class: "muted", style: "flex:none;font-size:12px" }, "$" + t.faab) : null));
+      h("strong", { style: "flex:0 0 140px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" }, (t.rosterIds || []).map(nameOf).join(" ↔ ") || "—"),
+      h("span", { style: "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px" },
+        adds ? h("span", { style: "color:var(--up)" }, "+ " + adds) : null,
+        drops ? h("span", { class: "muted" }, "− " + drops) : null),
+      t.faab != null ? h("span", { class: "muted", style: "flex:none;font-size:12px" }, "$" + t.faab) : null));
   });
   wrap.append(card);
   return wrap;
@@ -173,7 +173,7 @@ function pageStandings() {
     box.innerHTML = "";
     const sk = seasonSel.value; const s = B.seasons[sk];
     if (sk === B.state.season) { const note = seasonNote(); if (note) box.append(note); }
-    const headers = [{ t: "#" }, { t: "Team", l: true }, { t: "Record" }, { t: "Win%" }, { t: "H2H" }, { t: "PF" }, { t: "PA" }, { t: "Max" }, { t: "Avg" }, { t: "Top-6" }, { t: "Moves" }, { t: "Streak" }];
+    const headers = [{ t: "#" }, { t: "Team", l: true }, { t: "Record" }, { t: "Win%" }, { t: "H2H" }, { t: "PF" }, { t: "PA" }, { t: "Max" }, { t: "Avg" }, { t: "Top-6" }, { t: "Moves" }, { t: "FAAB" }, { t: "Streak" }];
     const rows = s.standings.map((st) => h("tr", { class: st.rank === 6 ? "playoff-line" : "" },
       h("td", { class: "rank" }, st.rank), h("td", { class: "l" }, teamCell(st)),
       h("td", { class: "tnum", style: "font-weight:600" }, `${st.wins}–${st.losses}`),
@@ -182,22 +182,23 @@ function pageStandings() {
       h("td", { class: "tnum" }, fmt(st.pf, 1)), h("td", { class: "tnum muted" }, fmt(st.pa, 1)),
       h("td", { class: "tnum" }, fmt(st.maxPF, 1)), h("td", { class: "tnum muted" }, fmt(st.avgPF, 1)),
       h("td", { class: "tnum" }, st.topFinishes), h("td", { class: "tnum muted" }, st.moves == null ? "—" : st.moves),
+      h("td", { class: "tnum muted" }, st.faabLeft == null ? "—" : "$" + st.faabLeft),
       h("td", { class: "tnum" }, streakText(st.streak))));
     box.append(table(headers, rows, { cls: "standings-tbl" }));
-    box.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" }, "Line marks the 6-team playoff cut · Max = highest single week · Top-6 = weeks in the scoring-bonus group · Moves = transactions (live in-season)."));
+    box.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" }, "Line marks the 6-team playoff cut · Max = highest single week · Top-6 = weeks in the scoring-bonus group · Moves = transactions · FAAB = waiver budget remaining (live in-season)."));
     if (s.weeklyScores.some((m) => m.scores.length)) {
       box.append(h("div", { class: "section-title" }, "Weekly scoring — " + sk));
-      box.append(weeklyHeatmap(s.weeklyScores));
+      box.append(weeklyHeatmap(s.weeklyScores, sk === B.state.season ? (B.league.playoffWeekStart - 1) : 0));
     }
   }
   render();
   return wrap;
 }
-const GREEN6 = ["#2fbf5b", "#28a54c", "#1f8c40", "#177535", "#12602c", "#0d4f25"];
-const RED6 = ["#e8a29f", "#e07d78", "#d75f59", "#cb4a44", "#b73a35", "#9c2f2b"];
-function heatCell(rk) { if (rk <= 6) { const i = rk - 1; return { bg: GREEN6[i], fg: i < 1 ? "#06220f" : "#eafff0" }; } const i = rk - 7; return { bg: RED6[i], fg: i < 1 ? "#3a0f0d" : "#fff0ef" }; }
-function weeklyHeatmap(matrix) {
-  const nWeeks = Math.max(...matrix.map((m) => m.scores.length));
+const GREEN6 = ["#3d9765", "#3a8f60", "#37875c", "#337e57", "#307653", "#2d6e4f"];
+const RED6 = ["#c17572", "#ba6b67", "#b3615c", "#ac5751", "#a54d47", "#9e433d"];
+function heatCell(rk) { if (rk <= 6) return { bg: GREEN6[rk - 1], fg: "#f4f7f5" }; return { bg: RED6[rk - 7], fg: "#f7f2f1" }; }
+function weeklyHeatmap(matrix, minWeeks = 0) {
+  const nWeeks = Math.max(minWeeks, ...matrix.map((m) => m.scores.length));
   const ranks = matrix.map(() => new Array(nWeeks).fill(0));
   for (let w = 0; w < nWeeks; w++) { const order = matrix.map((m, i) => ({ i, p: m.scores[w] ?? 0 })).sort((a, b) => b.p - a.p); order.forEach((o, k) => (ranks[o.i][w] = k + 1)); }
   const totals = matrix.map((m) => m.scores.reduce((x, y) => x + y, 0));
@@ -208,7 +209,11 @@ function weeklyHeatmap(matrix) {
   for (const i of idx) {
     const m = matrix[i];
     inner.append(h("div", { class: "hlabel" }, avatar(TByR.get(m.rosterId)?.avatar, m.teamName, 18), h("span", { style: "margin-left:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" }, m.teamName.length > 15 ? "@" + m.handle : m.teamName)));
-    for (let w = 0; w < nWeeks; w++) { const sc = m.scores[w] ?? 0; const c = heatCell(ranks[i][w]); inner.append(h("div", { class: "hcell", style: `background:${c.bg};color:${c.fg}`, title: `${m.teamName} · Wk ${w + 1}: ${sc} (${ranks[i][w] <= 6 ? "top-6 ✓" : "missed"})` }, Math.round(sc))); }
+    for (let w = 0; w < nWeeks; w++) {
+      if (w >= m.scores.length) { inner.append(h("div", { class: "hcell", style: "background:transparent" })); continue; }
+      const sc = m.scores[w]; const c = heatCell(ranks[i][w]);
+      inner.append(h("div", { class: "hcell", style: `background:${c.bg};color:${c.fg}`, title: `${m.teamName} · Wk ${w + 1}: ${sc} (${ranks[i][w] <= 6 ? "top-6 ✓" : "missed"})` }, Math.round(sc)));
+    }
   }
   const leg = h("div", { class: "hleg" }, h("span", {}, "Top 6 (earned +0.5 bonus)"), h("span", { class: "sw" }, GREEN6.slice().reverse().map((c) => h("i", { style: `background:${c}` }))), h("span", { style: "margin-left:8px" }, "Bottom 6"), h("span", { class: "sw" }, RED6.map((c) => h("i", { style: `background:${c}` }))), h("span", { class: "muted" }, "· bright→dim = high→low"));
   return h("div", { class: "card pad" }, h("div", { style: "overflow-x:auto" }, inner), leg);
