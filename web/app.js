@@ -486,15 +486,15 @@ function pageHistory() {
 function ordinal(n) { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 function rivalLine(nm, w, l, n, closest, avgAbs, hasPO) {
   let lead;
-  if (w > l) lead = `You've handled ${nm} more often than not — ${w}–${l} across ${n} meeting${n > 1 ? "s" : ""}`;
+  if (w > l) lead = `You've handled ${nm} more often than not, ${w}–${l} across ${n} meeting${n > 1 ? "s" : ""}`;
   else if (l > w) lead = `${nm} has your number: ${l}–${w} against you in ${n} meeting${n > 1 ? "s" : ""}`;
-  else lead = `Nobody's settled this one — dead even at ${w}–${l} over ${n} meeting${n > 1 ? "s" : ""}`;
+  else lead = `Nobody's settled this one, dead even at ${w}–${l} over ${n} meeting${n > 1 ? "s" : ""}`;
   let tex;
   if (closest <= 6) tex = ", and it keeps coming down to the final whistle.";
   else if (avgAbs >= 30) tex = ", though it's usually a laugher one way or the other.";
   else if (avgAbs >= 18) tex = ", and neither side shows much mercy.";
   else tex = ", and every one's been a grind.";
-  const po = hasPO ? " There's a playoff meeting on the ledger — the kind that gets brought up again at the next draft." : "";
+  const po = hasPO ? " There's a playoff meeting on the ledger, the kind that gets brought up again at the next draft." : "";
   return lead + tex + po;
 }
 
