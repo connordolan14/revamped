@@ -188,7 +188,8 @@ Validation should include:
 - no compact numeric score notation such as `129.63-99.35`
 - no unknown fact IDs
 - no unknown external-context IDs
-- tier-two (non-NFL) external references capped at two; tier-one (NFL box-score/milestone) references uncapped
+- tier-two (non-NFL) external references capped at two; tier-one (NFL box-score/milestone) references uncapped, but at least half of what research supplied must actually get used (`underused_research`) — a hard failure
+- (warning only) body isn't structured as one paragraph per matchup in schedule order (`matchup_march_structure`)
 - banned phrases
 - body/footer fact-ID duplication
 - title presence

@@ -157,6 +157,10 @@ export function optionsFor(ctx: RecapContext, research?: { candidates: { id: str
     externalCategories: research ? new Map(research.candidates.map((c) => [c.id, c.category ?? ""])) : undefined,
     knownTeamNames: ctx.teams.map((t) => t.teamName),
     knownHandles: ctx.teams.map((t) => t.handle),
+    matchups: ctx.matchups.map((m) => ({
+      a: [m.a.teamName, m.a.handle],
+      b: [m.b.teamName, m.b.handle],
+    })),
     knownPlayerNames: [
       ...ctx.players.topStarters.map((p) => p.name),
       ...ctx.players.highestBench.map((b) => b.name),

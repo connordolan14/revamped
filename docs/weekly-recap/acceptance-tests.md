@@ -119,10 +119,13 @@ Automated validator rejects:
 - unknown fact ID
 - unknown external-context ID
 - more than two non-NFL (cultural) external references
+- fewer than half of the supplied NFL-tier (tier-one) research candidates actually used (`underused_research`) — a hard failure, not a warning, because this is what let the rejected real Week 1 draft (1 of 7 candidates used) reach a human at all
 - configured banned phrases
 - direct body/footer fact-ID duplication
 
 Where feasible, validator should also flag unknown team/user references.
+
+Validator also warns (does not block) when every body paragraph maps 1:1 onto a single matchup in schedule order with no cross-references (`matchup_march_structure`) — the "six matchup capsules" shape the writer prompt bans. Fuzzy by nature (a short week can coincidentally match), so it's surfaced rather than enforced.
 
 ## H. Idempotency
 

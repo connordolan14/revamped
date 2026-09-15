@@ -71,6 +71,20 @@ export interface ValidateOptions {
   maxForTheRecord?: number;
   /** Cap applies only to non-NFL cultural references; see externalCategories. */
   maxExternalRefs?: number;
+  /**
+   * Minimum share of supplied tier-one (NFL) research candidates that must
+   * actually appear in external_context_used. Research is uncapped precisely
+   * so it gets used; a draft that fetches seven real box-score facts and
+   * uses one isn't under-cap, it's under-researched in practice. Requires
+   * externalCategories. Default 0.5.
+   */
+  minTierOneUsageRatio?: number;
+  /**
+   * Each week's matchups as schedule order + identifying strings per side
+   * (team name and handle). Used only for the matchup_march_structure
+   * heuristic below; omit to skip that check.
+   */
+  matchups?: { a: string[]; b: string[] }[];
   /** Allow a footer item to reuse a fact the body already used. */
   allowFactReuse?: boolean;
   styleRules?: StyleRules;
@@ -81,6 +95,7 @@ const DEFAULTS = {
   minWords: 600, maxWords: 800,
   minForTheRecord: 3, maxForTheRecord: 5,
   maxExternalRefs: 2,
+  minTierOneUsageRatio: 0.5,
 };
 
 const wordCount = (s: string) => (s.trim().match(/\S+/g) ?? []).length;
@@ -164,6 +179,53 @@ export function validateRecap(article: unknown, opts: ValidateOptions): Validati
     : a.external_context_used;
   if (culturalRefs.length > cfg.maxExternalRefs) {
     err("external_refs", `${culturalRefs.length} non-NFL cultural references, maximum ${cfg.maxExternalRefs}`);
+  }
+
+  // Tier-one (NFL) research is uncapped so it gets used. A draft that fetched
+  // real box-score/milestone facts and then barely touched them isn't a
+  // stylistic quibble — it's the difference between the Week 1 draft that got
+  // rejected (1 of 7 candidates used) and the one that replaced it (used all
+  // 8 supplied). Enforce a floor rather than trusting the writer to remember.
+  if (opts.knownExternalIds && opts.externalCategories) {
+    const nflCandidates = [...opts.knownExternalIds].filter(
+      (id) => (opts.externalCategories!.get(id) ?? "").toUpperCase() === "NFL",
+    );
+    if (nflCandidates.length) {
+      const nflUsed = a.external_context_used.filter((id) => nflCandidates.includes(id));
+      const minRequired = Math.max(1, Math.ceil(nflCandidates.length * cfg.minTierOneUsageRatio));
+      if (nflUsed.length < minRequired) {
+        err(
+          "underused_research",
+          `research surfaced ${nflCandidates.length} real NFL box-score/milestone facts but the recap used only ${nflUsed.length} (minimum ${minRequired}). Tier-one context is uncapped so it gets used — go back through EXTERNAL_CONTEXT and weave in more of it.`,
+        );
+      }
+    }
+  }
+
+  // A draft where every paragraph maps 1:1 onto one matchup, in schedule
+  // order, with no other team mentioned, is the "six matchup capsules"
+  // structure the writer prompt explicitly bans — the exact shape of the
+  // Week 1 draft that got rejected. Fuzzy (a short week can coincidentally
+  // match), so this is a warning, not a hard failure.
+  if (opts.matchups?.length && a.body.length === opts.matchups.length) {
+    const paraLower = a.body.map((p) => p.toLowerCase());
+    let exclusiveMatches = 0;
+    opts.matchups.forEach((m, i) => {
+      const para = paraLower[i];
+      const mentionsA = m.a.some((name) => name && para.includes(name.toLowerCase()));
+      const mentionsB = m.b.some((name) => name && para.includes(name.toLowerCase()));
+      const mentionsOther = opts.matchups!.some((other, j) => {
+        if (j === i) return false;
+        return [...other.a, ...other.b].some((name) => name && para.includes(name.toLowerCase()));
+      });
+      if (mentionsA && mentionsB && !mentionsOther) exclusiveMatches++;
+    });
+    if (exclusiveMatches === opts.matchups.length) {
+      warn(
+        "matchup_march_structure",
+        "every paragraph maps 1:1 onto a single matchup, in schedule order, with no cross-references — restructure around 2-4 real threads instead of one paragraph per game",
+      );
+    }
   }
 
   /* ---- typography and formatting ---- */

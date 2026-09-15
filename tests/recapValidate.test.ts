@@ -145,6 +145,58 @@ describe("validateRecap", () => {
       .errors.some((e) => e.rule === "external_refs")).toBe(true);
   });
 
+  it("rejects a draft that fetched real NFL research and barely used it", () => {
+    // Mirrors the actual rejected Week 1 draft: 7 NFL candidates supplied, 1 used.
+    const opts = baseOpts({
+      knownExternalIds: new Set(["nfl-1", "nfl-2", "nfl-3", "nfl-4", "nfl-5", "nfl-6", "nfl-7"]),
+      externalCategories: new Map(
+        ["nfl-1", "nfl-2", "nfl-3", "nfl-4", "nfl-5", "nfl-6", "nfl-7"].map((id) => [id, "NFL"]),
+      ),
+    });
+    const underused = validateRecap(good({ external_context_used: ["nfl-1"] }), opts);
+    expect(underused.errors.some((e) => e.rule === "underused_research")).toBe(true);
+    const wellUsed = validateRecap(
+      good({ external_context_used: ["nfl-1", "nfl-2", "nfl-3", "nfl-4"] }),
+      opts,
+    );
+    expect(wellUsed.errors.some((e) => e.rule === "underused_research")).toBe(false);
+  });
+
+  it("does not require tier-one usage when no NFL candidates were supplied", () => {
+    const opts = baseOpts({
+      knownExternalIds: new Set(["pop-1"]),
+      externalCategories: new Map([["pop-1", "Pop Culture"]]),
+    });
+    expect(validateRecap(good(), opts).errors.some((e) => e.rule === "underused_research")).toBe(false);
+  });
+
+  it("warns on a draft structured as one paragraph per matchup in schedule order", () => {
+    const matchups = [
+      { a: ["Team A", "usera"], b: ["Team B", "userb"] },
+      { a: ["Team C", "userc"], b: ["Team D", "userd"] },
+    ];
+    const fillerA = filler(300).split(" ").map((w) => `a-${w}`).join(" ");
+    const fillerB = filler(300).split(" ").map((w) => `b-${w}`).join(" ");
+    const marched = good({
+      body: [
+        `Team A beat Team B this week, and that was that. ${fillerA}`,
+        `Team C also won, this time against Team D. ${fillerB}`,
+      ],
+    });
+    const r = validateRecap(marched, baseOpts({ matchups }));
+    expect(r.warnings.some((w) => w.rule === "matchup_march_structure")).toBe(true);
+    expect(r.ok).toBe(true); // fuzzy heuristic: warning, not a blocking error
+
+    // A paragraph that crosses over into another matchup breaks the pattern.
+    const notMarched = good({
+      body: [
+        `Team A beat Team B, and Team C was watching closely since Team C plays Team D next. ${fillerA.split(" ").slice(0, 290).join(" ")}`,
+        `Team C also won, this time against Team D. ${fillerB}`,
+      ],
+    });
+    expect(validateRecap(notMarched, baseOpts({ matchups })).warnings.some((w) => w.rule === "matchup_march_structure")).toBe(false);
+  });
+
   it("rejects em dashes, hyphenated scores, emoji and hashtags", () => {
     expect(validateRecap(good({ title: "Week 8 — Recap" }), baseOpts()).errors.some((e) => e.rule === "em_dash")).toBe(true);
     expect(validateRecap(good({ body: [...body, "The final was 129.63-99.35."] }), baseOpts()).errors.some((e) => e.rule === "score_format")).toBe(true);
