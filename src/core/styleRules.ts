@@ -46,7 +46,7 @@ export function loadStyleRules(root = process.cwd()): StyleRules {
 
   const banned = quotedUnder(md, /^#\s*\d+\.\s*BANNED AI AND SPORTS-COPY PHRASES/i);
   const titles = quotedUnder(md, /^#\s*\d+\.\s*OUTPUT/i);
-  // §42 lists construction patterns and empty intensifiers as quoted examples.
+  // §14 (OTHER STYLE HABITS TO AVOID) lists construction patterns and empty intensifiers as quoted examples.
   const habits = quotedUnder(md, /^#\s*\d+\.\s*OTHER STYLE HABITS TO AVOID/i);
 
   // A single common word ("chaos", "meanwhile") cannot be a hard error: the
@@ -56,7 +56,7 @@ export function loadStyleRules(root = process.cwd()): StyleRules {
   for (const entry of banned) {
     (entry.trim().includes(" ") ? bannedPhrases : discouragedWords).push(entry.trim());
   }
-  // Empty intensifiers from §42 are multi-word and safe to enforce.
+  // Empty intensifiers from §14 are multi-word and safe to enforce.
   for (const h of habits) if (h.trim().includes(" ")) bannedPhrases.push(h.trim());
 
   return {
@@ -69,11 +69,11 @@ export function loadStyleRules(root = process.cwd()): StyleRules {
 const dedupe = (xs: string[]) => [...new Set(xs.map((x) => x.toLowerCase()))];
 
 /**
- * The negate-then-correct construction banned by writer prompt section 42:
+ * The negate-then-correct construction banned by writer prompt section 14 (OTHER STYLE HABITS TO AVOID):
  * "It's not X, it's Y." / "This isn't X. It's Y." / "Not X, but Y."
  *
  * Deliberately does NOT match a concessive like "I am not a fantasy scoring
- * engineer, but 70.65 seems low", which is the mock-authority device section 8A
+ * engineer, but 70.65 seems low", a concessive-authority device the writer prompt allows
  * explicitly recommends.
  */
 const APOS = "(?:'|’)";
@@ -93,5 +93,5 @@ export const NOT_X_BUT_Y = new RegExp(
 /** Scores written as a hyphenated pair, e.g. "129.63-99.35". */
 export const HYPHENATED_SCORE = /\d+\.\d+\s*[-‐-―]\s*\d+\.\d+/;
 
-/** Emoji, which §42 bans outright. */
+/** Emoji, which §14 bans outright. */
 export const EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}]/u;

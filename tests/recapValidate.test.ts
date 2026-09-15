@@ -46,7 +46,7 @@ const good = (over: Partial<RecapArticle> = {}): RecapArticle => ({
 
 describe("style rules parsed from the writer prompt", () => {
   const rules = loadStyleRules();
-  it("finds the section 41 banned phrase list", () => {
+  it("finds the section 15 banned phrase list", () => {
     expect(rules.bannedPhrases).toContain("statement win");
     expect(rules.bannedPhrases).toContain("when the dust settled");
     expect(rules.bannedPhrases.length).toBeGreaterThan(20);
@@ -63,7 +63,7 @@ describe("style rules parsed from the writer prompt", () => {
 });
 
 describe("negate-then-correct detection", () => {
-  it("catches the constructions section 42 bans", () => {
+  it("catches the constructions section 14 bans", () => {
     for (const s of [
       "It's not a rebuild, it's a demolition.",
       "This isn't bad luck. It is a lineup problem.",
@@ -71,7 +71,7 @@ describe("negate-then-correct detection", () => {
     ]) expect(NOT_X_BUT_Y.test(s)).toBe(true);
   });
 
-  it("does not flag the mock-authority concessive section 8A recommends", () => {
+  it("does not flag the mock-authority concessive construction the prompt allows", () => {
     for (const s of [
       "I am not a fantasy scoring engineer, but 70.65 seems low.",
       "I'm no breathing scientist, but that sounded wrong.",
