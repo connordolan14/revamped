@@ -145,8 +145,9 @@ function recentActivity() {
   tx.forEach((t, i) => {
     const adds = (t.adds || []).map((a) => a.player).filter(Boolean).join(", ");
     const drops = (t.drops || []).map((d) => d.player).filter(Boolean).join(", ");
+    const label = !adds && drops ? "Drop" : (TX_LABEL[t.type] || "Move");
     card.append(h("div", { style: `display:flex;gap:10px;align-items:center;padding:9px 4px;font-size:13px${i ? ";border-top:1px solid var(--hair)" : ""}` },
-      h("span", { class: "pill", style: "flex:none" }, TX_LABEL[t.type] || "Move"),
+      h("span", { class: "pill", style: "flex:0 0 64px; text-align:center" }, label),
       h("strong", { style: "flex:0 0 140px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" }, (t.rosterIds || []).map(nameOf).join(" ↔ ") || "—"),
       h("span", { style: "flex:1;min-width:0;display:flex;flex-direction:column;gap:2px" },
         adds ? h("span", { style: "color:var(--up)" }, "+ " + adds) : null,
