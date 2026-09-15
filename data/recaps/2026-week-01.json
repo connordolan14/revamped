@@ -1,0 +1,72 @@
+{
+  "season": 2026,
+  "week": 1,
+  "generated_at": "2026-09-15T14:55:36.279Z",
+  "source_data_hash": "87593587cf568115",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "claude-code-session",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 1 Recap",
+    "body": [
+      "There are a lot of respectable ways to lose a fantasy football game. You can score 140 and run into the one person who scored 145. You can lose a starting running back in the first quarter. You can spend four months researching dynasty football and then discover around 4:15 on Sunday that everything you believed was wrong. jtyurconic2 decided none of those were sufficiently interesting, so he started Josh Allen and Derrick Henry, received 70.46 fantasy points and seven actual touchdowns from the two of them, and lost 122.87 to 121.06.",
+      "Allen threw for 334 yards, ran for two touchdowns and became the first quarterback in NFL history to reach 80 career rushing scores. Henry ran for 144 yards and three touchdowns. Most 32-year-old running backs are supposed to be discussing veteran leadership while somebody younger gets 14 carries. Henry got 24 and averaged six yards a pop. Sleeper says jtyurconic2's optimal lineup would have scored 148.86. dball11's would have scored 159.08. Between them, the two managers left 64.01 potential points sitting around unused, which makes the 1.81-point final margin feel less like a classic duel and more like two guys trying to assemble IKEA furniture without admitting they threw away the instructions.",
+      "dackerly36 had a different problem. Caleb Williams scored 37.26 and Justin Jefferson scored 27.2, which gave him 64.46 points from two starters and 35.30 from the other eight combined. One of those eight scored negative 0.1. Another scored zero. I had initially thought 99.76 was an impressively low total until I remembered that Chicago and Carolina combined for 96 actual NFL points on Sunday, the most ever in an NFL season opener. Caleb accounted for 334 yards and four touchdowns while the Bears scored 59, their highest total in an opener in franchise history. So for one afternoon an entire professional football game nearly caught dackerly's fantasy team, which is not a comparison I expected to have available in Week 1.",
+      "Hank1517 beat him 123.40 to 99.76 and can mostly be credited with having the good sense to stand on the other side.",
+      "Taylor Swift skipped the Emmys for Arrowhead Monday night. TheBearJew44 had a less culturally significant but probably more urgent reason to be watching Kansas City. Kyler Murray, one of his two starting quarterbacks, completed three passes for 18 yards before leaving Minnesota's opener with a concussion and finished with 0.62 fantasy points. Ordinarily this would be the sort of development that ruins a superflex lineup before the late games have even started. Kenneth Walker III apparently disagreed. In his first game with Kansas City, Walker ran for a career-high 173 yards, finished with 191 yards from scrimmage and scored twice, including a 60-yard touchdown. TheBearJew44 beat connordolan14 145.26 to 134.69 despite getting less than one fantasy point from a starting quarterback, which is roughly the fantasy equivalent of making it home before noticing somewhere around Delaware that one of your tires is missing.",
+      "ryanog was considerably less theatrical. He scored a league-high 153.60 against greenie0513's 117.90 without having a single starter reach 30 points. Five different starters scored between 22.2 and 26.1. This is irritating in the same way that watching somebody calmly finish a group project three days early is irritating. There is nothing obvious to make fun of, everybody did his job, and somehow the whole thing is sitting in your inbox while you are still deciding what font to use.",
+      "BrendanBall03 had the other major score, beating jbitterman99 148.13 to 123.71, while chrisrenna17 beat mhaanders 134.35 to 100.04. mhaanders deserves a small amount of recognition for setting a lineup with a potential score of 100.94 and producing 100.04, meaning there was essentially nothing better hiding on the roster. Sometimes the machine really is just broken."
+    ],
+    "for_the_record": [
+      {
+        "text": "Derrick Henry finished Sunday with 125 career rushing touchdowns, passing Marcus Allen for third in NFL history. More absurdly, 110 of his 144 rushing yards came before contact, the third-highest total of his career, and Indianapolis managed to hit him at the line on only 8.3% of his carries.",
+        "fact_ids": [
+          "2026-w01-ext-derrick-henry-marcus-allen"
+        ]
+      },
+      {
+        "text": "ryanog posted the highest score in the league while leaving Bryce Young's 32.44 points on the bench. Young threw for 361 yards against Chicago. Apparently 153.60 was the conservative version of the lineup.",
+        "fact_ids": [
+          "2026-w01-bench-ryanog-young",
+          "2026-w01-ext-bryce-young-361"
+        ]
+      },
+      {
+        "text": "Kenneth Walker's 191 yards from scrimmage were the most ever in Week 1 by a reigning Super Bowl MVP, passing Jerry Rice's 180 in 1989. His 173 rushing yards were also the second-most by any veteran making his debut with a new team, behind Michael Turner's 220-yard Falcons debut in 2008. Apparently changing employers went fine.",
+        "fact_ids": [
+          "2026-w01-ext-kenneth-walker-chiefs-debut",
+          "2026-w01-ext-michael-turner-2008-debut"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w01-close-dball11-jtyurconic2-margin",
+      "2026-w01-lineup-regret-jtyurconic2-cost-the-game",
+      "2026-w01-low-dackerly36-score",
+      "2026-w01-matchup-hank1517-dackerly36-margin",
+      "2026-w01-matchup-thebearjew44-connordolan14-margin",
+      "2026-w01-high-ryanog-score",
+      "2026-w01-matchup-ryanog-greenie0513-margin",
+      "2026-w01-matchup-brendanball03-jbitterman99-margin",
+      "2026-w01-matchup-chrisrenna17-mhaanders-margin"
+    ],
+    "external_context_used": [
+      "2026-w01-ext-josh-allen-rushing-td-record",
+      "2026-w01-ext-derrick-henry-marcus-allen",
+      "2026-w01-ext-caleb-williams-bears-record",
+      "2026-w01-ext-bryce-young-361",
+      "2026-w01-ext-kyler-murray-concussion",
+      "2026-w01-ext-kenneth-walker-chiefs-debut",
+      "2026-w01-ext-michael-turner-2008-debut",
+      "2026-w01-ext-taylor-swift-emmys"
+    ],
+    "team_bits_used": []
+  }
+}

@@ -1,7 +1,7 @@
 {
   "season": "2026",
   "week": 1,
-  "capturedAt": "2026-09-15T14:43:01.525Z",
+  "capturedAt": "2026-09-15T14:25:24.692Z",
   "leagueId": "1312251123628789760",
   "rankings": [
     {
@@ -23,22 +23,22 @@
       "score": 1.5
     },
     {
-      "rosterId": 10,
-      "ownerId": "475339773154684928",
-      "handle": "chrisrenna17",
-      "teamName": "chrisrenna17",
-      "avatar": "https://sleepercdn.com/avatars/thumbs/8eb8f8bf999945d523f2c4033f70473e",
-      "rank": 3,
-      "score": 3
-    },
-    {
       "rosterId": 4,
       "ownerId": "957435781254746112",
       "handle": "TheBearJew44",
       "teamName": "Hanging With Hernandez",
       "avatar": "https://sleepercdn.com/uploads/713fd0bf3192c83a47258d0eeb99f470.jpg",
+      "rank": 3,
+      "score": 3
+    },
+    {
+      "rosterId": 10,
+      "ownerId": "475339773154684928",
+      "handle": "chrisrenna17",
+      "teamName": "chrisrenna17",
+      "avatar": "https://sleepercdn.com/avatars/thumbs/8eb8f8bf999945d523f2c4033f70473e",
       "rank": 4,
-      "score": 3.17
+      "score": 3
     },
     {
       "rosterId": 8,
@@ -110,7 +110,7 @@
       "teamName": "The Permanent Rebuild",
       "avatar": "https://sleepercdn.com/avatars/thumbs/15d7cf259bc30eab8f6120f45f652fb6",
       "rank": 12,
-      "score": 8
+      "score": 8.17
     }
   ]
 }
