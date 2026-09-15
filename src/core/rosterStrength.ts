@@ -1,8 +1,15 @@
-// Roster-strength = the "power ranking" roster factor, reproducing the league
-// sheet exactly: for each team, sum the top-N players at each position by
-// Superflex / TE-premium value, then rank teams by that sum.
+// Roster-strength = the "power ranking" roster factor: for each team, value
+// its actual starting lineup by Superflex / TE-premium dynasty value.
 //
-//   QB: top 2   RB: top 3   WR: top 4   TE: top 1     (= the SF starting 10)
+// The league's real lineup is QB, RB, RB, WR, WR, TE, FLEX, FLEX, FLEX,
+// SUPERFLEX (10 starters). SUPERFLEX is modeled as a 2nd QB slot (the
+// near-universal correct play in a QB-premium dynasty format). The 3 FLEX
+// slots are RB/WR/TE-eligible, so they go to whichever players are actually
+// most valuable there, not a fixed split — a team with a strong 3rd RB but
+// weak 3rd/4th WRs should get credit for flexing the RB, and vice versa.
+//
+//   Fixed:  QB top 2, RB top 2, WR top 2, TE top 1
+//   Flex:   best 3 remaining among RB/WR/TE (whatever's left after the fixed slots)
 //
 // Values come from the community "SF TE+" dynasty sheet (KTC-based), the same
 // source the league sheet pulls from. Joined to Sleeper by name + position.
@@ -11,7 +18,10 @@
 const SHEET_ID = "1n5aqip8iFCpltO8deiS7q9m3u_dFvKTZpwzfZXVTpgs";
 const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=SF%20TE%2B`;
 
-export const STARTER_SLOTS: Record<string, number> = { QB: 2, RB: 3, WR: 4, TE: 1 };
+export const VALID_POSITIONS = ["QB", "RB", "WR", "TE"] as const;
+export const FIXED_SLOTS: Record<string, number> = { QB: 2, RB: 2, WR: 2, TE: 1 };
+export const FLEX_SLOTS = 3;
+export const FLEX_ELIGIBLE = ["RB", "WR", "TE"] as const;
 
 /** name -> value, keyed loosely so Sleeper names join cleanly. */
 export type ValueMap = Map<string, number>;
@@ -52,7 +62,7 @@ export async function fetchStarterValues(url = SHEET_CSV): Promise<ValueMap> {
   for (let i = 1; i < rows.length; i++) {
     const [name, , pos, , valueStr] = rows[i];
     if (!name || !pos) continue;
-    if (!(pos.toUpperCase() in STARTER_SLOTS)) continue; // QB/RB/WR/TE only
+    if (!(VALID_POSITIONS as readonly string[]).includes(pos.toUpperCase())) continue; // QB/RB/WR/TE only
     const v = Number(String(valueStr).replace(/[^0-9.]/g, ""));
     if (!Number.isFinite(v) || v <= 0) continue;
     map.set(nameKey(name, pos), v);
@@ -63,7 +73,7 @@ export async function fetchStarterValues(url = SHEET_CSV): Promise<ValueMap> {
 
 export interface RosterPlayerMeta { position?: string | null; first_name?: string; last_name?: string; full_name?: string }
 
-/** Top-N-per-position starter-value sum for one roster. Unmatched players score 0. */
+/** Fixed-slot + best-remaining-FLEX starter-value sum for one roster. Unmatched players score 0. */
 export function starterStrength(
   playerIds: string[] | null,
   playersById: Record<string, RosterPlayerMeta>,
@@ -78,9 +88,15 @@ export function starterStrength(
     const nm = p?.full_name || `${p?.first_name ?? ""} ${p?.last_name ?? ""}`.trim();
     byPos[pos].push(values.get(nameKey(nm, pos)) ?? 0);
   }
+  for (const pos of Object.keys(byPos)) byPos[pos].sort((a, b) => b - a);
+
   let total = 0;
-  for (const [pos, n] of Object.entries(STARTER_SLOTS)) {
-    total += byPos[pos].sort((a, b) => b - a).slice(0, n).reduce((a, b) => a + b, 0);
+  const flexPool: number[] = [];
+  for (const [pos, n] of Object.entries(FIXED_SLOTS)) {
+    total += byPos[pos].slice(0, n).reduce((a, b) => a + b, 0);
+    if ((FLEX_ELIGIBLE as readonly string[]).includes(pos)) flexPool.push(...byPos[pos].slice(n));
   }
+  flexPool.sort((a, b) => b - a);
+  total += flexPool.slice(0, FLEX_SLOTS).reduce((a, b) => a + b, 0);
   return total;
 }
