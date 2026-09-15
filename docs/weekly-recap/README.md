@@ -188,7 +188,7 @@ Validation should include:
 - no compact numeric score notation such as `129.63-99.35`
 - no unknown fact IDs
 - no unknown external-context IDs
-- max two external references
+- tier-two (non-NFL) external references capped at two; tier-one (NFL box-score/milestone) references uncapped
 - banned phrases
 - body/footer fact-ID duplication
 - title presence

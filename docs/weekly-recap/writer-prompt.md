@@ -289,6 +289,10 @@ This is satire among friends.
 
 There is no fairness requirement.
 
+Do not structure the article as a walk through all six matchups in schedule order, one paragraph (or one clause) per game. That structure is banned even when every individual sentence is well written, because the shape itself is the tell — it reads as coverage, not a story. If a draft ends up with six paragraphs that map one-to-one onto the six games in order, that is the sign to restructure around the 2 to 4 real threads, not to polish the sentences inside that shape.
+
+Watch for the more common version of this mistake: reaching for the same joke premise for more than one team because the data happens to support it twice. A "left points on the bench" paragraph for one team followed immediately by another "left points on the bench" paragraph for a different team is two instances of the same joke, not two jokes. Pick the stronger one.
+
 # 6. THE CENTRAL STANDARD
 
 Every paragraph should pass this test:
@@ -900,6 +904,8 @@ Interesting examples:
 * team repeatedly gets punished by the schedule
 
 Do not turn the recap into a weekly expected-wins lecture.
+
+An all-play record already includes the actual opponent. Never describe a perfect or near-perfect all-play record (e.g. 11-0) as "would have beaten everyone except the team they played." That team IS one of the results counted in the record, so the sentence contradicts itself. State the record and what it means (best score in the league that week, would have beaten almost the whole field) without inventing an exception for the one opponent that's already baked into the number.
 
 Schedule luck should become material only when the gap is striking or cumulative.
 
@@ -1742,6 +1748,40 @@ Why it fails:
 * "exploding"
 * "dominant performance"
 * generic adjectives doing all the work
+
+# 43A. FULL WORKED EXAMPLE AT THE CURRENT STANDARD
+
+The short examples in section 43 teach individual sentences. This is a complete, real, approved recap at the current 600-800 word standard with uncapped tier-one research. Use it to calibrate shape and density, not to copy phrasing into a different week.
+
+"There are a lot of respectable ways to lose a fantasy football game. You can score 140 and run into the one person who scored 145. You can lose a starting running back in the first quarter. You can spend four months researching dynasty football and then discover around 4:15 on Sunday that everything you believed was wrong. jtyurconic2 decided none of those were sufficiently interesting, so he started Josh Allen and Derrick Henry, received 70.46 fantasy points and seven actual touchdowns from the two of them, and lost 122.87 to 121.06.
+
+Allen threw for 334 yards, ran for two touchdowns and became the first quarterback in NFL history to reach 80 career rushing scores. Henry ran for 144 yards and three touchdowns. Most 32-year-old running backs are supposed to be discussing veteran leadership while somebody younger gets 14 carries. Henry got 24 and averaged six yards a pop. Sleeper says jtyurconic2's optimal lineup would have scored 148.86. dball11's would have scored 159.08. Between them, the two managers left 64.01 potential points sitting around unused, which makes the 1.81-point final margin feel less like a classic duel and more like two guys trying to assemble IKEA furniture without admitting they threw away the instructions.
+
+dackerly36 had a different problem. Caleb Williams scored 37.26 and Justin Jefferson scored 27.2, which gave him 64.46 points from two starters and 35.30 from the other eight combined. One of those eight scored negative 0.1. Another scored zero. I had initially thought 99.76 was an impressively low total until I remembered that Chicago and Carolina combined for 96 actual NFL points on Sunday, the most ever in an NFL season opener. Caleb accounted for 334 yards and four touchdowns while the Bears scored 59, their highest total in an opener in franchise history. So for one afternoon an entire professional football game nearly caught dackerly's fantasy team, which is not a comparison I expected to have available in Week 1.
+
+Hank1517 beat him 123.40 to 99.76 and can mostly be credited with having the good sense to stand on the other side.
+
+Taylor Swift skipped the Emmys for Arrowhead Monday night. TheBearJew44 had a less culturally significant but probably more urgent reason to be watching Kansas City. Kyler Murray, one of his two starting quarterbacks, completed three passes for 18 yards before leaving Minnesota's opener with a concussion and finished with 0.62 fantasy points. Ordinarily this would be the sort of development that ruins a superflex lineup before the late games have even started. Kenneth Walker III apparently disagreed. In his first game with Kansas City, Walker ran for a career-high 173 yards, finished with 191 yards from scrimmage and scored twice, including a 60-yard touchdown. TheBearJew44 beat connordolan14 145.26 to 134.69 despite getting less than one fantasy point from a starting quarterback, which is roughly the fantasy equivalent of making it home before noticing somewhere around Delaware that one of your tires is missing.
+
+ryanog was considerably less theatrical. He scored a league-high 153.60 against greenie0513's 117.90 without having a single starter reach 30 points. Five different starters scored between 22.2 and 26.1. This is irritating in the same way that watching somebody calmly finish a group project three days early is irritating. There is nothing obvious to make fun of, everybody did his job, and somehow the whole thing is sitting in your inbox while you are still deciding what font to use.
+
+BrendanBall03 had the other major score, beating jbitterman99 148.13 to 123.71, while chrisrenna17 beat mhaanders 134.35 to 100.04. mhaanders deserves a small amount of recognition for setting a lineup with a potential score of 100.94 and producing 100.04, meaning there was essentially nothing better hiding on the roster. Sometimes the machine really is just broken."
+
+For the record:
+
+"Derrick Henry finished Sunday with 125 career rushing touchdowns, passing Marcus Allen for third in NFL history. More absurdly, 110 of his 144 rushing yards came before contact, the third-highest total of his career, and Indianapolis managed to hit him at the line on only 8.3% of his carries."
+
+"ryanog posted the highest score in the league while leaving Bryce Young's 32.44 points on the bench. Young threw for 361 yards against Chicago. Apparently 153.60 was the conservative version of the lineup."
+
+"Kenneth Walker's 191 yards from scrimmage were the most ever in Week 1 by a reigning Super Bowl MVP, passing Jerry Rice's 180 in 1989. His 173 rushing yards were also the second-most by any veteran making his debut with a new team, behind Michael Turner's 220-yard Falcons debut in 2008. Apparently changing employers went fine."
+
+Why this hits the standard:
+
+* Seven paragraphs cover six matchups, but it is not six capsules. jtyurconic2/dball11 gets two full paragraphs because the real-football side of that game (Allen's rushing-TD record, Henry's yards-before-contact workload) was the best story of the week. dackerly36/Hank1517 gets a paragraph and a one-sentence coda instead of two roughly equal halves. BrendanBall03/jbitterman99 and chrisrenna17/mhaanders — the two least interesting results — are compressed into a single shared closing paragraph, one clause each. Nobody gets a mechanically equal share.
+* Nearly every paragraph is built from tier-one material: Allen's rushing-TD milestone, Henry's yards-before-contact and Marcus Allen comparison, the Bears' opener-scoring franchise record, Kyler Murray's concussion, Kenneth Walker's Chiefs debut and its Jerry Rice/Michael Turner comparisons, Bryce Young's 361 yards. That density — a specific, verifiable real-NFL fact anchoring almost every fantasy number — is what separates this from the 400-500-word version of the same week, not just the extra length.
+* Exactly one tier-two reference (Taylor Swift skipping the Emmys) appears, and it's spent on the single paragraph where it actually completes a thought (a culturally significant Monday-night no-show next to Kansas City's actual Monday-night storyline), not sprinkled around for flavor.
+* The footer's three items are all built from tier-one facts the body didn't have room for (Henry's full-career touchdown total, Young's real passing yardage, Walker's historical comps), not restatements of the body's scores.
+* No paragraph marches through a matchup in scoreboard order — each one opens on whatever fact is most interesting (a career milestone, a lineup mistake, a Monday-night distraction) and lets the final score land as a consequence, not a topic sentence.
 
 # 44. RECENT RECAP MEMORY
 
