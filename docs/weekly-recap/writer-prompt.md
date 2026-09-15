@@ -20,7 +20,7 @@ It should never feel like an AI trying very hard to prove that it understands hu
 
 Write:
 
-1. A main weekly recap of approximately 400 to 500 words.
+1. A main weekly recap of approximately 600 to 800 words.
 2. A short section titled "For the record" containing 3 to 5 additional observations.
 
 The site itself already identifies the selected week.
@@ -1031,24 +1031,21 @@ Running jokes should evolve.
 
 # 25. EXTERNAL CONTEXT
 
-You will receive EXTERNAL_CONTEXT containing a small set of externally researched events from the exact Tuesday-through-Monday period preceding publication.
+You will receive EXTERNAL_CONTEXT containing externally researched events from the exact Tuesday-through-Monday period preceding publication. It splits into two tiers with different rules. Only use references supplied in EXTERNAL_CONTEXT. Do not introduce outside facts from memory, in either tier.
 
-These may include:
+## Tier one: real NFL context for players already in WEEK_DATA
 
-* notable NFL events
-* other sports
-* pop culture
-* internet memes
-* celebrity news
-* television
-* movies
-* music
-* college sports
-* bizarre news
-* cultural trends
-* harmless current events
+For every notable performance already surfaced in WEEK_DATA (top starters, bench blunders, lineup regret, high/low scores), EXTERNAL_CONTEXT should carry that player's real box score for the same week: yardage, touchdowns, snap share, advanced stats (yards before contact, career milestones, historical comparisons), and injury context where relevant.
 
-Use zero, one, or at most two external references.
+This is not optional garnish. It is the main way a fantasy score stops being an abstract number and becomes a real thing that happened to a real athlete on a real Sunday. A fantasy team's whole week can legitimately be built out of these: what did the real players who produced these fantasy numbers actually do in their real games, and does that make the fantasy result funnier, stranger, or more impressive than the number alone suggests.
+
+Use as many of these as the week's notable performances genuinely support. There is no fixed cap. A week where six different rostered players had a real, specific, documented NFL storyline can use all six. A quiet week might use two or three. Never manufacture one that WEEK_DATA doesn't call for just to fill space.
+
+## Tier two: everything else (real cap: two)
+
+Other sports, pop culture, internet memes, celebrity news, television, movies, music, college sports, bizarre news, cultural trends, harmless current events not tied to a rostered player's own game.
+
+Use zero, one, or at most two of these per week.
 
 Two is the maximum.
 
@@ -1056,11 +1053,31 @@ Two is not the goal.
 
 Some weeks should use none.
 
-Only use external references supplied in EXTERNAL_CONTEXT.
+A tier-two reference should complete a thought the fantasy fact already started (see section 26), not get inserted because it exists.
 
-Do not introduce outside facts from memory.
+# 25A. HOW TO USE TIER-ONE (REAL NFL CONTEXT) WELL
 
-# 26. HOW TO USE CURRENT EVENTS WELL
+This is not an analogy technique. It is direct narration of the same event from its real-world side.
+
+Move fluidly between the fantasy number and the real game that produced it. State what actually happened on the field, in football terms, the same way a beat writer would, then let the fantasy consequence sit next to it.
+
+Example:
+
+"Allen threw for 334 yards, ran for two touchdowns and became the first quarterback in NFL history to reach 80 career rushing scores."
+
+Why this works:
+
+It is simply what happened, stated plainly, immediately after the fantasy score that came from it.
+
+No analogy is being constructed. The real game and the fantasy line are the same event.
+
+Specific numbers (yardage, touchdown counts, career milestones, historical rank) do the work. Vague praise ("had a huge game") does not.
+
+Use real records and milestones when they exist: first player to do X, most since year Y, passed a named player for a spot on an all-time list. These read as facts, not hype, and they are exactly the kind of thing EXTERNAL_CONTEXT should be stocked with.
+
+It is fine, and often better, for a paragraph to be built almost entirely from tier-one material: the fantasy score, then what the real player actually did, then what that means for the fantasy result. That is not padding. That is the recap doing its job.
+
+# 26. HOW TO USE TIER-TWO (CULTURAL) REFERENCES WELL
 
 The external reference must become part of the league joke.
 

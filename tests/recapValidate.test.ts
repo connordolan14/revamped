@@ -21,11 +21,11 @@ const baseOpts = (over: Partial<ValidateOptions> = {}): ValidateOptions => ({
   ...over,
 });
 
-// ~430 words, inside the 400-500 hard range.
+// ~650 words, inside the 600-800 hard range.
 const filler = (n: number) => Array.from({ length: n }, (_, i) => `word${i}`).join(" ");
 const body = [
-  "New England Keys put 160.59 on the board, which was more than anyone else managed and very nearly double what the bottom of the league produced. " + filler(180),
-  "Woodys Toy Box benched C.J. Stroud for Elic Ayomanor and then lost by less than the difference between them. " + filler(215),
+  "New England Keys put 160.59 on the board, which was more than anyone else managed and very nearly double what the bottom of the league produced. " + filler(300),
+  "Woodys Toy Box benched C.J. Stroud for Elic Ayomanor and then lost by less than the difference between them. " + filler(305),
 ];
 
 const good = (over: Partial<RecapArticle> = {}): RecapArticle => ({
@@ -97,14 +97,14 @@ describe("validateRecap", () => {
     expect(validateRecap(noFacts, baseOpts()).errors.some((e) => e.rule === "schema")).toBe(true);
   });
 
-  it("enforces the 400 to 500 word body range", () => {
+  it("enforces the 600 to 800 word body range", () => {
     // Two paragraphs so the schema's minItems passes and the length rule is reached.
     expect(validateRecap(good({ body: ["Too short.", "Also short."] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
-    expect(validateRecap(good({ body: [filler(300), filler(300)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
-    // 399 and 501 are both out; the bounds are inclusive.
-    expect(validateRecap(good({ body: [filler(200), filler(199)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
-    expect(validateRecap(good({ body: [filler(250), filler(251)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
-    expect(validateRecap(good({ body: [filler(200), filler(200)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(false);
+    expect(validateRecap(good({ body: [filler(500), filler(500)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
+    // 599 and 801 are both out; the bounds are inclusive.
+    expect(validateRecap(good({ body: [filler(300), filler(299)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
+    expect(validateRecap(good({ body: [filler(400), filler(401)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(true);
+    expect(validateRecap(good({ body: [filler(300), filler(300)] }), baseOpts()).errors.some((e) => e.rule === "length")).toBe(false);
     expect(validateRecap(good(), baseOpts()).errors.some((e) => e.rule === "length")).toBe(false);
   });
 
@@ -117,11 +117,32 @@ describe("validateRecap", () => {
     expect(validateRecap(six, baseOpts({ allowFactReuse: true })).errors.some((e) => e.rule === "schema")).toBe(true);
   });
 
-  it("caps external references at two", () => {
+  it("caps non-NFL cultural references at two when no category info is given", () => {
     const three = good({ external_context_used: ["a", "b", "c"] });
     const r = validateRecap(three, baseOpts({ knownExternalIds: new Set(["a", "b", "c"]) }));
-    // schema maxItems catches it first; either signal is acceptable
-    expect(r.errors.some((e) => e.rule === "schema" || e.rule === "external_refs")).toBe(true);
+    expect(r.errors.some((e) => e.rule === "external_refs")).toBe(true);
+  });
+
+  it("does not cap real NFL context, only non-NFL cultural references", () => {
+    const opts = baseOpts({
+      knownExternalIds: new Set(["nfl-1", "nfl-2", "nfl-3", "nfl-4", "pop-1", "pop-2", "pop-3"]),
+      externalCategories: new Map([
+        ["nfl-1", "NFL"], ["nfl-2", "NFL"], ["nfl-3", "NFL"], ["nfl-4", "nfl"],
+        ["pop-1", "Pop Culture"], ["pop-2", "Other Sports"], ["pop-3", "Pop Culture"],
+      ]),
+    });
+    // Four NFL-category references: fine, uncapped.
+    expect(validateRecap(good({ external_context_used: ["nfl-1", "nfl-2", "nfl-3", "nfl-4"] }), opts)
+      .errors.some((e) => e.rule === "external_refs")).toBe(false);
+    // Two non-NFL references: still fine, at the cap.
+    expect(validateRecap(good({ external_context_used: ["pop-1", "pop-2"] }), opts)
+      .errors.some((e) => e.rule === "external_refs")).toBe(false);
+    // Three non-NFL references: over the cap.
+    expect(validateRecap(good({ external_context_used: ["pop-1", "pop-2", "pop-3"] }), opts)
+      .errors.some((e) => e.rule === "external_refs")).toBe(true);
+    // Mixed: two NFL (free) plus two non-NFL (over the cap) -> still an error.
+    expect(validateRecap(good({ external_context_used: ["nfl-1", "nfl-2", "pop-1", "pop-2", "pop-3"] }), opts)
+      .errors.some((e) => e.rule === "external_refs")).toBe(true);
   });
 
   it("rejects em dashes, hyphenated scores, emoji and hashtags", () => {
@@ -159,6 +180,13 @@ describe("validateRecap", () => {
     reuse.for_the_record[0].fact_ids = ["2025-w08-high-connordolan14-score"];
     expect(validateRecap(reuse, baseOpts()).errors.some((e) => e.rule === "fact_reuse")).toBe(true);
     expect(validateRecap(reuse, baseOpts({ allowFactReuse: true })).errors.some((e) => e.rule === "fact_reuse")).toBe(false);
+  });
+
+  it("accepts a footer item backed only by a researched external id (no local fact of its own)", () => {
+    const article = good({ external_context_used: ["2025-w08-jets-first-win"] });
+    article.for_the_record[0] = { text: "A real NFL milestone with no local WEEK_DATA fact behind it.", fact_ids: ["2025-w08-jets-first-win"] };
+    const r = validateRecap(article, baseOpts());
+    expect(r.errors.some((e) => e.rule === "unknown_fact_id")).toBe(false);
   });
 
   it("rejects external ids absent from the research packet", () => {

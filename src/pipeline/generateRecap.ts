@@ -150,10 +150,11 @@ export async function fetchWeekContext(season: string, week: number): Promise<Re
 }
 
 /** Validation options derived from a week's context and research packet. */
-export function optionsFor(ctx: RecapContext, research?: { candidates: { id: string }[] } | null) {
+export function optionsFor(ctx: RecapContext, research?: { candidates: { id: string; category?: string }[] } | null) {
   return {
     knownFactIds: new Set(ctx.facts.map((f) => f.fact_id)),
     knownExternalIds: research ? new Set(research.candidates.map((c) => c.id)) : undefined,
+    externalCategories: research ? new Map(research.candidates.map((c) => [c.id, c.category ?? ""])) : undefined,
     knownTeamNames: ctx.teams.map((t) => t.teamName),
     knownHandles: ctx.teams.map((t) => t.handle),
     knownPlayerNames: [

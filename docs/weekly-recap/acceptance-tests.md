@@ -96,7 +96,7 @@ If existing player metadata produces names, prefer that source rather than hard-
 
 - Permanent writer prompt is loaded from a single source of truth.
 - Structured output matches schema.
-- Maximum two external context IDs.
+- Maximum two non-NFL (cultural) external context IDs; NFL-category context for rostered players is uncapped.
 - Only supplied fact IDs are referenced.
 - Only supplied external context IDs are referenced.
 
@@ -118,7 +118,7 @@ Automated validator rejects:
 - compact score notation such as `129.63-99.35`
 - unknown fact ID
 - unknown external-context ID
-- more than two external references
+- more than two non-NFL (cultural) external references
 - configured banned phrases
 - direct body/footer fact-ID duplication
 

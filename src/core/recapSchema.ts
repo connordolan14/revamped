@@ -53,14 +53,23 @@ export interface ValidationResult {
 export interface ValidateOptions {
   knownFactIds: Set<string>;
   knownExternalIds?: Set<string>;
+  /**
+   * External-candidate id -> category (from the research packet). Real NFL
+   * box-score/record context for players already in WEEK_DATA is expected
+   * and uncapped; only non-NFL "cultural" references (other sports,
+   * celebrities, memes) count against maxExternalRefs. If omitted, every
+   * entry in external_context_used counts toward the cap (old behavior).
+   */
+  externalCategories?: Map<string, string>;
   knownTeamNames?: string[];
   knownHandles?: string[];
   knownPlayerNames?: string[];
-  /** Body only, footer excluded. Hard range 400-500. */
+  /** Body only, footer excluded. Hard range 600-800. */
   minWords?: number;
   maxWords?: number;
   minForTheRecord?: number;
   maxForTheRecord?: number;
+  /** Cap applies only to non-NFL cultural references; see externalCategories. */
   maxExternalRefs?: number;
   /** Allow a footer item to reuse a fact the body already used. */
   allowFactReuse?: boolean;
@@ -69,7 +78,7 @@ export interface ValidateOptions {
 }
 
 const DEFAULTS = {
-  minWords: 400, maxWords: 500,
+  minWords: 600, maxWords: 800,
   minForTheRecord: 3, maxForTheRecord: 5,
   maxExternalRefs: 2,
 };
@@ -148,8 +157,13 @@ export function validateRecap(article: unknown, opts: ValidateOptions): Validati
   if (bodyWords > cfg.maxWords) err("length", `body is ${bodyWords} words, maximum ${cfg.maxWords}`);
 
   /* ---- external references ---- */
-  if (a.external_context_used.length > cfg.maxExternalRefs) {
-    err("external_refs", `${a.external_context_used.length} external references, maximum ${cfg.maxExternalRefs}`);
+  // Real NFL context for players already in WEEK_DATA is uncapped; only
+  // non-NFL "cultural" references count toward the limit.
+  const culturalRefs = opts.externalCategories
+    ? a.external_context_used.filter((id) => (opts.externalCategories!.get(id) ?? "").toUpperCase() !== "NFL")
+    : a.external_context_used;
+  if (culturalRefs.length > cfg.maxExternalRefs) {
+    err("external_refs", `${culturalRefs.length} non-NFL cultural references, maximum ${cfg.maxExternalRefs}`);
   }
 
   /* ---- typography and formatting ---- */
@@ -184,7 +198,11 @@ export function validateRecap(article: unknown, opts: ValidateOptions): Validati
   }
   for (const [i, item] of a.for_the_record.entries()) {
     for (const id of item.fact_ids) {
-      if (!opts.knownFactIds.has(id)) err("unknown_fact_id", `for_the_record[${i}] contains unknown "${id}"`);
+      // A footer fact_id may point at a local WEEK_DATA fact or a researched
+      // external candidate (e.g. a real NFL milestone with no local fact of
+      // its own) — either is a legitimate, checkable source.
+      const known = opts.knownFactIds.has(id) || (opts.knownExternalIds?.has(id) ?? false);
+      if (!known) err("unknown_fact_id", `for_the_record[${i}] contains unknown "${id}"`);
       if (!cfg.allowFactReuse && bodyFacts.has(id)) {
         err("fact_reuse", `for_the_record[${i}] reuses "${id}" already used in the body`);
       }
