@@ -301,15 +301,29 @@ async function main() {
   for (const [rid, b] of bestByRoster) if (!recordPlayerWeek || b.points > recordPlayerWeek.points) recordPlayerWeek = { ...b, rosterId: rid };
   const allMatchups = [...hist.matchups.map((m) => ({ ...m, isPlayoff: false, round: null })), ...playoffLog];
 
-  // full current-season schedule pairings (all weeks, even future)
+  // full current-season schedule pairings (all weeks, even future). Completed
+  // weeks also carry final scores, reusing sd.rowsByWeek so a week only shows
+  // as final once it's passed the same live-week gate as standings/power.
   const regWeeksCur = (current.settings.playoff_week_start ?? 15) - 1;
+  const currentSD = seasonDatas.find((sd) => sd.leagueId === LEAGUE_ID);
   const scheduleWeeksArr: any[] = [];
   for (let w = 1; w <= regWeeksCur; w++) {
     const ms = await sleeper.matchups(LEAGUE_ID, w).catch(() => []);
     if (!ms || !ms.length) continue;
+    const scoredRows = currentSD?.rowsByWeek[String(w)];
+    const pointsByRoster = scoredRows ? new Map(scoredRows.map((row) => [row.r, row.p])) : null;
     const byM = new Map<number, number[]>();
     for (const m of ms) { if (m.matchup_id == null) continue; if (!byM.has(m.matchup_id)) byM.set(m.matchup_id, []); byM.get(m.matchup_id)!.push(m.roster_id); }
-    scheduleWeeksArr.push({ week: w, games: [...byM.values()].filter((p) => p.length === 2).map((p) => ({ a: p[0], b: p[1] })) });
+    scheduleWeeksArr.push({
+      week: w,
+      games: [...byM.values()].filter((p) => p.length === 2).map((pair) => {
+        const [a, b] = pair;
+        if (!pointsByRoster) return { a, b };
+        const aP = round(pointsByRoster.get(a) ?? 0, 2);
+        const bP = round(pointsByRoster.get(b) ?? 0, 2);
+        return { a, b, aP, bP, w: aP === bP ? null : aP > bP ? a : b };
+      }),
+    });
   }
   const schedule = { season: current.season, playoffStart: current.settings.playoff_week_start ?? 15, weeks: scheduleWeeksArr };
 
