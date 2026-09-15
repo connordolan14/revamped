@@ -174,6 +174,10 @@ The editor receives:
 
 Its job is to fix problems, not rewrite strong prose gratuitously.
 
+**One writer pass plus one editor pass is not the same thing as real revision.** Both of the drafts that got rejected this way (see the actual git history around 2026 Week 1) came from exactly that: a single writer generation, treated as done once it passed a deterministic validator. The version that replaced them came from real back-and-forth — a draft, an actual reaction to it, a real rewrite, sometimes more than once — not from a bigger prompt or a stricter validator.
+
+So: when generating a recap in a live session, don't treat "validator passed" as "done." Show the draft to the person who's going to read it, actually listen to what's wrong with it, and rewrite the specific things that are wrong — not a full regeneration, not a defensive pass to satisfy more rules. If nobody is available to react to it, at minimum don't publish the first thing that validates; read it once, cold, as a skeptical reader would, and rewrite what doesn't hold up before persisting it.
+
 ## Stage 6: deterministic validation
 
 Validate after the editor.
