@@ -110,7 +110,10 @@ export function powerShape(
   const byRoster = new Map(teams.map((team) => [team.rosterId, team]));
   const rosterIds = teams.map((team) => team.rosterId);
   const rankAt = (week: number) => powerAt(rowsByWeek, rosterIds, rosterScores, week).power;
-  const previous = maxWeek > 1
+  // Week 1's "previous" is rankAt(0): every real-game factor ties (no games
+  // played yet), so it's exactly the preseason roster-strength-only ranking
+  // — a legitimate baseline for Week 1's trend, not a placeholder.
+  const previous = maxWeek > 0
     ? new Map(rankAt(maxWeek - 1).map((ranking) => [ranking.rosterId, ranking.rank]))
     : new Map<number, number>();
 
