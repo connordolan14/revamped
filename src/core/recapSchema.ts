@@ -2,7 +2,7 @@
 //
 // Structure is validated against docs/weekly-recap/output-schema.json itself,
 // rather than a hand-written copy of it, so the published schema stays the
-// single source of truth. Editorial rules from the writer prompt (§15 banned phrases, §14 style habits) and
+// single source of truth. Editorial rules from the writer prompt (§19 banned phrases, §18 style habits) and
 // the acceptance tests layer on top.
 //
 // Errors block publication. Warnings are surfaced but do not block, and cover
@@ -244,7 +244,7 @@ export function validateRecap(article: unknown, opts: ValidateOptions): Validati
     err("banned_title", "all-caps headlines are not allowed");
   }
 
-  /* ---- banned phrases (writer prompt §15/§14) ---- */
+  /* ---- banned phrases (writer prompt §19/§18) ---- */
   const lower = allText.toLowerCase();
   for (const p of style.bannedPhrases) if (lower.includes(p)) err("banned_phrase", `contains "${p}"`);
   for (const w of style.discouragedWords) {
