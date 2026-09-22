@@ -1,0 +1,116 @@
+{
+  "season": "2026",
+  "week": 2,
+  "capturedAt": "2026-09-22T14:29:20.929Z",
+  "leagueId": "1312251123628789760",
+  "rankings": [
+    {
+      "rosterId": 7,
+      "ownerId": "989626395162636288",
+      "handle": "ryanog",
+      "teamName": "New York Mudbones",
+      "avatar": "https://sleepercdn.com/uploads/bbe87db28f3084a8e92c6a8e763f10fb.jpg",
+      "rank": 1,
+      "score": 1.5
+    },
+    {
+      "rosterId": 4,
+      "ownerId": "957435781254746112",
+      "handle": "TheBearJew44",
+      "teamName": "Hanging With Hernandez",
+      "avatar": "https://sleepercdn.com/uploads/713fd0bf3192c83a47258d0eeb99f470.jpg",
+      "rank": 2,
+      "score": 2.67
+    },
+    {
+      "rosterId": 10,
+      "ownerId": "475339773154684928",
+      "handle": "chrisrenna17",
+      "teamName": "chrisrenna17",
+      "avatar": "https://sleepercdn.com/avatars/thumbs/8eb8f8bf999945d523f2c4033f70473e",
+      "rank": 3,
+      "score": 3.5
+    },
+    {
+      "rosterId": 12,
+      "ownerId": "989606956224544768",
+      "handle": "BrendanBall03",
+      "teamName": "BrendanBall03",
+      "avatar": "https://sleepercdn.com/avatars/thumbs/f0edbf4278f53f9425db175073df6584",
+      "rank": 4,
+      "score": 4.33
+    },
+    {
+      "rosterId": 6,
+      "ownerId": "989602386832314368",
+      "handle": "dball11",
+      "teamName": "Woodys Toy Box",
+      "avatar": "https://sleepercdn.com/uploads/90e3b6806d084926468c249b761ff5b1.jpg",
+      "rank": 5,
+      "score": 4.67
+    },
+    {
+      "rosterId": 11,
+      "ownerId": "1256365186739081216",
+      "handle": "jbitterman99",
+      "teamName": "Mark 2.0",
+      "avatar": "https://sleepercdn.com/uploads/ceb696ccabf2f9311f60c14c3c6e5d4f.jpg",
+      "rank": 6,
+      "score": 6.5
+    },
+    {
+      "rosterId": 5,
+      "ownerId": "895437361486491648",
+      "handle": "mhaanders",
+      "teamName": "Injured Reserve",
+      "avatar": "https://sleepercdn.com/uploads/b96fe5c50d5a9a7b77fd7d1d5aaabb29.jpg",
+      "rank": 7,
+      "score": 6.67
+    },
+    {
+      "rosterId": 8,
+      "ownerId": "989623752923086848",
+      "handle": "connordolan14",
+      "teamName": "New England Keys",
+      "avatar": "https://sleepercdn.com/uploads/febdfaa6950f7c1b7ec1076b88170a20",
+      "rank": 8,
+      "score": 6.67
+    },
+    {
+      "rosterId": 9,
+      "ownerId": "1136007372641792000",
+      "handle": "jtyurconic2",
+      "teamName": "jtyurconic2",
+      "avatar": "https://sleepercdn.com/avatars/thumbs/f0edbf4278f53f9425db175073df6584",
+      "rank": 9,
+      "score": 8
+    },
+    {
+      "rosterId": 3,
+      "ownerId": "988181717380820992",
+      "handle": "greenie0513",
+      "teamName": "Green Egbukas & Ham",
+      "avatar": "https://sleepercdn.com/uploads/9e2f9fff6c08474919f2fb59f1434e13.jpg",
+      "rank": 10,
+      "score": 8.33
+    },
+    {
+      "rosterId": 2,
+      "ownerId": "989607777175674880",
+      "handle": "Hank1517",
+      "teamName": "It Hurts When I Pitts",
+      "avatar": "https://sleepercdn.com/avatars/thumbs/e7af4deab0289b4f5505646424895246",
+      "rank": 11,
+      "score": 9
+    },
+    {
+      "rosterId": 1,
+      "ownerId": "989751443903025152",
+      "handle": "dackerly36",
+      "teamName": "The Permanent Rebuild",
+      "avatar": "https://sleepercdn.com/avatars/thumbs/15d7cf259bc30eab8f6120f45f652fb6",
+      "rank": 12,
+      "score": 10.33
+    }
+  ]
+}
