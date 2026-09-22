@@ -1,0 +1,75 @@
+{
+  "season": 2026,
+  "week": 2,
+  "generated_at": "2026-09-22T15:54:30.567Z",
+  "source_data_hash": "fca0cb1a1e9ff8ec",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human-and-other-model",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 2 Recap",
+    "body": [
+      "At the end of Week 1, dackerly36 had 99.76 points and what seemed like a fairly secure claim to the league’s most embarrassing performance. A normal person might have spent the next seven days figuring out how to improve. dackerly36 apparently spent them figuring out how to divide by two.",
+      "He scored 49.97 this week. Exactly half of last week’s total would have been 49.88, so he overshot the target by nine hundredths of a point, possibly out of respect for the rest of us. Nobody in his starting lineup reached double digits. Harold Fannin led the way with 9.15, and Caleb Williams managed 8.72 as Chicago followed its 59-point opener by scoring three against Minnesota. It was a difficult week for the Bears offense, but at least the Bears only had to be the Bears once.",
+      "dball11 won 143.27 to 49.97, a margin of 93.30. For perspective, Josh Allen scored 40.82 for jtyurconic2. Add Fannin’s 9.15 and you have dackerly36’s entire team total, exactly. One quarterback and one tight end did the work of ten starters. If this is a deliberate rebuilding strategy, I’d be interested to know which part is under construction.",
+      "Allen, meanwhile, opened Buffalo’s new stadium by accounting for five touchdowns against Detroit, which is the sort of performance that usually makes a fantasy manager start composing an obnoxious group-chat message before the Sunday games have even kicked off. jtyurconic2 probably considered it. He’d already lost in Week 1 despite getting 70.46 combined points from Allen and Derrick Henry, so surely 40.82 from Allen alone would buy him a little peace.",
+      "Unfortunately, ryanog had Jaxon Smith-Njigba, and Seattle’s backup quarterback apparently had no interest in honoring the normal expectations for backup quarterbacks. Drew Lock’s first pass to Smith-Njigba wasn’t even supposed to be a deep route; Smith-Njigba got so open that Lock threw it 82 yards for a touchdown anyway. He finished with nine catches, 155 yards and three scores. ryanog put up a league-high 165.79 and beat jtyurconic2’s 130.55. Two weeks into the season, Josh Allen is 2-0 in real life and his fantasy manager is 0-2. There may be a lesson about team sports here, although it seems unnecessarily cruel to make him learn it twice.",
+      "The week’s most useful celebrity news came from Beverly Hills, where Puka Nacua spent the weekend judging a chicken-tender competition alongside Lizzo. Nacua missed Monday’s Rams game with a hip injury, leaving Davante Adams to catch eight passes for 195 yards and two touchdowns. chrisrenna17 had Adams and Matthew Stafford, who combined for 63.48 fantasy points, and beat Hank1517 125.28 to 88.62 despite getting 0.8 from Jaxson Dart. If there is a connection between celebrity chicken judging and chrisrenna17’s win, I’m not qualified to establish it. I am qualified to suggest that he send Lizzo a thank-you note.",
+      "Elsewhere, mhaanders edged jbitterman99 134.45 to 132.40, TheBearJew44 beat BrendanBall03 145.98 to 127.03, and connordolan14 defeated greenie0513 93.88 to 88.00. That last result is a nice reminder that fantasy football remains a fair and sensible enterprise: 93.88 was enough to win, while 132.40 wasn’t. jbitterman99 is now 0-2 with 256.11 points scored. I’d tell him to keep doing what he’s doing, but he might reasonably ask me to go fuck myself."
+    ],
+    "for_the_record": [
+      {
+        "text": "Davante Adams gained more receiving yards by himself than the Giants gained on offense. Adams had 195; New York had 182 total.",
+        "fact_ids": [
+          "adams-195yd-2td-week2",
+          "giants-182yd-total-week2"
+        ]
+      },
+      {
+        "text": "Christian McCaffrey’s 100 career touchdowns are split perfectly between his two teams: 50 with Carolina and 50 with San Francisco. Even stranger, he scored exactly 32 rushing touchdowns and 18 receiving touchdowns for each franchise.",
+        "fact_ids": [
+          "mccaffrey-100-career-tds"
+        ]
+      },
+      {
+        "text": "Aaron Donald returned to an NFL field Monday for the first time in 982 days. The Rams brought him back after more than two years away; dackerly36 might want to ask whether retirement is available to fantasy rosters as well.",
+        "fact_ids": [
+          "aaron-donald-comeback-982-days"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w02-low-dackerly36-score",
+      "2026-w02-blowout-dball11-dackerly36-margin",
+      "2026-w02-high-ryanog-score",
+      "2026-w02-matchup-ryanog-jtyurconic2-margin",
+      "2026-w02-matchup-chrisrenna17-hank1517-margin",
+      "2026-w02-close-mhaanders-jbitterman99-margin",
+      "2026-w02-matchup-thebearjew44-brendanball03-margin",
+      "2026-w02-close-connordolan14-greenie0513-margin"
+    ],
+    "external_context_used": [
+      "allen-40pt-week2",
+      "jsn-82yd-td-week2",
+      "lock-235yd-3td-week2",
+      "adams-195yd-2td-week2",
+      "stafford-327yd-week2",
+      "harold-fannin-5rec-54yd-week2",
+      "caleb-williams-bears-vikings-week2",
+      "puka-nacua-lizzo-chicken-tender-festival",
+      "giants-182yd-total-week2",
+      "aaron-donald-comeback-982-days",
+      "mccaffrey-100-career-tds"
+    ],
+    "team_bits_used": [],
+    "opening_mechanism": "administrative premise",
+    "ending_mechanism": "dry callback"
+  }
+}

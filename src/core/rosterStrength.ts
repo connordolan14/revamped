@@ -73,6 +73,58 @@ export async function fetchStarterValues(url = SHEET_CSV): Promise<ValueMap> {
 
 export interface RosterPlayerMeta { position?: string | null; first_name?: string; last_name?: string; full_name?: string }
 
+/**
+ * surname|POS -> candidate nameKeys sharing that surname + position, so a
+ * Sleeper short name (e.g. "Chig Okonkwo", "Kenny Gainwell", "Matt Hibner")
+ * can still match a sheet row keyed by the player's full first name ("Chigoziem
+ * Okonkwo", "Kenneth Gainwell", "Matthew Hibner") without a hardcoded nickname
+ * list. Cached per ValueMap so repeated starterStrength() calls (one per
+ * roster) don't rebuild it.
+ */
+const surnameIndexCache = new WeakMap<ValueMap, Map<string, string[]>>();
+function surnameIndex(values: ValueMap): Map<string, string[]> {
+  let idx = surnameIndexCache.get(values);
+  if (idx) return idx;
+  idx = new Map();
+  for (const key of values.keys()) {
+    const [namePart, pos] = key.split("|");
+    const surname = namePart.trim().split(" ").pop();
+    if (!surname) continue;
+    const sk = `${surname}|${pos}`;
+    const arr = idx.get(sk) ?? [];
+    arr.push(key);
+    idx.set(sk, arr);
+  }
+  surnameIndexCache.set(values, idx);
+  return idx;
+}
+
+/**
+ * A player's sheet value, falling back to an unambiguous surname+position
+ * match (exactly one sheet row, same first initial) when the exact name
+ * doesn't join — so a first-name/nickname mismatch ("Chig" vs "Chigoziem
+ * Okonkwo", "Kenny" vs "Kenneth Gainwell") doesn't silently zero out a real
+ * player. The first-initial check matters: without it, "Van Jefferson" would
+ * wrongly inherit "Justin Jefferson"'s value merely for sharing a surname +
+ * position with the sheet's only Jefferson. Any other ambiguity (two
+ * candidates, or a mismatched initial) is deliberately left unmatched (0)
+ * rather than guessed at.
+ */
+function valueFor(nm: string, pos: string, values: ValueMap): number {
+  const key = nameKey(nm, pos);
+  const exact = values.get(key);
+  if (exact != null) return exact;
+  const [normName, keyPos] = key.split("|");
+  const parts = normName.trim().split(" ");
+  const surname = parts[parts.length - 1];
+  const firstInitial = parts[0]?.[0];
+  if (!surname || !firstInitial) return 0;
+  const candidates = surnameIndex(values).get(`${surname}|${keyPos}`);
+  if (candidates?.length !== 1) return 0;
+  const candFirstInitial = candidates[0].split("|")[0].trim()[0];
+  return candFirstInitial === firstInitial ? values.get(candidates[0]) ?? 0 : 0;
+}
+
 /** Fixed-slot + best-remaining-FLEX starter-value sum for one roster. Unmatched players score 0. */
 export function starterStrength(
   playerIds: string[] | null,
@@ -86,7 +138,7 @@ export function starterStrength(
     const pos = (p?.position || "").toUpperCase();
     if (!(pos in byPos)) continue;
     const nm = p?.full_name || `${p?.first_name ?? ""} ${p?.last_name ?? ""}`.trim();
-    byPos[pos].push(values.get(nameKey(nm, pos)) ?? 0);
+    byPos[pos].push(valueFor(nm, pos, values));
   }
   for (const pos of Object.keys(byPos)) byPos[pos].sort((a, b) => b - a);
 

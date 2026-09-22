@@ -26,6 +26,8 @@ import { join } from "node:path";
 import { sleeper, fetchLeagueChain } from "../core/sleeper.js";
 import { buildRecapContext, RecapContext } from "../core/recapContext.js";
 import { recapInputFromSleeper, SleeperLike } from "./recapInput.js";
+import { fetchStarterValues, starterStrength, nameKey } from "../core/rosterStrength.js";
+import { fetchDynastyValues } from "../core/fantasycalc.js";
 import {
   validateRecap, validateAgainstSchema, RecapArticle, PersistedRecap, RESEARCH_SCHEMA_PATH, PERSISTED_SCHEMA_PATH,
 } from "../core/recapSchema.js";
@@ -141,12 +143,31 @@ export async function fetchWeekContext(season: string, week: number): Promise<Re
   for (const m of matchups) for (const pid of [...(m.players ?? []), ...(m.starters ?? [])]) addPlayer(pid);
   for (const t of transactions ?? []) for (const pid of [...Object.keys(t.adds ?? {}), ...Object.keys(t.drops ?? {})]) addPlayer(pid);
 
+  // Roster-value power-ranking factor, same method and source as the live
+  // build (src/pipeline/buildLive.ts): current dynasty starter value, applied
+  // across the current season's weeks. Historical seasons get none — no
+  // dynasty values exist for a past-season week, matching recapInput.ts's
+  // "empty for historical backfill" default.
+  const rosterScores = new Map<number, number>();
+  if (season === state.season) {
+    try {
+      const starterValues = await fetchStarterValues();
+      for (const r of rosters) rosterScores.set(r.roster_id, starterStrength(r.players, players, starterValues));
+    } catch (e) {
+      console.warn(`[rosterStrength] ${(e as Error).message} — falling back to FantasyCalc SF values`);
+      const values = await fetchDynastyValues();
+      const fcMap = new Map<string, number>();
+      for (const v of values) fcMap.set(nameKey(v.name, v.position), v.value);
+      for (const r of rosters) rosterScores.set(r.roster_id, starterStrength(r.players, players, fcMap));
+    }
+  }
+
   const s: SleeperLike = {
     league: lg as any, users: users as any, rosters: rosters as any,
     matchups: matchups as any, transactions: transactions as any, players: trimmed,
   };
   // The window is derived from `season`, not from live NFL state.
-  return buildRecapContext(recapInputFromSleeper(s, { season, week, rowsByWeek, priorMeetings, allTimeHighWeek }));
+  return buildRecapContext(recapInputFromSleeper(s, { season, week, rowsByWeek, priorMeetings, allTimeHighWeek, rosterScores }));
 }
 
 /** Validation options derived from a week's context and research packet. */
