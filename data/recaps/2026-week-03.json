@@ -1,0 +1,84 @@
+{
+  "season": 2026,
+  "week": 3,
+  "generated_at": "2026-09-29T04:47:20.533Z",
+  "source_data_hash": "ca4d8c01b2237a85",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 3 Recap",
+    "body": [
+      "Three weeks into a fantasy season is enough time for everyone to become completely unreasonable. Nobody with a winning record thinks three games is a small sample. Everybody with a losing record does. The people in the middle have already opened a trade calculator 45 times and convinced themselves they are one flex upgrade away.",
+      "So yes, it is still early. The New York Mudbones are also making that increasingly difficult to care about.",
+      "The Mudbones scored 176.55 this week after putting up 153.60 and 165.79 in the first two. That is three straight weeks as the highest-scoring team in the league. Jaxon Smith-Njigba added another 30.36 after scoring 38 last week, and nine of the ten starters finished in double figures. If every team played every other team each week, New York Mudbones would currently be 33-0.",
+      "The Permanent Rebuild scored 73.95 on the other side. Anyway.",
+      "Green Egbukas & Ham finally won, and did it convincingly, beating Hanging With Hernandez 143.38 to 102.96. Jahmyr Gibbs scored 37.9, Brock Bowers returned with 25.1, and Green Egbukas went from looking completely dead through two weeks to putting up the third-highest score of Week 3.",
+      "This was also a big weekend nationally for learning how to celebrate a good performance. Texas defensive end Colin Simmons tied the school record with five sacks against Tennessee, then celebrated one of them by pretending to unzip his pants and piss on the field. The officials announced the penalty as “simulating using the restroom,” which is such a polite description of the event that it sounds like Simmons was asking permission to leave a third-grade classroom. Green Egbukas won by 40 and, as far as I know, everybody kept their pants on.",
+      "Team chrisrenna17 is now sitting second in the standings after beating Woodys Toy Box 142.31 to 96.01. Bijan Robinson did most of the damage with 34.3, rushing for 194 yards against Green Bay. The Packers on the other hand rushed for 17, just enough to still be eligible for a trip to Epstein's Island. BrendanBall03 also had a good week, beating Injured Reserve 145.72 to 134.30. Injured Reserve actually finished fifth in league scoring and still lost, so the top-six bonus at least provided the fantasy equivalent of the airline giving you 5,000 miles after losing your luggage. BrendanBall03 got 31.28 from Brock Purdy, who threw four touchdowns in San Francisco’s win.",
+      "New England Keys beat Team jtyurconic2 134.16 to 117.70 and finished exactly sixth in weekly scoring, grabbing the final top-half bonus. Team jtyurconic2 is now 0.5-4 despite having scored 369.31 points, which is more than five teams currently ahead of it in the standings. There is probably an argument to be made here about strength of schedule. Unfortunately fantasy football has never shown much interest in your argument.",
+      "Mark 2.0 picked up its first head-to-head win of the season as well, beating It Hurts When I Pitts 125.58 to 90.27.",
+      "So after three weeks, New York Mudbones is 4.5-0, Team chrisrenna17 is 4-0.5, BrendanBall03 is 3-1.5, and the middle of the standings is already becoming the kind of place where everybody can find one statistic proving they are actually better than their record.",
+      "This is usually how it starts.",
+      "The teams at the top decide the standings are finally telling the truth. The teams at the bottom start talking about points against. Everybody else discovers that their bench would apparently be a playoff team if only they had the courage to start it.",
+      "Three weeks ago, everyone liked their roster. Give it another two and somebody is going to trade a future first because they are “one piece away.”"
+    ],
+    "for_the_record": [
+      {
+        "text": "Jaxon Smith-Njigba entered the NFL with questions about whether he was basically a slot receiver. Through three games this season, 365 of his 405 receiving yards and five of his six touchdowns have come while lined up outside. He currently leads the NFL in catches, yards and touchdowns from a wide alignment.",
+        "fact_ids": [
+          "jsn-outside-alignment-week3"
+        ]
+      },
+      {
+        "text": "Jahmyr Gibbs became the first player in NFL history with at least 300 rushing yards, four rushing touchdowns, 150 receiving yards and two receiving touchdowns through the first three games of a season. He also passed Billy Sims for second on Detroit's career rushing-touchdown list. Gibbs is 24.",
+        "fact_ids": [
+          "gibbs-history-week3"
+        ]
+      },
+      {
+        "text": "Bijan Robinson ran for 194 yards Thursday night. Drake London had exactly 194 receiving yards in the same game. It was already the third time the two have each gone over 150 yards from scrimmage in the same game, more than any pair of teammates in NFL history.",
+        "fact_ids": [
+          "bijan-london-194-week3"
+        ]
+      },
+      {
+        "text": "Deebo Samuel finished Sunday with zero receptions, 80 receiving yards and a touchdown. Mike Evans caught a Brock Purdy pass and lateraled it to Deebo, who took it the rest of the way. Evans got the catch. Deebo got the 80 receiving yards. Somewhere there is a statistician who had to explain this to his boss.",
+        "fact_ids": [
+          "deebo-0rec-80yd-week3"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w03-high-ryanog-score",
+      "2026-w03-blowout-ryanog-dackerly36-margin",
+      "2026-w03-low-dackerly36-score",
+      "2026-w03-blowout-greenie0513-thebearjew44-margin",
+      "2026-w03-blowout-chrisrenna17-dball11-margin",
+      "2026-w03-matchup-brendanball03-mhaanders-margin",
+      "2026-w03-high-scoring-loss-mhaanders-top-six",
+      "2026-w03-matchup-connordolan14-jtyurconic2-margin",
+      "2026-w03-matchup-jbitterman99-hank1517-margin",
+      "2026-w03-win-streak-ryanog-w3"
+    ],
+    "external_context_used": [
+      "jsn-outside-alignment-week3",
+      "gibbs-history-week3",
+      "bijan-london-194-week3",
+      "packers-17-rush-yards-week3",
+      "purdy-4td-week3",
+      "deebo-0rec-80yd-week3",
+      "colin-simmons-restroom-penalty"
+    ],
+    "team_bits_used": [],
+    "opening_mechanism": "early-season premise",
+    "ending_mechanism": "dry forecast"
+  }
+}
