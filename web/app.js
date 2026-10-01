@@ -304,7 +304,11 @@ function pageRosters() {
   }
   const now = Date.now();
   const teamsSorted = [...B.teams].sort((a, b) => a.teamName.localeCompare(b.teamName));
-  const teamSel = h("select", { class: "team-select", style: "max-width:220px" }, teamsSorted.map((t) => h("option", { value: t.rosterId }, t.teamName)));
+  const ALL = "all";
+  const teamSel = h("select", { class: "team-select", style: "max-width:220px" },
+    h("option", { value: ALL }, "All franchises"),
+    teamsSorted.map((t) => h("option", { value: t.rosterId }, t.teamName)));
+  teamSel.value = String(teamsSorted[0]?.rosterId ?? ALL);
   const posSel = h("select", { class: "team-select", style: "max-width:110px" }, ["All", "QB", "RB", "WR", "TE"].map((p) => h("option", { value: p }, p)));
   let show = "all", sort = { col: "Pts", dir: "desc" };
   const expanded = new Set();
@@ -342,7 +346,14 @@ function pageRosters() {
     h("td", { class: "tnum muted" }, u.games ? fmt(u.pts / u.games, 1) : "—"),
   ];
   const rowDays = (r) => { const d = r.stints.map((st) => stintDays(st, now)); return d.some((x) => x == null) ? null : d.reduce((a, b) => a + b, 0); };
-  const cols = [
+  // League-wide view: one row per player, totals across every franchise.
+  const teamChip = (rid) => h("span", { class: "tenure-team" }, avatar(TByR.get(rid)?.avatar, nameOf(rid), 18), nameOf(rid));
+  const nowOnCol = { t: "Now on", left: true, k: (r) => r.rid == null ? null : nameOf(r.rid).toLowerCase(), asc: true, title: "Current team (— = not on a roster)" };
+  const tenuresCol = { t: "Tenures", k: (r) => r.stints.length, title: "Separate stays on a roster, across all franchises" };
+  const nowOnCell = (r) => h("td", { class: "la" }, r.rid == null ? h("span", { class: "muted" }, "—") : teamChip(r.rid));
+  const tenuresCell = (r) => h("td", { class: "tnum" }, r.stints.length);
+  const withLeague = (list, on) => on ? [list[0], nowOnCol, tenuresCol, ...list.slice(1)] : list;
+  const baseCols = [
     { t: "Player", l: true, k: (r) => P(r.id).n.toLowerCase(), asc: true },
     { t: "Age", k: (r) => P(r.id).a ?? null, asc: true },
     { t: "Acquired", left: true, k: acquiredKey, asc: true, title: "How the player first joined this franchise (sorts in the order they arrived)" },
@@ -368,18 +379,19 @@ function pageRosters() {
   }
   for (const list of careers.values()) list.sort((a, b) => (a.st.from?.ts ?? -Infinity) - (b.st.from?.ts ?? -Infinity) || (a.st.to ? 0 : 1) - (b.st.to ? 0 : 1));
 
-  function tenureRow({ rid, st }, selectedRid, playerId) {
+  function tenureRow({ rid, st }, selectedRid, playerId, span) {
     const days = stintDays(st, now);
     const range = `${fmtDate(st.from?.ts)} → ${st.to ? fmtDate(st.to.ts) : "now"}`;
     const own = rid === selectedRid;
+    const plain = selectedRid == null; // league-wide: no franchise to highlight
     const team = TByR.get(rid);
     const teamLink = h("span", {
       class: "tenure-team" + (own ? "" : " other"),
       title: own ? null : `Open ${nameOf(rid)}`,
-      onclick: own ? null : (e) => { e.stopPropagation(); teamSel.value = String(rid); expanded.clear(); expanded.add(playerId); render(); },
+      onclick: own ? null : (e) => { e.stopPropagation(); teamSel.value = String(rid); expanded.clear(); expanded.add(`${rid}:${playerId}`); render(); },
     }, avatar(team?.avatar, nameOf(rid), 16), nameOf(rid));
-    return h("tr", { class: "tenure-row" + (own ? " own" : "") },
-      h("td", { class: "l", colspan: 3 },
+    return h("tr", { class: "tenure-row" + (own ? " own" : "") + (plain ? " plain" : "") },
+      h("td", { class: "l", colspan: span },
         h("div", { class: "tenure-line" }, teamLink, h("span", { class: "muted" }, " · "), stintFrom(st.from), h("span", { class: "muted" }, " → "), stintTo(st.to)),
         h("div", { class: "muted", style: "font-size:11.5px" }, range)),
       h("td", { class: "tnum" }, days == null ? "—" : fmt(days)),
@@ -387,20 +399,20 @@ function pageRosters() {
   }
 
   // `open` = true/false draws the expand caret; null = not expandable.
-  function playerCell(r, open) {
+  function playerCell(r, open, pill = true) {
     const meta = P(r.id);
     return h("td", { class: "l" }, h("div", { class: "team-cell" },
       open == null ? null : h("span", { class: "caret" }, open ? "▾" : "▸"),
       playerHeadshot(r.id, 26),
       h("div", {},
-        h("div", { class: "nm" }, meta.n, r.stints.length > 1 ? h("span", { class: "pill", style: "margin-left:6px", title: `${r.stints.length} separate tenures with this team` }, "×" + r.stints.length) : null),
+        h("div", { class: "nm" }, meta.n, pill && r.stints.length > 1 ? h("span", { class: "pill", style: "margin-left:6px", title: `${r.stints.length} separate tenures with this team` }, "×" + r.stints.length) : null),
         h("div", { class: "hd" },
           meta.p ? h("span", { class: "pos-" + meta.p, style: "font-weight:600" }, meta.p) : null,
           meta.t ? " · " + meta.t : ""))));
   }
 
   // Postseason: winners-bracket games only (incl. the 3rd-place game).
-  const postCols = [
+  const basePostCols = [
     { t: "Player", l: true, k: (r) => P(r.id).n.toLowerCase(), asc: true },
     { t: "Seasons", left: true, k: (r) => r.post.seasons.join(","), title: "Seasons with a playoff game for this franchise" },
     { t: "G", k: (r) => r.post.weeks, title: "Playoff games the team played with him on the roster" },
@@ -414,16 +426,19 @@ function pageRosters() {
     { t: "PPG", k: (r) => r.post.games ? r.post.pts / r.post.games : null, title: "Playoff points per game played, starting or benched" },
   ];
   let postSort = { col: "Start Pts", dir: "desc" };
-  function renderPostseason(all, keep) {
+  function renderPostseason(all, keep, leagueWide) {
+    const postCols = withLeague(basePostCols, leagueWide);
+    if (!postCols.some((c) => c.t === postSort.col)) postSort = { col: "Start Pts", dir: "desc" };
     const played = all.filter((r) => r.post);
     box.append(h("div", { class: "section-title" }, "Postseason"));
     if (!played.length) {
-      box.append(h("div", { class: "callout" }, "No playoff games yet for this franchise."));
+      box.append(h("div", { class: "callout" }, leagueWide ? "No playoff games yet." : "No playoff games yet for this franchise."));
       return;
     }
     const sorted = sortRows(played.filter(keep), postCols, postSort, (a, b) => b.post.startPts - a.post.startPts);
     const rows = sorted.map((r) => h("tr", { class: r.current ? "current" : "former" },
-      playerCell(r, null),
+      playerCell(r, null, !leagueWide),
+      leagueWide ? nowOnCell(r) : null, leagueWide ? tenuresCell(r) : null,
       h("td", { class: "la muted" }, r.post.seasons.join(", ")),
       ...usageCells(r.post, true)));
     if (!rows.length) rows.push(h("tr", {}, h("td", { class: "l muted", colspan: postCols.length }, "No players match.")));
@@ -432,33 +447,69 @@ function pageRosters() {
       "Winners-bracket games only: each playoff round plus the 3rd-place game. Byes, the 5th-place game, and the toilet bowl don't count."));
   }
 
+  // Sum a player's rows across franchises. `rid` = his current team (or null),
+  // `stints` = every tenure in the league, oldest first.
+  function combinePlayers(rows) {
+    const add = (a, b) => ({
+      weeks: a.weeks + b.weeks, games: (a.games ?? 0) + (b.games ?? 0), starts: a.starts + b.starts,
+      pts: a.pts + b.pts, startPts: a.startPts + b.startPts,
+    });
+    const byId = new Map();
+    for (const r of rows) {
+      const cur = byId.get(r.id);
+      if (!cur) {
+        byId.set(r.id, { ...r, rid: r.current ? r.rid : null, stints: (careers.get(r.id) || []).map((t) => t.st) });
+        continue;
+      }
+      Object.assign(cur, add(cur, r));
+      if (r.current) { cur.current = true; cur.rid = r.rid; }
+      if (r.post) cur.post = cur.post
+        ? { ...add(cur.post, r.post), seasons: [...new Set([...cur.post.seasons, ...r.post.seasons])].sort() }
+        : r.post;
+    }
+    return [...byId.values()];
+  }
+
   function render() {
     box.innerHTML = "";
-    const rid = Number(teamSel.value);
-    const all = RH.byRoster[rid] || [];
+    const leagueWide = teamSel.value === ALL;
+    const rid = leagueWide ? null : Number(teamSel.value);
+    const tag = (r, k) => ({ ...r, rid: Number(k) });
+    // One row per player per franchise (tiles use these league-wide too)…
+    const perTeam = leagueWide
+      ? Object.entries(RH.byRoster).flatMap(([k, rows]) => rows.map((r) => tag(r, k)))
+      : (RH.byRoster[rid] || []).map((r) => tag(r, rid));
+    // …collapsed to one row per player for the league-wide tables.
+    const all = leagueWide ? combinePlayers(perTeam) : perTeam;
+    const cols = withLeague(baseCols, leagueWide);
+    if (!cols.some((c) => c.t === sort.col)) sort = { col: "Pts", dir: "desc" };
+    const lead = cols.findIndex((c) => c.t === "Days"); // columns a tenure line spans
     const pos = posSel.value;
     const keep = (r) =>
       (show === "all" || (show === "current") === r.current) &&
       (pos === "All" || P(r.id).p === pos);
     const list = all.filter(keep);
 
-    const multi = all.filter((r) => r.stints.length > 1).length;
+    const multi = perTeam.filter((r) => r.stints.length > 1).length;
     const top = [...all].sort((a, b) => b.startPts - a.startPts)[0];
     const tile = (label, val, sub) => h("div", { class: "card tile" }, h("div", { class: "label" }, label), h("div", { class: "val" }, val), sub ? h("div", { class: "sub" }, sub) : null);
     // Best pickup: most regular-season starting points from tenures that began
     // with a waiver claim, free-agent add, or trade (not drafts or commish moves).
     let pickup = null;
-    for (const r of all) {
+    for (const r of perTeam) {
       const got = r.stints.filter((st) => ["waiver", "free_agent", "trade"].includes(st.from?.how));
       const pts = got.reduce((n, st) => n + st.startPts, 0);
       if (got.length && pts > 0 && (!pickup || pts > pickup.pts)) pickup = { r, pts, from: got[0].from };
     }
+    const onTeam = (r) => leagueWide ? ` · ${nameOf(r.rid)}` : "";
     box.append(h("div", { class: "grid cols-4", style: "margin-bottom:14px" },
-      tile("Players used", all.length, `${all.filter((r) => r.current).length} on the roster now`),
-      tile("Tenures", all.reduce((n, r) => n + r.stints.length, 0), `${multi} player${multi === 1 ? "" : "s"} brought back after leaving`),
-      top ? tile("Top starter", P(top.id).n, `${fmt(top.startPts, 1)} pts in ${top.starts} starts`) : null,
+      leagueWide
+        ? tile("Players rostered", all.length, `${all.filter((r) => r.current).length} on a roster now`)
+        : tile("Players used", all.length, `${all.filter((r) => r.current).length} on the roster now`),
+      tile("Tenures", perTeam.reduce((n, r) => n + r.stints.length, 0), `${multi} player${multi === 1 ? "" : "s"} brought back after leaving`),
+      top ? tile("Top starter", P(top.id).n, `${fmt(top.startPts, 1)} pts in ${top.starts} starts${leagueWide ? "" : onTeam(top)}`) : null,
       tile("Best pickup", pickup ? P(pickup.r.id).n : "—", pickup
-        ? `${fmt(pickup.pts, 1)} pts as a starter · ${stintFrom(pickup.from, true)}, ${fmtDate(pickup.from.ts)}`
+        ? `${fmt(pickup.pts, 1)} pts as a starter · ${stintFrom(pickup.from, true)}, ${fmtDate(pickup.from.ts)}${onTeam(pickup.r)}`
         : "No waiver, free-agent, or trade pickup has started yet")));
 
     box.append(h("div", { class: "section-title", style: "margin-top:4px" }, "Regular season"));
@@ -467,23 +518,25 @@ function pageRosters() {
     const rows = [];
     for (const r of sorted) {
       const meta = P(r.id);
-      const open = expanded.has(r.id);
+      const key = `${r.rid}:${r.id}`;
+      const open = expanded.has(key);
       const days = rowDays(r);
-      rows.push(h("tr", { class: "roster-row" + (open ? " open" : "") + (r.current ? " current" : " former"), onclick: () => { open ? expanded.delete(r.id) : expanded.add(r.id); render(); }, title: "Show this player's full league history" },
-        playerCell(r, open),
+      rows.push(h("tr", { class: "roster-row" + (open ? " open" : "") + (r.current ? " current" : " former"), onclick: () => { open ? expanded.delete(key) : expanded.add(key); render(); }, title: "Show this player's full league history" },
+        playerCell(r, open, !leagueWide),
+        leagueWide ? nowOnCell(r) : null, leagueWide ? tenuresCell(r) : null,
         h("td", { class: "tnum muted" }, meta.a == null ? "—" : Math.floor(meta.a)),
         h("td", { class: "la muted" }, stintFrom(r.stints[0].from, true),
           r.stints[0].from?.ts != null ? h("div", { style: "font-size:11.5px;color:var(--faint)" }, fmtDate(r.stints[0].from.ts)) : null),
         h("td", { class: "tnum muted" }, days == null ? "—" : fmt(days)),
         ...usageCells(r, true)));
-      if (open) for (const t of careers.get(r.id) || []) rows.push(tenureRow(t, rid, r.id));
+      if (open) for (const t of careers.get(r.id) || []) rows.push(tenureRow(t, leagueWide ? null : r.rid, r.id, lead));
     }
     if (!rows.length) rows.push(h("tr", {}, h("td", { class: "l muted", colspan: cols.length }, "No players match.")));
     box.append(table(headers, rows, { cls: "standings-tbl roster-tbl" }));
     const seasons = Object.entries(RH.regularSeasonWeeks || {}).map(([sk, n]) => `${sk}: ${n} wk${n === 1 ? "" : "s"}`).join(", ");
     box.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" },
-      `Bold names are on the roster now · Click a player to see every team he's been on (×2 = two separate tenures here) · Regular-season weeks counted (${seasons}) · GS = games started · Bench Pts = points scored while benched · GP = games played (no byes or inactive weeks) · Start PPG = points per start · PPG = points per game played · Days run from the move date (draft day for draft picks) to the drop, trade, or today.`));
-    renderPostseason(all, keep);
+      `${leagueWide ? "One row per player, totals across every franchise · Bold names are on a roster now · Click a player to see his full transaction history · " : "Bold names are on the roster now · Click a player to see every team he's been on (×2 = two separate tenures here) · "}Regular-season weeks counted (${seasons}) · GS = games started · Bench Pts = points scored while benched · GP = games played (no byes or inactive weeks) · Start PPG = points per start · PPG = points per game played · Days run from the move date (draft day for draft picks) to the drop, trade, or today.`));
+    renderPostseason(all, keep, leagueWide);
   }
   render();
   return wrap;

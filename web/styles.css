@@ -193,7 +193,7 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 .roster-tbl tr.current .nm { font-weight: 650; }
 .roster-tbl tr.former .nm { font-weight: 450; color: var(--ink-2); }
 .roster-tbl tr.tenure-row td { background: var(--surface-2); font-size: 12.5px; padding-top: 7px; padding-bottom: 7px; color: var(--muted); }
-.roster-tbl tr.tenure-row.own td { color: var(--ink-2); }
+.roster-tbl tr.tenure-row.own td, .roster-tbl tr.tenure-row.plain td { color: var(--ink-2); }
 .roster-tbl tr.tenure-row td.l { padding-left: 34px; white-space: normal; min-width: 280px; box-shadow: inset 3px 0 0 transparent; }
 .roster-tbl tr.tenure-row.own td.l { box-shadow: inset 3px 0 0 var(--s3); }
 .roster-tbl .tenure-team { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; color: var(--ink); vertical-align: middle; }
