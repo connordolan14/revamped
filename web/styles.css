@@ -190,7 +190,6 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 .roster-tbl tr.roster-row { cursor: pointer; }
 .roster-tbl .caret { color: var(--muted); font-size: 13px; width: 10px; flex: none; }
 .roster-tbl .rec-headshot { position: static; flex: none; border-radius: 50%; }
-.roster-tbl .on-roster { color: var(--s3); }
 .roster-tbl tr.current .nm { font-weight: 650; }
 .roster-tbl tr.former .nm { font-weight: 450; color: var(--ink-2); }
 .roster-tbl tr.tenure-row td { background: var(--surface-2); font-size: 12.5px; padding-top: 7px; padding-bottom: 7px; color: var(--muted); }

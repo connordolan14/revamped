@@ -395,8 +395,7 @@ function pageRosters() {
         h("div", { class: "nm" }, meta.n, r.stints.length > 1 ? h("span", { class: "pill", style: "margin-left:6px", title: `${r.stints.length} separate tenures with this team` }, "×" + r.stints.length) : null),
         h("div", { class: "hd" },
           meta.p ? h("span", { class: "pos-" + meta.p, style: "font-weight:600" }, meta.p) : null,
-          meta.t ? " · " + meta.t : "",
-          r.current ? h("span", { class: "on-roster" }, " · on roster") : h("span", {}, " · former")))));
+          meta.t ? " · " + meta.t : ""))));
   }
 
   // Postseason: winners-bracket games only (incl. the 3rd-place game).
@@ -445,10 +444,21 @@ function pageRosters() {
     const multi = all.filter((r) => r.stints.length > 1).length;
     const top = [...all].sort((a, b) => b.startPts - a.startPts)[0];
     const tile = (label, val, sub) => h("div", { class: "card tile" }, h("div", { class: "label" }, label), h("div", { class: "val" }, val), sub ? h("div", { class: "sub" }, sub) : null);
-    box.append(h("div", { class: "grid cols-3", style: "margin-bottom:14px" },
+    // Best pickup: most regular-season starting points from tenures that began
+    // with a waiver claim, free-agent add, or trade (not drafts or commish moves).
+    let pickup = null;
+    for (const r of all) {
+      const got = r.stints.filter((st) => ["waiver", "free_agent", "trade"].includes(st.from?.how));
+      const pts = got.reduce((n, st) => n + st.startPts, 0);
+      if (got.length && pts > 0 && (!pickup || pts > pickup.pts)) pickup = { r, pts, from: got[0].from };
+    }
+    box.append(h("div", { class: "grid cols-4", style: "margin-bottom:14px" },
       tile("Players used", all.length, `${all.filter((r) => r.current).length} on the roster now`),
       tile("Tenures", all.reduce((n, r) => n + r.stints.length, 0), `${multi} player${multi === 1 ? "" : "s"} brought back after leaving`),
-      top ? tile("Top starter", P(top.id).n, `${fmt(top.startPts, 1)} pts in ${top.starts} starts`) : null));
+      top ? tile("Top starter", P(top.id).n, `${fmt(top.startPts, 1)} pts in ${top.starts} starts`) : null,
+      tile("Best pickup", pickup ? P(pickup.r.id).n : "—", pickup
+        ? `${fmt(pickup.pts, 1)} pts as a starter · ${stintFrom(pickup.from, true)}, ${fmtDate(pickup.from.ts)}`
+        : "No waiver, free-agent, or trade pickup has started yet")));
 
     box.append(h("div", { class: "section-title", style: "margin-top:4px" }, "Regular season"));
     const headers = sortHeaders(cols, sort, (next) => { sort = next; render(); });
