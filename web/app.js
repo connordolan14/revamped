@@ -309,7 +309,7 @@ function pageRosters() {
     h("option", { value: ALL }, "All franchises"),
     teamsSorted.map((t) => h("option", { value: t.rosterId }, t.teamName)));
   teamSel.value = String(teamsSorted[0]?.rosterId ?? ALL);
-  const posSel = h("select", { class: "team-select", style: "max-width:170px" }, ["All", "QB", "RB", "WR", "TE", "FLEX"].map((p) => h("option", { value: p }, p === "FLEX" ? "FLEX (RB/WR/TE)" : p)));
+  const posSel = h("select", { class: "team-select", style: "max-width:110px", title: "Flex = RB, WR, and TE" }, ["All", "QB", "RB", "WR", "TE", "FLEX"].map((p) => h("option", { value: p }, p === "FLEX" ? "Flex" : p)));
   let show = "all", sort = { col: "Pts", dir: "desc" };
   const expanded = new Set();
   const seg = h("div", { class: "seg" });
