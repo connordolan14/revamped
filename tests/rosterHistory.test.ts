@@ -85,6 +85,29 @@ describe("computeRosterHistory", () => {
     expect(history.get(1)!.find((r) => r.playerId === "new")).toMatchObject({ weeks: 0, current: true });
   });
 
+  it("keeps playoff weeks out of regular-season totals", () => {
+    const events = [ev({ rosterId: 1, playerId: "p", kind: "add", leg: 0, how: "draft" })];
+    const weeks = [
+      wk(14, 1, ["p"], ["p"], { p: 10 }),
+      { ...wk(15, 1, ["p"], ["p"], { p: 25 }), playoff: true },
+      { ...wk(16, 1, ["p"], [], { p: 7 }), playoff: true },
+    ];
+    const [p] = computeRosterHistory(weeks, events).get(1)!;
+    expect(p).toMatchObject({ weeks: 1, starts: 1, points: 10, starterPoints: 10, postSeasons: ["2025"] });
+    expect(p.post).toEqual({ weeks: 2, games: 2, starts: 1, points: 32, starterPoints: 25 });
+    expect(p.stints[0].post).toEqual(p.post);
+  });
+
+  it("counts games played separately from weeks rostered (byes, inactives)", () => {
+    const weeks = [
+      { ...wk(1, 1, ["p"], ["p"], { p: 12 }), played: ["p"] },
+      { ...wk(2, 1, ["p"], [], { p: 0 }), played: [] }, // bye
+      { ...wk(3, 1, ["p"], ["p"], { p: 8 }), played: ["p"] },
+    ];
+    const [p] = computeRosterHistory(weeks, []).get(1)!;
+    expect(p).toMatchObject({ weeks: 3, games: 2, starts: 2, points: 20 });
+  });
+
   it("closes a stint for a player no longer on the current roster", () => {
     const events = [ev({ rosterId: 1, playerId: "p", kind: "add", leg: 1 })];
     const [p] = computeRosterHistory([], events, new Map([[1, []]])).get(1)!;

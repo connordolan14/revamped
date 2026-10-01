@@ -331,18 +331,30 @@ function pageRosters() {
     const m = f.how === "draft" && /(\d+)\.(\d+)$/.exec(f.draft || "");
     return f.ts + (m ? Number(m[1]) * 100 + Number(m[2]) : 0);
   };
+  // Weeks · GP · GS · GS% · Pts · Start Pts · Bench Pts · Start PPG · PPG
+  const usageCells = (u, strong) => [
+    h("td", { class: "tnum" }, u.weeks), h("td", { class: "tnum" }, u.games ?? "—"), h("td", { class: "tnum" }, u.starts),
+    h("td", { class: "tnum muted" }, u.weeks ? Math.round((u.starts / u.weeks) * 100) + "%" : "—"),
+    h("td", { class: "tnum", style: strong ? "font-weight:600" : null }, fmt(u.pts, 1)), h("td", { class: "tnum" }, fmt(u.startPts, 1)),
+    h("td", { class: "tnum muted" }, fmt(u.pts - u.startPts, 1)),
+    h("td", { class: "tnum muted" }, u.starts ? fmt(u.startPts / u.starts, 1) : "—"),
+    h("td", { class: "tnum muted" }, u.games ? fmt(u.pts / u.games, 1) : "—"),
+  ];
   const rowDays = (r) => { const d = r.stints.map((st) => stintDays(st, now)); return d.some((x) => x == null) ? null : d.reduce((a, b) => a + b, 0); };
   const cols = [
     { t: "Player", l: true, k: (r) => P(r.id).n.toLowerCase(), asc: true },
+    { t: "Age", k: (r) => P(r.id).a ?? null, asc: true },
     { t: "Acquired", left: true, k: acquiredKey, asc: true, title: "How the player first joined this franchise (sorts in the order they arrived)" },
     { t: "Days", k: rowDays, title: "Days on this roster, across all tenures" },
     { t: "Wks", k: (r) => r.weeks, title: "Regular-season weeks on the roster" },
+    { t: "GP", k: (r) => r.games, title: "Games played while on the roster (no byes or inactive weeks)" },
     { t: "GS", k: (r) => r.starts, title: "Games started" },
     { t: "GS%", k: (r) => r.weeks ? r.starts / r.weeks : null, title: "Share of rostered weeks in the starting lineup" },
     { t: "Pts", k: (r) => r.pts, title: "Points scored while on the roster (starting or benched)" },
     { t: "Start Pts", k: (r) => r.startPts, title: "Points scored in the starting lineup" },
     { t: "Bench Pts", k: (r) => r.pts - r.startPts, title: "Points left on the bench" },
-    { t: "PPG", k: (r) => r.starts ? r.startPts / r.starts : null, title: "Points per start" },
+    { t: "Start PPG", k: (r) => r.starts ? r.startPts / r.starts : null, title: "Points per start" },
+    { t: "PPG", k: (r) => r.games ? r.pts / r.games : null, title: "Points per game played, starting or benched (byes and inactive weeks excluded)" },
   ];
 
   // player id → every tenure on every franchise, oldest first (unknown starts first).
@@ -366,15 +378,58 @@ function pageRosters() {
       onclick: own ? null : (e) => { e.stopPropagation(); teamSel.value = String(rid); expanded.clear(); expanded.add(playerId); render(); },
     }, avatar(team?.avatar, nameOf(rid), 16), nameOf(rid));
     return h("tr", { class: "tenure-row" + (own ? " own" : "") },
-      h("td", { class: "l", colspan: 2 },
+      h("td", { class: "l", colspan: 3 },
         h("div", { class: "tenure-line" }, teamLink, h("span", { class: "muted" }, " · "), stintFrom(st.from), h("span", { class: "muted" }, " → "), stintTo(st.to)),
         h("div", { class: "muted", style: "font-size:11.5px" }, range)),
       h("td", { class: "tnum" }, days == null ? "—" : fmt(days)),
-      h("td", { class: "tnum" }, st.weeks), h("td", { class: "tnum" }, st.starts),
-      h("td", { class: "tnum" }, st.weeks ? Math.round((st.starts / st.weeks) * 100) + "%" : "—"),
-      h("td", { class: "tnum" }, fmt(st.pts, 1)), h("td", { class: "tnum" }, fmt(st.startPts, 1)),
-      h("td", { class: "tnum" }, fmt(st.pts - st.startPts, 1)),
-      h("td", { class: "tnum" }, st.starts ? fmt(st.startPts / st.starts, 1) : "—"));
+      ...usageCells(st, false));
+  }
+
+  // `open` = true/false draws the expand caret; null = not expandable.
+  function playerCell(r, open) {
+    const meta = P(r.id);
+    return h("td", { class: "l" }, h("div", { class: "team-cell" },
+      open == null ? null : h("span", { class: "caret" }, open ? "▾" : "▸"),
+      playerHeadshot(r.id, 26),
+      h("div", {},
+        h("div", { class: "nm" }, meta.n, r.stints.length > 1 ? h("span", { class: "pill", style: "margin-left:6px", title: `${r.stints.length} separate tenures with this team` }, "×" + r.stints.length) : null),
+        h("div", { class: "hd" },
+          meta.p ? h("span", { class: "pos-" + meta.p, style: "font-weight:600" }, meta.p) : null,
+          meta.t ? " · " + meta.t : "",
+          r.current ? h("span", { class: "on-roster" }, " · on roster") : h("span", {}, " · former")))));
+  }
+
+  // Postseason: winners-bracket games only (incl. the 3rd-place game).
+  const postCols = [
+    { t: "Player", l: true, k: (r) => P(r.id).n.toLowerCase(), asc: true },
+    { t: "Seasons", left: true, k: (r) => r.post.seasons.join(","), title: "Seasons with a playoff game for this franchise" },
+    { t: "G", k: (r) => r.post.weeks, title: "Playoff games the team played with him on the roster" },
+    { t: "GP", k: (r) => r.post.games, title: "Playoff weeks he played an NFL game" },
+    { t: "GS", k: (r) => r.post.starts, title: "Playoff games started" },
+    { t: "GS%", k: (r) => r.post.starts / r.post.weeks },
+    { t: "Pts", k: (r) => r.post.pts, title: "Playoff points while on the roster (starting or benched)" },
+    { t: "Start Pts", k: (r) => r.post.startPts, title: "Playoff points in the starting lineup" },
+    { t: "Bench Pts", k: (r) => r.post.pts - r.post.startPts, title: "Playoff points left on the bench" },
+    { t: "Start PPG", k: (r) => r.post.starts ? r.post.startPts / r.post.starts : null, title: "Points per playoff start" },
+    { t: "PPG", k: (r) => r.post.games ? r.post.pts / r.post.games : null, title: "Playoff points per game played, starting or benched" },
+  ];
+  let postSort = { col: "Start Pts", dir: "desc" };
+  function renderPostseason(all, keep) {
+    const played = all.filter((r) => r.post);
+    box.append(h("div", { class: "section-title" }, "Postseason"));
+    if (!played.length) {
+      box.append(h("div", { class: "callout" }, "No playoff games yet for this franchise."));
+      return;
+    }
+    const sorted = sortRows(played.filter(keep), postCols, postSort, (a, b) => b.post.startPts - a.post.startPts);
+    const rows = sorted.map((r) => h("tr", { class: r.current ? "current" : "former" },
+      playerCell(r, null),
+      h("td", { class: "la muted" }, r.post.seasons.join(", ")),
+      ...usageCells(r.post, true)));
+    if (!rows.length) rows.push(h("tr", {}, h("td", { class: "l muted", colspan: postCols.length }, "No players match.")));
+    box.append(table(sortHeaders(postCols, postSort, (next) => { postSort = next; render(); }), rows, { cls: "standings-tbl roster-tbl" }));
+    box.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" },
+      "Winners-bracket games only: each playoff round plus the 3rd-place game. Byes, the 5th-place game, and the toilet bowl don't count."));
   }
 
   function render() {
@@ -382,19 +437,20 @@ function pageRosters() {
     const rid = Number(teamSel.value);
     const all = RH.byRoster[rid] || [];
     const pos = posSel.value;
-    const list = all.filter((r) =>
+    const keep = (r) =>
       (show === "all" || (show === "current") === r.current) &&
-      (pos === "All" || P(r.id).p === pos));
+      (pos === "All" || P(r.id).p === pos);
+    const list = all.filter(keep);
 
     const multi = all.filter((r) => r.stints.length > 1).length;
     const top = [...all].sort((a, b) => b.startPts - a.startPts)[0];
     const tile = (label, val, sub) => h("div", { class: "card tile" }, h("div", { class: "label" }, label), h("div", { class: "val" }, val), sub ? h("div", { class: "sub" }, sub) : null);
-    box.append(h("div", { class: "grid cols-4", style: "margin-bottom:14px" },
+    box.append(h("div", { class: "grid cols-3", style: "margin-bottom:14px" },
       tile("Players used", all.length, `${all.filter((r) => r.current).length} on the roster now`),
       tile("Tenures", all.reduce((n, r) => n + r.stints.length, 0), `${multi} player${multi === 1 ? "" : "s"} brought back after leaving`),
-      tile("Acquired by move", all.filter((r) => r.stints.some((st) => st.from?.how && st.from.how !== "draft")).length, "waivers, free agency, trades"),
       top ? tile("Top starter", P(top.id).n, `${fmt(top.startPts, 1)} pts in ${top.starts} starts`) : null));
 
+    box.append(h("div", { class: "section-title", style: "margin-top:4px" }, "Regular season"));
     const headers = sortHeaders(cols, sort, (next) => { sort = next; render(); });
     const sorted = sortRows(list, cols, sort, (a, b) => b.pts - a.pts);
     const rows = [];
@@ -403,30 +459,20 @@ function pageRosters() {
       const open = expanded.has(r.id);
       const days = rowDays(r);
       rows.push(h("tr", { class: "roster-row" + (open ? " open" : "") + (r.current ? " current" : " former"), onclick: () => { open ? expanded.delete(r.id) : expanded.add(r.id); render(); }, title: "Show this player's full league history" },
-        h("td", { class: "l" }, h("div", { class: "team-cell" },
-          h("span", { class: "caret" }, open ? "▾" : "▸"),
-          playerHeadshot(r.id, 26),
-          h("div", {},
-            h("div", { class: "nm" }, meta.n, r.stints.length > 1 ? h("span", { class: "pill", style: "margin-left:6px", title: `${r.stints.length} separate tenures with this team` }, "×" + r.stints.length) : null),
-            h("div", { class: "hd" },
-              meta.p ? h("span", { class: "pos-" + meta.p, style: "font-weight:600" }, meta.p) : null,
-              meta.t ? " · " + meta.t : "",
-              r.current ? h("span", { class: "on-roster" }, " · on roster") : h("span", {}, " · former"))))),
+        playerCell(r, open),
+        h("td", { class: "tnum muted" }, meta.a == null ? "—" : Math.floor(meta.a)),
         h("td", { class: "la muted" }, stintFrom(r.stints[0].from, true),
           r.stints[0].from?.ts != null ? h("div", { style: "font-size:11.5px;color:var(--faint)" }, fmtDate(r.stints[0].from.ts)) : null),
         h("td", { class: "tnum muted" }, days == null ? "—" : fmt(days)),
-        h("td", { class: "tnum" }, r.weeks), h("td", { class: "tnum" }, r.starts),
-        h("td", { class: "tnum muted" }, r.weeks ? Math.round((r.starts / r.weeks) * 100) + "%" : "—"),
-        h("td", { class: "tnum", style: "font-weight:600" }, fmt(r.pts, 1)), h("td", { class: "tnum" }, fmt(r.startPts, 1)),
-        h("td", { class: "tnum muted" }, fmt(r.pts - r.startPts, 1)),
-        h("td", { class: "tnum muted" }, r.starts ? fmt(r.startPts / r.starts, 1) : "—")));
+        ...usageCells(r, true)));
       if (open) for (const t of careers.get(r.id) || []) rows.push(tenureRow(t, rid, r.id));
     }
     if (!rows.length) rows.push(h("tr", {}, h("td", { class: "l muted", colspan: cols.length }, "No players match.")));
     box.append(table(headers, rows, { cls: "standings-tbl roster-tbl" }));
     const seasons = Object.entries(RH.regularSeasonWeeks || {}).map(([sk, n]) => `${sk}: ${n} wk${n === 1 ? "" : "s"}`).join(", ");
     box.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" },
-      `Bold names are on the roster now · Click a player to see every team he's been on (×2 = two separate tenures here) · Regular-season weeks counted (${seasons}) · GS = games started · Bench Pts = points scored while benched · PPG = points per start · Days run from the move date (draft day for draft picks) to the drop, trade, or today.`));
+      `Bold names are on the roster now · Click a player to see every team he's been on (×2 = two separate tenures here) · Regular-season weeks counted (${seasons}) · GS = games started · Bench Pts = points scored while benched · GP = games played (no byes or inactive weeks) · Start PPG = points per start · PPG = points per game played · Days run from the move date (draft day for draft picks) to the drop, trade, or today.`));
+    renderPostseason(all, keep);
   }
   render();
   return wrap;

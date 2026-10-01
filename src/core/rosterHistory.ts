@@ -1,5 +1,6 @@
 // Roster history engine. Every player a franchise has ever rostered, with
-// regular-season usage and the stints (acquired → released) that make it up.
+// regular-season and postseason usage and the stints (acquired → released)
+// that make it up.
 //
 // Two independent sources, each authoritative for one thing:
 //   - Weekly roster snapshots (Sleeper matchups: players / starters / points)
@@ -17,6 +18,11 @@ export interface RosterWeek {
   players: string[];
   starters: string[];
   points: Record<string, number>;
+  /** A winners-bracket playoff game; counted separately from the regular season. */
+  playoff?: boolean;
+  /** Players who appeared in an NFL game that week (not on bye or inactive).
+   *  When omitted, every rostered player is assumed to have played. */
+  played?: string[];
 }
 
 export type MoveHow = "draft" | "waiver" | "free_agent" | "trade" | "commissioner" | "unknown";
@@ -49,12 +55,16 @@ export interface StintEnd {
 
 export interface Usage {
   weeks: number;
+  /** Weeks rostered in which the player actually played an NFL game. */
+  games: number;
   starts: number;
   points: number;
   starterPoints: number;
 }
 
+/** Top-level usage fields are regular season; `post` is the postseason. */
 export interface Stint extends Usage {
+  post: Usage;
   from: StintEnd;
   /** null = still on the roster. */
   to: StintEnd | null;
@@ -63,10 +73,20 @@ export interface Stint extends Usage {
 export interface PlayerHistory extends Usage {
   playerId: string;
   current: boolean;
+  post: Usage;
+  /** Seasons with at least one postseason game for this franchise. */
+  postSeasons: string[];
   stints: Stint[];
 }
 
-const emptyUsage = (): Usage => ({ weeks: 0, starts: 0, points: 0, starterPoints: 0 });
+const emptyUsage = (): Usage => ({ weeks: 0, games: 0, starts: 0, points: 0, starterPoints: 0 });
+const addUsage = (into: Usage, from: Usage) => {
+  into.weeks += from.weeks;
+  into.games += from.games;
+  into.starts += from.starts;
+  into.points += from.points;
+  into.starterPoints += from.starterPoints;
+};
 const end = (e: RosterEvent): StintEnd => ({
   ts: e.ts,
   season: e.season,
@@ -113,34 +133,43 @@ export function computeRosterHistory(
     const list = listFor(keyOf(e.rosterId, e.playerId));
     if (e.kind === "add") {
       if (open(list)) continue; // already on the roster — duplicate add
-      list.push({ ...emptyUsage(), from: end(e), fromLeg: e.leg, to: null });
+      list.push({ ...emptyUsage(), post: emptyUsage(), from: end(e), fromLeg: e.leg, to: null });
     } else {
       const cur = open(list);
       if (cur) cur.to = end(e);
       // Dropped without a recorded add: acquired before the feed begins.
-      else list.push({ ...emptyUsage(), from: unknownEnd(), to: end(e) });
+      else list.push({ ...emptyUsage(), post: emptyUsage(), from: unknownEnd(), to: end(e) });
     }
   }
 
   // 2. Usage from weekly snapshots, attributed to the stint that was open then:
   // the latest stint that began at or before that week.
+  const postSeasons = new Map<string, Set<string>>();
   for (const w of weeks) {
     const starters = new Set(w.starters);
+    const played = w.played ? new Set(w.played) : null;
     const at: [number, number, number] = [Number(w.season), w.week, Number.POSITIVE_INFINITY];
     for (const playerId of w.players) {
       const list = listFor(keyOf(w.rosterId, playerId));
-      if (!list.length) list.push({ ...emptyUsage(), from: unknownEnd(), to: null });
+      if (!list.length) list.push({ ...emptyUsage(), post: emptyUsage(), from: unknownEnd(), to: null });
       let stint = list[0];
       for (const s of list) {
         const k = stintKey(s);
         if (k == null || cmpKey(k, at) <= 0) stint = s;
       }
       const pts = w.points[playerId] ?? 0;
-      stint.weeks += 1;
-      stint.points += pts;
+      const usage: Usage = w.playoff ? stint.post : stint;
+      usage.weeks += 1;
+      if (!played || played.has(playerId)) usage.games += 1;
+      usage.points += pts;
       if (starters.has(playerId)) {
-        stint.starts += 1;
-        stint.starterPoints += pts;
+        usage.starts += 1;
+        usage.starterPoints += pts;
+      }
+      if (w.playoff) {
+        const k = keyOf(w.rosterId, playerId);
+        if (!postSeasons.has(k)) postSeasons.set(k, new Set());
+        postSeasons.get(k)!.add(w.season);
       }
     }
   }
@@ -149,7 +178,7 @@ export function computeRosterHistory(
   for (const [rosterId, players] of currentRosters) {
     for (const playerId of players) {
       const list = listFor(keyOf(rosterId, playerId));
-      if (!open(list)) list.push({ ...emptyUsage(), from: unknownEnd(), to: null });
+      if (!open(list)) list.push({ ...emptyUsage(), post: emptyUsage(), from: unknownEnd(), to: null });
     }
   }
   if (currentRosters.size) {
@@ -167,15 +196,16 @@ export function computeRosterHistory(
     const [rid, playerId] = k.split(":");
     const rosterId = Number(rid);
     const total = emptyUsage();
+    const post = emptyUsage();
     for (const s of list) {
-      total.weeks += s.weeks;
-      total.starts += s.starts;
-      total.points += s.points;
-      total.starterPoints += s.starterPoints;
+      addUsage(total, s);
+      addUsage(post, s.post);
     }
     const row: PlayerHistory = {
       playerId,
       ...total,
+      post,
+      postSeasons: [...(postSeasons.get(k) ?? [])].sort(),
       current: list[list.length - 1].to === null,
       stints: list.map(({ fromLeg: _fromLeg, ...s }) => s),
     };

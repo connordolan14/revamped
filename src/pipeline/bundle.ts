@@ -9,7 +9,7 @@ import { computeRecaps, WeekRecap } from "../core/recap.js";
 import { loadSeasonRecaps } from "../core/recapStore.js";
 import { MatchRow } from "../core/history.js";
 import { round } from "../core/stats.js";
-import { PlayerHistory, StintEnd } from "../core/rosterHistory.js";
+import { PlayerHistory, StintEnd, Usage } from "../core/rosterHistory.js";
 import { loadPowerSnapshots } from "./powerHistory.js";
 
 export interface BundleTeam {
@@ -238,22 +238,26 @@ export function rosterHistoryShape(history: Map<number, PlayerHistory[]>, regula
     ...(e.otherRosterId != null ? { team: e.otherRosterId } : {}),
     ...(e.draftLabel ? { draft: e.draftLabel } : {}),
   };
+  const usageShape = (u: Usage) => ({
+    weeks: u.weeks,
+    games: u.games,
+    starts: u.starts,
+    pts: round(u.points, 2),
+    startPts: round(u.starterPoints, 2),
+  });
   const byRoster: Record<number, unknown[]> = {};
   for (const [rosterId, rows] of history) {
     byRoster[rosterId] = rows.map((row) => ({
       id: row.playerId,
-      weeks: row.weeks,
-      starts: row.starts,
-      pts: round(row.points, 2),
-      startPts: round(row.starterPoints, 2),
+      ...usageShape(row),
+      // Postseason only when there is one — most players never get there.
+      ...(row.post.weeks ? { post: { ...usageShape(row.post), seasons: row.postSeasons } } : {}),
       current: row.current,
       stints: row.stints.map((stint) => ({
         from: endShape(stint.from),
         to: endShape(stint.to),
-        weeks: stint.weeks,
-        starts: stint.starts,
-        pts: round(stint.points, 2),
-        startPts: round(stint.starterPoints, 2),
+        ...usageShape(stint),
+        ...(stint.post.weeks ? { post: usageShape(stint.post) } : {}),
       })),
     }));
   }

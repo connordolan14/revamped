@@ -57,9 +57,10 @@ async function fetchSeason(leagueId: string, season: string, complete: boolean, 
     // has moved past it — a score can look "done" while MNF is still playing.
     if (w >= liveWeek) break;
     rowsByWeek[String(w)] = ms.map((m) => ({ r: m.roster_id, m: m.matchup_id ?? 0, p: m.points ?? 0 }));
+    const played = await playedIn(season, w);
     for (const m of ms) {
       rosterWeeks.push({
-        season, week: w, rosterId: m.roster_id,
+        season, week: w, rosterId: m.roster_id, played,
         players: m.players ?? [],
         starters: (m.starters ?? []).filter((pid) => pid && pid !== "0"), // "0" = empty slot
         points: m.players_points ?? {},
@@ -79,6 +80,47 @@ async function fetchSeason(leagueId: string, season: string, complete: boolean, 
     }
   }
   return { season, leagueId, complete, rowsByWeek, teams, playerBest, rosterWeeks };
+}
+
+// Players who appeared in an NFL game that week, so per-game averages skip
+// byes and inactive weeks. Undefined (count every week) if stats are down.
+async function playedIn(season: string, week: number): Promise<string[] | undefined> {
+  try {
+    const stats = await sleeper.weekStats(season, week);
+    return Object.entries(stats).filter(([, st]) => (st?.gp ?? 0) > 0).map(([pid]) => pid);
+  } catch {
+    return undefined;
+  }
+}
+
+// Postseason roster snapshots: one per team per winners-bracket game, round r
+// being week playoffStart + r - 1. Placement games below 3rd (p >= 5) are
+// consolation and don't count; byes have no game, so they don't either.
+async function fetchPlayoffWeeks(leagueId: string, season: string, playoffStart: number, liveWeek: number): Promise<RosterWeek[]> {
+  const wb: any[] = (await fetchJson(`https://api.sleeper.app/v1/league/${leagueId}/winners_bracket`)) || [];
+  const teamsByWeek = new Map<number, Set<number>>();
+  for (const m of wb) {
+    if (m.t1 == null || m.t2 == null || (m.p != null && m.p >= 5)) continue;
+    const week = playoffStart + (m.r || 1) - 1;
+    if (week >= liveWeek) continue; // same live-week gate as the regular season
+    if (!teamsByWeek.has(week)) teamsByWeek.set(week, new Set());
+    teamsByWeek.get(week)!.add(m.t1).add(m.t2);
+  }
+  const out: RosterWeek[] = [];
+  for (const [week, teams] of [...teamsByWeek].sort((a, b) => a[0] - b[0])) {
+    const ms = await sleeper.matchups(leagueId, week).catch(() => []);
+    const played = await playedIn(season, week);
+    for (const m of ms || []) {
+      if (!teams.has(m.roster_id)) continue;
+      out.push({
+        season, week, rosterId: m.roster_id, playoff: true, played,
+        players: m.players ?? [],
+        starters: (m.starters ?? []).filter((pid) => pid && pid !== "0"),
+        points: m.players_points ?? {},
+      });
+    }
+  }
+  return out;
 }
 
 async function fetchJson(url: string): Promise<any> { try { return await (await fetch(url)).json(); } catch { return null; } }
@@ -182,6 +224,9 @@ async function main() {
       }
     }
     regularSeasonWeeks[lg.season] = Object.keys(sd.rowsByWeek).length;
+    if (regularSeasonWeeks[lg.season]) {
+      sd.rosterWeeks.push(...await fetchPlayoffWeeks(lg.league_id, lg.season, regWeeks + 1, liveWeek));
+    }
     for (const draft of await sleeper.drafts(lg.league_id).catch(() => [])) {
       if (draft.status !== "complete" || draft.start_time == null) continue;
       const picks = await sleeper.draftPicks(draft.draft_id);
@@ -198,13 +243,16 @@ async function main() {
   // Compact player name/pos/team map (dynasty-relevant + everyone rostered +
   // everyone in recent transactions) so the client can name live waiver/trade
   // activity it pulls straight from Sleeper. Extended after the tx loop below.
-  const playerMap: Record<string, { n: string; p: string; t: string | null }> = {};
+  // v/pr/tr = FantasyCalc dynasty value, position rank, 30-day trend; a = age.
+  const playerMap: Record<string, { n: string; p: string; t: string | null; a?: number | null; v?: number; pr?: number; tr?: number }> = {};
   const addPlayer = (pid: string) => {
     if (playerMap[pid] || !players[pid]) return;
     const m = players[pid];
-    playerMap[pid] = { n: `${m.first_name ?? ""} ${m.last_name ?? ""}`.trim() || pid, p: m.position ?? "", t: m.team ?? null };
+    playerMap[pid] = { n: `${m.first_name ?? ""} ${m.last_name ?? ""}`.trim() || pid, p: m.position ?? "", t: m.team ?? null, a: m.age ?? null };
   };
-  for (const v of values) if (v.sleeperId) playerMap[v.sleeperId] = { n: v.name, p: v.position, t: v.team };
+  for (const v of values) {
+    if (v.sleeperId) playerMap[v.sleeperId] = { n: v.name, p: v.position, t: v.team, a: v.age ?? players[v.sleeperId]?.age ?? null, v: v.value, pr: v.positionRank, tr: v.trend30Day };
+  }
   for (const r of rosters) for (const pid of r.players || []) addPlayer(pid);
 
   // transactions (current league) → list + per-roster counts for standings.moves
