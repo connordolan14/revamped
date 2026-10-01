@@ -111,6 +111,7 @@ header.top {
 .icon-btn:hover { color: var(--ink); border-color: var(--hair-strong); background: var(--surface-2); }
 
 main { max-width: var(--maxw); margin: 0 auto; padding: 26px 20px 96px; width: 100%; }
+body.wide { --maxw: 1320px; } /* data-dense pages (Rosters): header + content widen together */
 
 /* mobile bottom nav */
 .botnav { display: none; }
@@ -187,6 +188,7 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
   .standings-tbl tbody tr:hover td.l { background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
 }
 /* all-time rosters: expandable player rows */
+.roster-tbl thead th, .roster-tbl tbody td { padding-left: 9px; padding-right: 9px; }
 .roster-tbl tr.roster-row { cursor: pointer; }
 .roster-tbl .caret { color: var(--muted); font-size: 13px; width: 10px; flex: none; }
 .roster-tbl .rec-headshot { position: static; flex: none; border-radius: 50%; }
@@ -198,6 +200,7 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
 .roster-tbl tr.tenure-row.own td.l { box-shadow: inset 3px 0 0 var(--s3); }
 .roster-tbl .tenure-team { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; color: var(--ink); vertical-align: middle; }
 .roster-tbl .tenure-team .ava { flex: none; }
+.roster-tbl .now-on .tenure-team { font-weight: 500; color: var(--muted); gap: 4px; }
 @media (max-width: 860px) { .roster-tbl tr.tenure-row td.l > div { max-width: calc(100vw - 90px); } }
 .roster-tbl .tenure-team.other { cursor: pointer; color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--hair-strong); text-underline-offset: 2px; }
 .roster-tbl .tenure-team.other:hover { color: var(--ink); }

@@ -348,11 +348,9 @@ function pageRosters() {
   const rowDays = (r) => { const d = r.stints.map((st) => stintDays(st, now)); return d.some((x) => x == null) ? null : d.reduce((a, b) => a + b, 0); };
   // League-wide view: one row per player, totals across every franchise.
   const teamChip = (rid) => h("span", { class: "tenure-team" }, avatar(TByR.get(rid)?.avatar, nameOf(rid), 18), nameOf(rid));
-  const nowOnCol = { t: "Now on", left: true, k: (r) => r.rid == null ? null : nameOf(r.rid).toLowerCase(), asc: true, title: "Current team (— = not on a roster)" };
   const tenuresCol = { t: "Tenures", k: (r) => r.stints.length, title: "Separate stays on a roster, across all franchises" };
-  const nowOnCell = (r) => h("td", { class: "la" }, r.rid == null ? h("span", { class: "muted" }, "—") : teamChip(r.rid));
   const tenuresCell = (r) => h("td", { class: "tnum" }, r.stints.length);
-  const withLeague = (list, on) => on ? [list[0], nowOnCol, tenuresCol, ...list.slice(1)] : list;
+  const withLeague = (list, on) => on ? [list[0], tenuresCol, ...list.slice(1)] : list;
   const baseCols = [
     { t: "Player", l: true, k: (r) => P(r.id).n.toLowerCase(), asc: true },
     { t: "Age", k: (r) => P(r.id).a ?? null, asc: true },
@@ -399,7 +397,9 @@ function pageRosters() {
   }
 
   // `open` = true/false draws the expand caret; null = not expandable.
-  function playerCell(r, open, pill = true) {
+  // `leagueWide` adds the player's current team to the sub-line.
+  function playerCell(r, open, leagueWide = false) {
+    const pill = !leagueWide;
     const meta = P(r.id);
     return h("td", { class: "l" }, h("div", { class: "team-cell" },
       open == null ? null : h("span", { class: "caret" }, open ? "▾" : "▸"),
@@ -408,7 +408,8 @@ function pageRosters() {
         h("div", { class: "nm" }, meta.n, pill && r.stints.length > 1 ? h("span", { class: "pill", style: "margin-left:6px", title: `${r.stints.length} separate tenures with this team` }, "×" + r.stints.length) : null),
         h("div", { class: "hd" },
           meta.p ? h("span", { class: "pos-" + meta.p, style: "font-weight:600" }, meta.p) : null,
-          meta.t ? " · " + meta.t : ""))));
+          meta.t ? " · " + meta.t : "",
+          leagueWide && r.rid != null ? h("span", { class: "now-on" }, " · ", teamChip(r.rid)) : null))));
   }
 
   // Postseason: winners-bracket games only (incl. the 3rd-place game).
@@ -437,8 +438,8 @@ function pageRosters() {
     }
     const sorted = sortRows(played.filter(keep), postCols, postSort, (a, b) => b.post.startPts - a.post.startPts);
     const rows = sorted.map((r) => h("tr", { class: r.current ? "current" : "former" },
-      playerCell(r, null, !leagueWide),
-      leagueWide ? nowOnCell(r) : null, leagueWide ? tenuresCell(r) : null,
+      playerCell(r, null, leagueWide),
+      leagueWide ? tenuresCell(r) : null,
       h("td", { class: "la muted" }, r.post.seasons.join(", ")),
       ...usageCells(r.post, true)));
     if (!rows.length) rows.push(h("tr", {}, h("td", { class: "l muted", colspan: postCols.length }, "No players match.")));
@@ -522,8 +523,8 @@ function pageRosters() {
       const open = expanded.has(key);
       const days = rowDays(r);
       rows.push(h("tr", { class: "roster-row" + (open ? " open" : "") + (r.current ? " current" : " former"), onclick: () => { open ? expanded.delete(key) : expanded.add(key); render(); }, title: "Show this player's full league history" },
-        playerCell(r, open, !leagueWide),
-        leagueWide ? nowOnCell(r) : null, leagueWide ? tenuresCell(r) : null,
+        playerCell(r, open, leagueWide),
+        leagueWide ? tenuresCell(r) : null,
         h("td", { class: "tnum muted" }, meta.a == null ? "—" : Math.floor(meta.a)),
         h("td", { class: "la muted" }, stintFrom(r.stints[0].from, true),
           r.stints[0].from?.ts != null ? h("div", { style: "font-size:11.5px;color:var(--faint)" }, fmtDate(r.stints[0].from.ts)) : null),
@@ -535,7 +536,7 @@ function pageRosters() {
     box.append(table(headers, rows, { cls: "standings-tbl roster-tbl" }));
     const seasons = Object.entries(RH.regularSeasonWeeks || {}).map(([sk, n]) => `${sk}: ${n} wk${n === 1 ? "" : "s"}`).join(", ");
     box.append(h("p", { class: "muted", style: "font-size:11.5px;margin-top:8px" },
-      `${leagueWide ? "One row per player, totals across every franchise · Bold names are on a roster now · Click a player to see his full transaction history · " : "Bold names are on the roster now · Click a player to see every team he's been on (×2 = two separate tenures here) · "}Regular-season weeks counted (${seasons}) · GS = games started · Bench Pts = points scored while benched · GP = games played (no byes or inactive weeks) · Start PPG = points per start · PPG = points per game played · Days run from the move date (draft day for draft picks) to the drop, trade, or today.`));
+      `${leagueWide ? "One row per player, totals across every franchise · Bold names are on a roster now (current team shown under the name) · Click a player to see his full transaction history · " : "Bold names are on the roster now · Click a player to see every team he's been on (×2 = two separate tenures here) · "}Regular-season weeks counted (${seasons}) · GS = games started · Bench Pts = points scored while benched · GP = games played (no byes or inactive weeks) · Start PPG = points per start · PPG = points per game played · Days run from the move date (draft day for draft picks) to the drop, trade, or today.`));
     renderPostseason(all, keep, leagueWide);
   }
   render();
@@ -914,7 +915,7 @@ const ROUTES = {
   "/": { fn: pageHome, nav: "Home", g: "◆" },
   "/standings": { fn: pageStandings, nav: "Standings", g: "▤" },
   "/schedule": { fn: pageSchedule, nav: "Schedule", g: "▦" },
-  "/rosters": { fn: pageRosters, nav: "Rosters", g: "☰" },
+  "/rosters": { fn: pageRosters, nav: "Rosters", g: "☰", wide: true },
   "/history": { fn: pageHistory, nav: "History", g: "🏆" },
   "/rules": { fn: pageRules, nav: "Rules", g: "§" },
 };
@@ -938,7 +939,7 @@ function buildNav() {
 function route() {
   const path = location.pathname || "/";
   const r = ROUTES[path] || ROUTES["/"];
-  const main = $("#main"); main.innerHTML = ""; main.append(r.fn()); window.scrollTo(0, 0);
+  const main = $("#main"); main.innerHTML = ""; document.body.classList.toggle("wide", !!r.wide); main.append(r.fn()); window.scrollTo(0, 0);
   document.querySelectorAll("[data-path]").forEach((a) => a.classList.toggle("active", a.getAttribute("data-path") === path));
 }
 function initTheme() {
