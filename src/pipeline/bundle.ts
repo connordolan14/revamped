@@ -9,6 +9,7 @@ import { computeRecaps, WeekRecap } from "../core/recap.js";
 import { loadSeasonRecaps } from "../core/recapStore.js";
 import { MatchRow } from "../core/history.js";
 import { round } from "../core/stats.js";
+import { PlayerHistory, StintEnd } from "../core/rosterHistory.js";
 import { loadPowerSnapshots } from "./powerHistory.js";
 
 export interface BundleTeam {
@@ -46,6 +47,7 @@ export function standingsShape(
   teams: BundleTeam[],
   movesByRoster?: Map<number, number>,
   faabLeftByRoster?: Map<number, number>,
+  maxPFByRoster?: Map<number, number>,
 ) {
   const computed = computeStandings(computeWeeklyResults(toTeamWeeks(rowsByWeek)));
   const byRoster = new Map(teams.map((team) => [team.rosterId, team]));
@@ -87,7 +89,10 @@ export function standingsShape(
       h2hLosses: standing.h2hLosses,
       pf: round(standing.pointsFor, 2),
       pa: round(standing.pointsAgainst, 2),
-      maxPF: round(standing.high, 2),
+      // Max PF = Sleeper's potential points (optimal lineup every week), not
+      // the single-week high — that's `highPF`.
+      maxPF: maxPFByRoster?.has(standing.rosterId) ? round(maxPFByRoster.get(standing.rosterId)!, 2) : null,
+      highPF: round(standing.high, 2),
       minPF: round(standing.low, 2),
       avgPF: round(standing.avgPF, 2),
       stdev: round(standing.stdev, 2),
@@ -153,13 +158,14 @@ export interface SeasonBundleInput {
   rosterScores: Map<number, number>;
   movesByRoster?: Map<number, number>;
   faabLeftByRoster?: Map<number, number>;
+  maxPFByRoster?: Map<number, number>;
   root?: string;
 }
 
 export function buildSeasonBundle(input: SeasonBundleInput) {
   return {
     complete: input.complete,
-    standings: standingsShape(input.rowsByWeek, input.teams, input.movesByRoster, input.faabLeftByRoster),
+    standings: standingsShape(input.rowsByWeek, input.teams, input.movesByRoster, input.faabLeftByRoster, input.maxPFByRoster),
     power: powerShape(input.rowsByWeek, input.teams, input.rosterScores),
     weeklyScores: weeklyMatrix(input.rowsByWeek, input.teams),
     powerHistory: loadPowerSnapshots(input.season, input.root),
@@ -201,6 +207,7 @@ export interface BundleDocumentInput {
   schedule: unknown;
   rulebook: unknown;
   meta: unknown;
+  rosterHistory?: unknown;
 }
 
 /** The sole definition of the JSON object consumed by web/app.js. */
@@ -217,5 +224,38 @@ export function buildBundleDocument(input: BundleDocumentInput) {
     schedule: input.schedule,
     rulebook: input.rulebook,
     meta: input.meta,
+    rosterHistory: input.rosterHistory ?? null,
   };
+}
+
+/** Browser shape for the all-time rosters page: franchise → player careers. */
+export function rosterHistoryShape(history: Map<number, PlayerHistory[]>, regularSeasonWeeks: Record<string, number>) {
+  const endShape = (e: StintEnd | null) => e && {
+    ts: e.ts,
+    season: e.season,
+    how: e.how,
+    ...(e.faab != null ? { faab: e.faab } : {}),
+    ...(e.otherRosterId != null ? { team: e.otherRosterId } : {}),
+    ...(e.draftLabel ? { draft: e.draftLabel } : {}),
+  };
+  const byRoster: Record<number, unknown[]> = {};
+  for (const [rosterId, rows] of history) {
+    byRoster[rosterId] = rows.map((row) => ({
+      id: row.playerId,
+      weeks: row.weeks,
+      starts: row.starts,
+      pts: round(row.points, 2),
+      startPts: round(row.starterPoints, 2),
+      current: row.current,
+      stints: row.stints.map((stint) => ({
+        from: endShape(stint.from),
+        to: endShape(stint.to),
+        weeks: stint.weeks,
+        starts: stint.starts,
+        pts: round(stint.points, 2),
+        startPts: round(stint.starterPoints, 2),
+      })),
+    }));
+  }
+  return { regularSeasonWeeks, byRoster };
 }

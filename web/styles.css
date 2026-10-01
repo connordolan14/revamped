@@ -6,18 +6,18 @@
    ============================================================ */
 :root {
   color-scheme: dark;
-  /* surfaces — small, even luminance steps, faint cool cast */
-  --plane: #0a0a0c;
-  --surface: #121317;
-  --surface-2: #181a1f;
-  --surface-3: #21232a;
-  --surface-hi: #2a2c34;
+  /* surfaces — small, even luminance steps, soft navy cast */
+  --plane: #0c1018;
+  --surface: #141a25;
+  --surface-2: #1a212d;
+  --surface-3: #232b39;
+  --surface-hi: #2c3544;
   /* ink */
-  --ink: #ecedf1;
-  --ink-2: #b4b6c1;
-  --muted: #82848f;
-  --faint: #5a5c66;
-  --grid: #24262d;
+  --ink: #eceef3;
+  --ink-2: #b3b9c6;
+  --muted: #828a9b;
+  --faint: #5a6273;
+  --grid: #242c39;
   --hair: rgba(255,255,255,0.065);
   --hair-strong: rgba(255,255,255,0.12);
   /* accent — one restrained indigo, used sparingly */
@@ -168,7 +168,12 @@ thead th {
   font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
   text-align: right; padding: 10px 12px; border-bottom: 1px solid var(--hair); white-space: nowrap;
 }
-thead th.l, tbody td.l { text-align: left; }
+thead th.l, tbody td.l, thead th.la, tbody td.la { text-align: left; }
+thead th.sortable { cursor: pointer; user-select: none; }
+thead th.sortable:hover { color: var(--ink-2); }
+thead th.sorted-asc, thead th.sorted-desc { color: var(--ink); }
+thead th.sorted-asc::after { content: " ▲"; font-size: 8px; }
+thead th.sorted-desc::after { content: " ▼"; font-size: 8px; }
 tbody td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--hair); white-space: nowrap; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 tbody td:first-child, tbody td.l { color: var(--ink); }
 tbody tr:last-child td { border-bottom: 0; }
@@ -181,6 +186,22 @@ td.rank { color: var(--muted); font-weight: 600; width: 30px; text-align: center
   .standings-tbl tbody td.l { position: sticky; left: 0; z-index: 2; background: var(--surface); box-shadow: 2px 0 6px -2px rgba(0,0,0,.35); }
   .standings-tbl tbody tr:hover td.l { background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
 }
+/* all-time rosters: expandable player rows */
+.roster-tbl tr.roster-row { cursor: pointer; }
+.roster-tbl .caret { color: var(--muted); font-size: 13px; width: 10px; flex: none; }
+.roster-tbl .rec-headshot { position: static; flex: none; border-radius: 50%; }
+.roster-tbl .on-roster { color: var(--s3); }
+.roster-tbl tr.current .nm { font-weight: 650; }
+.roster-tbl tr.former .nm { font-weight: 450; color: var(--ink-2); }
+.roster-tbl tr.tenure-row td { background: var(--surface-2); font-size: 12.5px; padding-top: 7px; padding-bottom: 7px; color: var(--muted); }
+.roster-tbl tr.tenure-row.own td { color: var(--ink-2); }
+.roster-tbl tr.tenure-row td.l { padding-left: 34px; white-space: normal; min-width: 280px; box-shadow: inset 3px 0 0 transparent; }
+.roster-tbl tr.tenure-row.own td.l { box-shadow: inset 3px 0 0 var(--s3); }
+.roster-tbl .tenure-team { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; color: var(--ink); vertical-align: middle; }
+.roster-tbl .tenure-team .ava { flex: none; }
+@media (max-width: 860px) { .roster-tbl tr.tenure-row td.l > div { max-width: calc(100vw - 90px); } }
+.roster-tbl .tenure-team.other { cursor: pointer; color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--hair-strong); text-underline-offset: 2px; }
+.roster-tbl .tenure-team.other:hover { color: var(--ink); }
 .team-cell { display: flex; align-items: center; gap: 10px; text-align: left; }
 .team-cell .nm { font-weight: 600; color: var(--ink); }
 .team-cell .hd { color: var(--muted); font-size: 11.5px; }

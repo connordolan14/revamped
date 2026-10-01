@@ -11,7 +11,8 @@ import { computeHistory, computeRecords, SeasonInput, MatchRow } from "../core/h
 import { round } from "../core/stats.js";
 import { readFileSync } from "node:fs";
 import { marked } from "marked";
-import { buildBundleDocument, buildSeasonBundle, BundleTeam, powerShape } from "./bundle.js";
+import { buildBundleDocument, buildSeasonBundle, BundleTeam, powerShape, rosterHistoryShape } from "./bundle.js";
+import { computeRosterHistory, eventsFromDraft, eventsFromTransactions, RosterEvent, RosterWeek } from "../core/rosterHistory.js";
 import { loadPowerSnapshots, PowerSnapshot, savePowerSnapshot } from "./powerHistory.js";
 
 const LEAGUE_ID = process.env.LEAGUE_ID || "1312251123628789760";
@@ -38,11 +39,16 @@ interface SeasonData {
   rowsByWeek: Record<string, MatchRow[]>;
   teams: TeamInfo[];
   playerBest: Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>;
+  maxPFByRoster?: Map<number, number>;
+  movesByRoster?: Map<number, number>;
+  /** Weekly roster snapshots for scored regular-season weeks. */
+  rosterWeeks: RosterWeek[];
 }
 
 async function fetchSeason(leagueId: string, season: string, complete: boolean, regWeeks: number, teams: TeamInfo[], players: Record<string, any>, liveWeek = Number.POSITIVE_INFINITY): Promise<SeasonData> {
   const rowsByWeek: Record<string, MatchRow[]> = {};
   const playerBest = new Map<number, { name: string; playerId: string | null; points: number; season: string; week: number }>();
+  const rosterWeeks: RosterWeek[] = [];
   for (let w = 1; w <= regWeeks; w++) {
     let ms; try { ms = await sleeper.matchups(leagueId, w); } catch { continue; }
     if (!ms || !ms.length) continue;
@@ -51,6 +57,14 @@ async function fetchSeason(leagueId: string, season: string, complete: boolean, 
     // has moved past it — a score can look "done" while MNF is still playing.
     if (w >= liveWeek) break;
     rowsByWeek[String(w)] = ms.map((m) => ({ r: m.roster_id, m: m.matchup_id ?? 0, p: m.points ?? 0 }));
+    for (const m of ms) {
+      rosterWeeks.push({
+        season, week: w, rosterId: m.roster_id,
+        players: m.players ?? [],
+        starters: (m.starters ?? []).filter((pid) => pid && pid !== "0"), // "0" = empty slot
+        points: m.players_points ?? {},
+      });
+    }
     for (const m of ms) {
       const pp = m.players_points || {};
       let bestId: string | null = null, bestPts = -Infinity;
@@ -64,7 +78,7 @@ async function fetchSeason(leagueId: string, season: string, complete: boolean, 
       }
     }
   }
-  return { season, leagueId, complete, rowsByWeek, teams, playerBest };
+  return { season, leagueId, complete, rowsByWeek, teams, playerBest, rosterWeeks };
 }
 
 async function fetchJson(url: string): Promise<any> { try { return await (await fetch(url)).json(); } catch { return null; } }
@@ -136,6 +150,10 @@ async function main() {
 
   // fetch every season's data
   const seasonDatas: SeasonData[] = [];
+  const rosterEvents: RosterEvent[] = [];
+  const regularSeasonWeeks: Record<string, number> = {};
+  let firstDraftTs = Number.POSITIVE_INFINITY;
+  const draftEvents: { ts: number; season: string; picks: Awaited<ReturnType<typeof sleeper.draftPicks>>; teams: number }[] = [];
   for (const lg of chain) {
     const users = await sleeper.users(lg.league_id);
     const rs = await sleeper.rosters(lg.league_id);
@@ -145,6 +163,31 @@ async function main() {
     const sd = await fetchSeason(lg.league_id, lg.season, lg.status === "complete", regWeeks, teams, players, liveWeek);
     // Always keep the current league (even preseason with no games) so the site
     // shows a fresh 0–0 season; older seasons only count if they have games.
+    // Max PF (potential points) comes straight from Sleeper's roster settings.
+    sd.maxPFByRoster = new Map(
+      rs.filter((r) => r.settings.ppts != null)
+        .map((r) => [r.roster_id, (r.settings.ppts ?? 0) + (r.settings.ppts_decimal ?? 0) / 100]),
+    );
+    // Past seasons: count moves from that season's own league, the same way the
+    // current season is counted below (completed transactions per roster).
+    if (lg.league_id !== LEAGUE_ID) {
+      sd.movesByRoster = new Map();
+      for (let w = 1; w <= 18; w++) {
+        const txs = await sleeper.transactions(lg.league_id, w).catch(() => []);
+        rosterEvents.push(...eventsFromTransactions(lg.season, txs || []));
+        for (const tx of txs || []) {
+          if (tx.status !== "complete") continue;
+          for (const rid of tx.roster_ids || []) sd.movesByRoster.set(rid, (sd.movesByRoster.get(rid) ?? 0) + 1);
+        }
+      }
+    }
+    regularSeasonWeeks[lg.season] = Object.keys(sd.rowsByWeek).length;
+    for (const draft of await sleeper.drafts(lg.league_id).catch(() => [])) {
+      if (draft.status !== "complete" || draft.start_time == null) continue;
+      const picks = await sleeper.draftPicks(draft.draft_id);
+      firstDraftTs = Math.min(firstDraftTs, draft.start_time);
+      draftEvents.push({ ts: draft.start_time, season: lg.season, picks, teams: lg.total_rosters });
+    }
     if (lg.league_id === LEAGUE_ID || Object.keys(sd.rowsByWeek).length) seasonDatas.push(sd);
   }
 
@@ -172,6 +215,7 @@ async function main() {
   for (let w = 1; w <= upto + 1; w++) {
     try {
       const txs = await sleeper.transactions(LEAGUE_ID, w);
+      rosterEvents.push(...eventsFromTransactions(current.season, txs || []));
       for (const tx of txs || []) {
         if (tx.status !== "complete") continue;
         for (const rid of tx.roster_ids || []) movesByRoster.set(rid, (movesByRoster.get(rid) ?? 0) + 1);
@@ -198,6 +242,19 @@ async function main() {
     rosters.map((r) => [r.roster_id, waiverBudget - (faabSpentByRoster.get(r.roster_id) ?? 0)]),
   );
 
+  // All-time rosters: every player each franchise has ever had. Usage comes
+  // from the weekly snapshots, tenure from draft picks + transactions.
+  for (const d of draftEvents) {
+    const name = d.ts === firstDraftTs ? "Startup draft" : `${d.season} rookie draft`;
+    rosterEvents.push(...eventsFromDraft(d.season, d.ts, name, d.picks, d.teams));
+  }
+  const rosterHistory = computeRosterHistory(
+    seasonDatas.flatMap((sd) => sd.rosterWeeks),
+    rosterEvents,
+    new Map(rosters.map((r) => [r.roster_id, r.players ?? []])),
+  );
+  for (const rows of rosterHistory.values()) for (const row of rows) addPlayer(row.playerId);
+
   // seasons output (scored seasons only)
   const seasons: Record<string, any> = {};
   const seasonInputs: SeasonInput[] = [];
@@ -209,7 +266,7 @@ async function main() {
   const leagueBySeasonId = new Map(chain.map((l) => [l.season, l]));
   for (const sd of seasonDatas) {
     const isCurrent = sd.leagueId === LEAGUE_ID;
-    const moves = isCurrent ? movesByRoster : undefined;
+    const moves = isCurrent ? movesByRoster : sd.movesByRoster;
     let seasonBundle = buildSeasonBundle({
       season: sd.season,
       complete: sd.complete,
@@ -218,6 +275,7 @@ async function main() {
       rosterScores: isCurrent ? rosterScores : new Map(),
       movesByRoster: moves,
       faabLeftByRoster: isCurrent ? faabLeftByRoster : undefined,
+      maxPFByRoster: sd.maxPFByRoster,
     });
     // A score can look complete before Monday Night Football ends. Archive only
     // weeks Sleeper has moved past, then calculate that exact week's view even
@@ -361,6 +419,7 @@ async function main() {
       note: currentScored ? "" : "Preseason — 2026 standings/power/transactions light up at Week 1.",
       rosterStrengthSource,
     },
+    rosterHistory: rosterHistoryShape(rosterHistory, regularSeasonWeeks),
   });
 
   mkdirSync(join(process.cwd(), "web/data"), { recursive: true });

@@ -50,7 +50,7 @@ try {
     body: "[]",
   }));
 
-  for (const route of ["/", "/standings", "/schedule", "/history", "/rules"]) {
+  for (const route of ["/", "/standings", "/schedule", "/rosters", "/history", "/rules"]) {
     const response = await page.goto(base + route, { waitUntil: "networkidle" });
     if (!response?.ok()) throw new Error(`${route} returned ${response?.status() ?? "no response"}`);
     await page.locator("#main").waitFor({ state: "visible" });
@@ -59,9 +59,9 @@ try {
   }
 
   const navItems = await page.locator("#nav a").count();
-  if (navItems !== 5) throw new Error(`Expected 5 navigation items, found ${navItems}`);
+  if (navItems !== 6) throw new Error(`Expected 6 navigation items, found ${navItems}`);
   if (errors.length) throw new Error(`Browser errors: ${errors.join(" | ")}`);
-  console.log("Smoke test passed: 5 routes rendered with no browser errors.");
+  console.log("Smoke test passed: 6 routes rendered with no browser errors.");
 } finally {
   await browser?.close();
   await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));

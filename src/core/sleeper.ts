@@ -35,6 +35,7 @@ export interface SleeperRoster {
     wins: number; losses: number; ties: number;
     fpts: number; fpts_decimal?: number;
     fpts_against?: number; fpts_against_decimal?: number;
+    ppts?: number; ppts_decimal?: number;
   } & Record<string, number>;
 }
 
@@ -53,12 +54,31 @@ export interface SleeperTransaction {
   type: string; // "trade" | "waiver" | "free_agent" | "commissioner"
   status: string;
   created: number;
+  leg: number; // week the transaction was processed in
   roster_ids: number[];
   adds: Record<string, number> | null; // player_id -> roster_id
   drops: Record<string, number> | null;
   draft_picks: any[];
   waiver_budget: { sender: number; receiver: number; amount: number }[];
   settings?: { waiver_bid?: number } | null;
+}
+
+export interface SleeperDraft {
+  draft_id: string;
+  season: string;
+  status: string;
+  type: string;
+  start_time: number | null;
+  settings: Record<string, number>;
+}
+
+export interface SleeperDraftPick {
+  player_id: string;
+  picked_by: string;
+  roster_id: number;
+  round: number;
+  draft_slot: number;
+  pick_no: number;
 }
 
 export interface NflState {
@@ -81,6 +101,8 @@ export const sleeper = {
   rosters: (id: string) => get<SleeperRoster[]>(`/league/${id}/rosters`),
   matchups: (id: string, week: number) => get<SleeperMatchup[]>(`/league/${id}/matchups/${week}`),
   transactions: (id: string, week: number) => get<SleeperTransaction[]>(`/league/${id}/transactions/${week}`),
+  drafts: (id: string) => get<SleeperDraft[]>(`/league/${id}/drafts`),
+  draftPicks: (draftId: string) => get<SleeperDraftPick[]>(`/draft/${draftId}/picks`),
   tradedPicks: (id: string) => get<any[]>(`/league/${id}/traded_picks`),
   state: () => get<NflState>(`/state/nfl`),
   playersNfl: () => get<Record<string, any>>(`/players/nfl`),
