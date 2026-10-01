@@ -42,6 +42,8 @@ export interface RosterEvent {
   otherRosterId?: number | null;
   /** e.g. "Startup draft · 1.01" */
   draftLabel?: string;
+  /** A team-to-team move the commissioner made; treated as a trade. */
+  viaCommissioner?: boolean;
 }
 
 export interface StintEnd {
@@ -51,6 +53,7 @@ export interface StintEnd {
   faab?: number | null;
   otherRosterId?: number | null;
   draftLabel?: string;
+  viaCommissioner?: boolean;
 }
 
 export interface Usage {
@@ -94,6 +97,7 @@ const end = (e: RosterEvent): StintEnd => ({
   ...(e.faab != null ? { faab: e.faab } : {}),
   ...(e.otherRosterId != null ? { otherRosterId: e.otherRosterId } : {}),
   ...(e.draftLabel ? { draftLabel: e.draftLabel } : {}),
+  ...(e.viaCommissioner ? { viaCommissioner: true } : {}),
 });
 const unknownEnd = (): StintEnd => ({ ts: null, season: null, how: "unknown" });
 
@@ -223,26 +227,34 @@ const HOW: Record<string, MoveHow> = {
   commissioner: "commissioner",
 };
 
-/** Completed Sleeper transactions → add/drop events (one per player per side). */
+/** Completed Sleeper transactions → add/drop events (one per player per side).
+ *  A commissioner move that sends a player from one team to another is a
+ *  trade in practice (e.g. a trade the commissioner re-executed), so it's
+ *  recorded as one, flagged `viaCommissioner`. */
 export function eventsFromTransactions(season: string, txs: SleeperTransaction[]): RosterEvent[] {
   const out: RosterEvent[] = [];
   for (const tx of txs) {
     if (tx.status !== "complete") continue;
-    const how = HOW[tx.type] ?? "unknown";
+    const txHow = HOW[tx.type] ?? "unknown";
     const leg = tx.leg ?? 0;
     const adds = tx.adds ?? {};
     const drops = tx.drops ?? {};
+    const moved = (playerId: string) => adds[playerId] != null && drops[playerId] != null && adds[playerId] !== drops[playerId];
+    const howFor = (playerId: string): Pick<RosterEvent, "how" | "viaCommissioner"> =>
+      txHow === "commissioner" && moved(playerId) ? { how: "trade", viaCommissioner: true } : { how: txHow };
     for (const [playerId, rosterId] of Object.entries(drops)) {
+      const h = howFor(playerId);
       out.push({
-        season, leg, ts: tx.created, rosterId, playerId, kind: "drop", how,
-        otherRosterId: how === "trade" ? (adds[playerId] ?? null) : null,
+        season, leg, ts: tx.created, rosterId, playerId, kind: "drop", ...h,
+        otherRosterId: h.how === "trade" ? (adds[playerId] ?? null) : null,
       });
     }
     for (const [playerId, rosterId] of Object.entries(adds)) {
+      const h = howFor(playerId);
       out.push({
-        season, leg, ts: tx.created, rosterId, playerId, kind: "add", how,
-        faab: how === "waiver" ? (tx.settings?.waiver_bid ?? null) : null,
-        otherRosterId: how === "trade" ? (drops[playerId] ?? null) : null,
+        season, leg, ts: tx.created, rosterId, playerId, kind: "add", ...h,
+        faab: h.how === "waiver" ? (tx.settings?.waiver_bid ?? null) : null,
+        otherRosterId: h.how === "trade" ? (drops[playerId] ?? null) : null,
       });
     }
   }

@@ -131,6 +131,16 @@ describe("Sleeper event mapping", () => {
     expect(events.some((e) => e.playerId === "e")).toBe(false);
   });
 
+  it("treats a commissioner's team-to-team move as a trade, but not a free-agent add", () => {
+    const events = eventsFromTransactions("2025", [
+      tx({ type: "commissioner", adds: { a: 2, f: 3 }, drops: { a: 1 } }),
+    ]);
+    expect(events.find((e) => e.playerId === "a" && e.kind === "add")).toMatchObject({ how: "trade", viaCommissioner: true, rosterId: 2, otherRosterId: 1 });
+    expect(events.find((e) => e.playerId === "a" && e.kind === "drop")).toMatchObject({ how: "trade", viaCommissioner: true, rosterId: 1, otherRosterId: 2 });
+    expect(events.find((e) => e.playerId === "f")).toMatchObject({ how: "commissioner", otherRosterId: null });
+    expect(events.find((e) => e.playerId === "f")?.viaCommissioner).toBeUndefined();
+  });
+
   it("labels draft picks with round and pick-in-round", () => {
     const [e] = eventsFromDraft("2025", 100, "Startup draft", [
       { player_id: "p", picked_by: "u", roster_id: 4, round: 2, draft_slot: 9, pick_no: 16 },

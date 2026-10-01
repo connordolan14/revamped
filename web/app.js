@@ -279,12 +279,13 @@ function stintFrom(f, short = false) {
   if (f.how === "draft") return short ? (f.draft || "Draft").replace(" draft · ", " ") : (f.draft || "Draft");
   if (f.how === "waiver") return (short ? "Waiver" : "Waiver claim") + (f.faab != null ? ` ($${f.faab})` : "");
   if (f.how === "free_agent") return short ? "Free agent" : "Free-agent pickup";
-  if (f.how === "trade") return short || f.team == null ? "Trade" : `Trade from ${nameOf(f.team)}`;
+  const via = f.commish ? " (commissioner)" : "";
+  if (f.how === "trade") return short || f.team == null ? "Trade" + (short ? "" : via) : `Trade from ${nameOf(f.team)}${via}`;
   return short ? "Commish" : "Commissioner move";
 }
 function stintTo(t) {
   if (!t) return "Still on roster";
-  if (t.how === "trade") return t.team != null ? `Traded to ${nameOf(t.team)}` : "Traded";
+  if (t.how === "trade") return (t.team != null ? `Traded to ${nameOf(t.team)}` : "Traded") + (t.commish ? " (commissioner)" : "");
   if (t.how === "waiver" || t.how === "free_agent") return "Dropped";
   if (t.how === "commissioner") return "Commissioner move";
   return "Left roster";

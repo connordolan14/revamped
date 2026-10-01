@@ -237,6 +237,7 @@ export function rosterHistoryShape(history: Map<number, PlayerHistory[]>, regula
     ...(e.faab != null ? { faab: e.faab } : {}),
     ...(e.otherRosterId != null ? { team: e.otherRosterId } : {}),
     ...(e.draftLabel ? { draft: e.draftLabel } : {}),
+    ...(e.viaCommissioner ? { commish: true } : {}),
   };
   const usageShape = (u: Usage) => ({
     weeks: u.weeks,
