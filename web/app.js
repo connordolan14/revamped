@@ -309,7 +309,7 @@ function pageRosters() {
     h("option", { value: ALL }, "All franchises"),
     teamsSorted.map((t) => h("option", { value: t.rosterId }, t.teamName)));
   teamSel.value = String(teamsSorted[0]?.rosterId ?? ALL);
-  const posSel = h("select", { class: "team-select", style: "max-width:110px" }, ["All", "QB", "RB", "WR", "TE"].map((p) => h("option", { value: p }, p)));
+  const posSel = h("select", { class: "team-select", style: "max-width:170px" }, ["All", "QB", "RB", "WR", "TE", "FLEX"].map((p) => h("option", { value: p }, p === "FLEX" ? "FLEX (RB/WR/TE)" : p)));
   let show = "all", sort = { col: "Pts", dir: "desc" };
   const expanded = new Set();
   const seg = h("div", { class: "seg" });
@@ -327,6 +327,7 @@ function pageRosters() {
   wrap.append(box);
 
   const P = (id) => B.players?.[id] || { n: id, p: "", t: null };
+  const FLEX = new Set(["RB", "WR", "TE"]);
   // Arrival order. Every pick in a draft shares the draft's timestamp, so
   // break that tie by pick (round.pick from the label) — a few ms per pick
   // never crosses into another event, which are days apart.
@@ -488,7 +489,7 @@ function pageRosters() {
     const pos = posSel.value;
     const keep = (r) =>
       (show === "all" || (show === "current") === r.current) &&
-      (pos === "All" || P(r.id).p === pos);
+      (pos === "All" || (pos === "FLEX" ? FLEX.has(P(r.id).p) : P(r.id).p === pos));
     const list = all.filter(keep);
 
     const multi = perTeam.filter((r) => r.stints.length > 1).length;
