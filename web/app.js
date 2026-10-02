@@ -296,7 +296,7 @@ function stintDays(st, now) {
 }
 function pageRosters() {
   const wrap = h("div", {});
-  wrap.append(pageHead("All-Time Rosters", "Every player each franchise has rostered — regular season only."));
+  wrap.append(pageHead("All-Time Rosters"));
   const RH = B.rosterHistory;
   if (!RH || !Object.keys(RH.byRoster || {}).length) {
     wrap.append(h("div", { class: "callout" }, "Roster history builds from Sleeper on the next data refresh."));
