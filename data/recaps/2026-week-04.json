@@ -1,0 +1,82 @@
+{
+  "season": 2026,
+  "week": 4,
+  "generated_at": "2026-10-06T04:32:56.965Z",
+  "source_data_hash": "e978a75f7deb4925",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 4 Recap",
+    "body": [
+      "Week 4 was a pretty good argument against the idea that fantasy football rewards the best team. The New York Mudbones had the third-highest score in the league and lost. Injured Reserve was one of three teams that failed to break 90 and won. One of those managers has every reason to complain about the schedule this week, while the other should probably avoid bringing it up.",
+      "Team chrisrenna17 deserves the credit for the Mudbones’ first loss because it wasn’t exactly a collapse. The Mudbones still scored 152.39, which would have comfortably beaten almost everyone else. Team chrisrenna17 just happened to have Tetairoa McMillan score 38.2 while the rest of the lineup did enough to get to 162.95. That puts Team chrisrenna17 on top of the standings after four weeks, although I imagine the Mudbones will be filing an appeal based on the fact that they would still be 42-2 if we made everyone play everybody.",
+      "The New England Keys were actually the highest-scoring team this week with 163.40, which was a fairly impressive group effort considering nine starters scored in double figures and none scored 30. Their opponent was The Permanent Rebuild, which scored 64.30. I have been asked to stop making the same joke about this team every week and, luckily, a 99-point loss has removed most of the need for additional commentary.",
+      "Green Egbukas & Ham made it two straight wins by beating Team BrendanBall03 145.02 to 112.65. This might have been the least stressful lineup in the league all weekend. Eight starters reached double figures, nobody scored more than 25.5, and there was never a point where the entire outcome depended on one guy catching a screen pass on Monday night. Fantasy analysts would probably call this “depth.” I would call it a nice way to spend a Sunday.",
+      "Hanging With Hernandez beat Team jtyurconic2 behind 30.4 from Kenneth Walker III and 28.8 from Javonte Williams. Five rushing touchdowns between the two of them should normally create a little more separation than this. Team jtyurconic2 took a pounding from Hanging With Hernandez but somehow stayed within 5.83.",
+      "Mark 2.0 won the closest matchup of the week behind 32.8 from CeeDee Lamb and 31.7 from Kyren Williams. Woodys Toy Box got worked from behind late and couldn’t hold on, losing 131.73 to 128.02.",
+      "Then there was Injured Reserve beating It Hurts When I Pitts 86.47 to 67.85, a game that I was prepared to criticize until I saw what the Minnesota Vikings have been doing. Minnesota is 4-0 despite already winning two games this season without scoring a touchdown. Only two other teams in NFL history have ever started 4-0 while failing to score a touchdown in two of those games, and both were the Chicago Cardinals in the early 1920s, when a significant portion of the league probably still considered the forward pass a fad and beer was still illegal.",
+      "So I’m temporarily suspending the idea that a win has to look good.",
+      "Injured Reserve started ten players, got 86 points and left with the result it needed. The Vikings have apparently established legal precedent.",
+      "That brings us through the first month of the season, which is usually where the preseason version of everyone’s roster finally starts getting replaced by the one that actually exists. Team chrisrenna17 is sitting at the top, the Mudbones finally lost a game, Green Egbukas & Ham has won two straight, and several teams that looked either great or completely hopeless two weeks ago have already changed the argument.",
+      "September is mostly for explaining why you were right about your team. October is when other people start getting evidence."
+    ],
+    "for_the_record": [
+      {
+        "text": "Tetairoa McMillan had 14 catches for 192 yards and two touchdowns Sunday. In the first three games of the season combined, he had 12 catches for 193 yards and zero touchdowns. He essentially recreated his entire September in one night and missed the yardage total by one.",
+        "fact_ids": [
+          "mcmillan-14-192-week4"
+        ]
+      },
+      {
+        "text": "CeeDee Lamb caught 17 passes for 189 yards and the game-winning touchdown with 40 seconds left. He became only the fourth player in NFL history with at least 17 catches, 180 receiving yards and a touchdown in the same game, joining Tom Fears, Terrell Owens and Brandon Marshall.",
+        "fact_ids": [
+          "lamb-17-catches-week4"
+        ]
+      },
+      {
+        "text": "Kenneth Walker III has now rushed for at least 170 yards twice in Kansas City’s first four games. The only other players in NFL history to do that twice within a team’s first four games are Jim Brown and O.J. Simpson.",
+        "fact_ids": [
+          "walker-170-twice-week4"
+        ]
+      },
+      {
+        "text": "Kyle Monangai carried the ball 30 times for 146 yards and two touchdowns against the Jets. Chicago finished the game with 34 first downs. The Jets ran 32 offensive plays. The Bears literally earned more first downs than New York had opportunities to snap the football.",
+        "fact_ids": [
+          "monangai-bears-34-first-downs-week4"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w04-high-scoring-loss-ryanog-top-six",
+      "2026-w04-matchup-chrisrenna17-ryanog-margin",
+      "2026-w04-win-streak-chrisrenna17-w4",
+      "2026-w04-high-connordolan14-score",
+      "2026-w04-blowout-connordolan14-dackerly36-margin",
+      "2026-w04-low-dackerly36-score",
+      "2026-w04-matchup-greenie0513-brendanball03-margin",
+      "2026-w04-close-thebearjew44-jtyurconic2-margin",
+      "2026-w04-close-jbitterman99-dball11-margin",
+      "2026-w04-matchup-mhaanders-hank1517-margin",
+      "2026-w04-low-scoring-win-mhaanders-missed-bonus"
+    ],
+    "external_context_used": [
+      "vikings-4-0-no-td-week4",
+      "walker-javonte-five-rush-tds-week4",
+      "mcmillan-14-192-week4",
+      "lamb-17-catches-week4",
+      "walker-170-twice-week4",
+      "monangai-bears-34-first-downs-week4"
+    ],
+    "team_bits_used": [],
+    "opening_mechanism": "schedule irony",
+    "ending_mechanism": "seasonal maxim"
+  }
+}
