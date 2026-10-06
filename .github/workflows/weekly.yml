@@ -1,16 +1,28 @@
 name: League data refresh
 
-# Runs daily at 12:00 UTC (~7–8 AM ET) so roster moves and the transactions
-# feed stay current. The Tuesday run additionally renders and emails the weekly
-# write-up. Also runnable on demand from the Actions tab.
+# Runs daily so roster moves and the transactions feed stay current. Tuesday
+# runs additionally render and email the weekly write-up. Also runnable on
+# demand from the Actions tab.
+#
+# GitHub starts scheduled runs late under load (3.5–8.5 hours late through
+# Sept/Oct 2026) and the delay can't be configured away. So Tuesday has several
+# staggered attempts instead of one: whichever starts first after 08:30 UTC
+# (4:30 AM EDT / 3:30 AM EST, once Sleeper's overnight stat updates are in)
+# sends the email, one that starts a bit early waits for that time, and
+# data/email-sent.json stops the later attempts from sending it again. With the
+# delays seen so far, one attempt lands by ~10:00 UTC (6 AM EDT) at worst.
 on:
   schedule:
-    - cron: "0 12 * * *"   # every day — refresh data + redeploy
-    - cron: "0 10 * * 2"   # Tuesday — 6 AM EDT / 5 AM EST; also send the weekly write-up
+    - cron: "23 7 * * *"   # every day — refresh data + redeploy
+    - cron: "17 1 * * 2"   # Tuesday email attempts (see above)
+    - cron: "17 3 * * 2"
+    - cron: "17 5 * * 2"
+    - cron: "17 7 * * 2"
+    - cron: "17 9 * * 2"
   workflow_dispatch:
     inputs:
       send_email:
-        description: "Also render + email the weekly write-up"
+        description: "Also render + email the weekly write-up (sends even if this week's already went out)"
         type: boolean
         default: false
       force_deploy:
@@ -28,11 +40,57 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 300
     env:
       LEAGUE_ID: ${{ vars.LEAGUE_ID || '1312251123628789760' }}
-      SEND_EMAIL: ${{ github.event.schedule == '0 10 * * 2' || (github.event_name == 'workflow_dispatch' && inputs.send_email) }}
     steps:
+      # Runs wait on each other (concurrency group), so check out the branch
+      # head at start rather than the possibly hours-old commit the scheduled
+      # event was created against.
       - uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Decide whether this run sends the weekly email
+        id: gate
+        env:
+          EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          FORCE_EMAIL: ${{ inputs.send_email }}
+        run: |
+          send=false
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            [ "$FORCE_EMAIL" = "true" ] && send=true
+          elif [[ "$SCHEDULE" == *" * * 2" ]]; then
+            # Not before 08:30 UTC on Tuesday. Starting up to 4h early: wait.
+            if [ "$(date -u +%u)" = "2" ]; then
+              target=$(date -u -d "today 08:30" +%s)
+              wait=$(( target - $(date -u +%s) ))
+              if [ "$wait" -gt 14400 ]; then
+                echo "Too early for the email (${wait}s to 08:30 UTC); a later attempt will send it."
+              elif [ "$wait" -gt 0 ]; then
+                echo "Waiting ${wait}s until 08:30 UTC before pulling data."
+                sleep "$wait"
+                git pull --ff-only   # pick up anything pushed (e.g. the recap) while waiting
+                send=true
+              else
+                send=true
+              fi
+            else
+              send=true   # delayed past Tuesday entirely: still send if not sent
+            fi
+          fi
+
+          state=$(curl -fsS https://api.sleeper.app/v1/state/nfl)
+          season=$(jq -r .season <<<"$state")
+          week=$(( $(jq -r .week <<<"$state") - 1 ))
+          if [ "$send" = "true" ] && [ "$EVENT" != "workflow_dispatch" ] && [ -f data/email-sent.json ] \
+             && [ "$(jq -r '"\(.season)-\(.week)"' data/email-sent.json)" = "$season-$week" ]; then
+            echo "Week $week email already sent; skipping."
+            send=false
+          fi
+          echo "Send email: $send (season $season, week $week)"
+          { echo "send=$send"; echo "season=$season"; echo "week=$week"; } >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v5
         with:
@@ -70,6 +128,7 @@ jobs:
             echo "No data changes."
           else
             git commit -m "chore: data refresh"
+            git pull --rebase
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
@@ -86,15 +145,28 @@ jobs:
           curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" > /dev/null && echo "Vercel deploy hook fired."
 
       - name: Render standings & power images
-        if: env.SEND_EMAIL == 'true'
+        if: steps.gate.outputs.send == 'true'
         run: |
           npx playwright install --with-deps chromium
           npm run render:email
 
       - name: Email the weekly write-up (skips itself if secrets unset)
-        if: env.SEND_EMAIL == 'true'
+        if: steps.gate.outputs.send == 'true'
         run: npm run email
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+
+      - name: Record that this week's email went out
+        if: steps.gate.outputs.send == 'true'
+        env:
+          SEASON: ${{ steps.gate.outputs.season }}
+          WEEK: ${{ steps.gate.outputs.week }}
+        run: |
+          jq -n --arg s "$SEASON" --argjson w "$WEEK" --arg t "$(date -u +%FT%TZ)" \
+            '{season: $s, week: $w, sentAt: $t}' > data/email-sent.json
+          git add data/email-sent.json
+          git commit -m "chore: record week $WEEK email sent"
+          git pull --rebase
+          git push
