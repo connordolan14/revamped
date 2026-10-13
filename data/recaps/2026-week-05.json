@@ -1,0 +1,82 @@
+{
+  "season": 2026,
+  "week": 5,
+  "generated_at": "2026-10-13T04:29:45.416Z",
+  "source_data_hash": "d53fd3881870be2a",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 5 Recap",
+    "body": [
+      "Every NFL team employs a head coach, two coordinators, several analysts in the booth and approximately 80 people wearing headsets, yet this weekend raised serious questions about whether any of them have been entrusted with knowing what time it is. Philadelphia took the lead against Jacksonville with eight seconds remaining, kicked the ball to a man with functioning legs and watched him return it 53 yards to set up a game-winning field goal. Washington managed to reach field-goal range in overtime against the Giants before Jayden Daniels took a sack and let the clock expire without another play.",
+      "Unfortunately, It Hurts When I Pitts also had a difficult weekend with Jayden Daniels. Despite his apparent inability to tell time, Daniels managed 32.26 fantasy points, all of which were left on the bench in favor of Michael Penix's 14.4. The decision ultimately wouldn't have saved the matchup, as BrendanBall03 scored a league-leading 165.47 behind Drake Maye's 39.46 and another 29.3 from Christian Watson. Maye threw four touchdowns and ran for another against Las Vegas.",
+      "The more important development was that Team jtyurconic2 finally won a fucking game.",
+      "After four consecutive losses, it took 31.5 and overtime from Josh Allen and 33.8 from Jaylen Warren to get past Green Egbukas & Ham, 140.53 to 137.41. Warren was especially helpful, scoring on both an 80-yard reception and a 57-yard run against Indianapolis. Green Egbukas & Ham had 35.2 from Jahmyr Gibbs and another 21 from Brock Bowers, but couldn't quite finish the job. It still collected the sixth and final top-half scoring bonus, although that was presumably not the preferred outcome when Gibbs was busy breaking Barry Sanders' records.",
+      "Team chrisrenna17 had barely settled into first place before the New England Keys blew its back out 145.61 to 127.97. Puka Nacua supplied 29.2, Jordan Love 25.28 and Joe Burrow 24.6, ending renna's undefeated start. Its stint in first place lasted less time than several recent British prime ministers.",
+      "The New York Mudbones reclaimed first with a 145.72 to 77.95 win over Mark 2.0. Jacoby Brissett contributed 25.78, Trevor Lawrence added 22.74 and Jaxon Smith-Njigba scored another 20.3. The Mudbones have now cleared 145 in all five weeks, which is beginning to look suspiciously like a team that knows what it's doing.",
+      "Hanging With Hernandez also had a strong afternoon, getting 30.5 from Bucky Irving and 28.94 from Jared Goff in a 139.80 to 54.72 win over The Permanent Rebuild. Goff and Irving alone outscored the opposing lineup, so there is probably no reason to bring the other eight starters into this.",
+      "Woodys Toy Box beat Injured Reserve 131.64 to 116.13 behind an unexpectedly productive combination of Isaiah Likely and Parker Washington, who contributed 29.65 and 27.4 respectively. They combined for 57.05 points, and Woodys still finished seventh in weekly scoring, one spot shy of the top-half bonus. A perfectly respectable win with just enough disappointment attached to preserve everybody's dignity.",
+      "The league should consider a mandatory 48-hour cooling-off period after a manager gets his first win. Team jtyurconic2 just got 33.8 from Jaylen Warren, which is precisely the sort of event that persuades a man to trade his 2028 first-round pick for a 29-year-old running back.",
+      "There is a particular danger in finally winning after putting up 140 points, because it allows a manager to reinterpret every previous loss as an unfortunate misunderstanding. The roster was always good, the rebuild was never necessary, and any concerns raised over the last month can now be dismissed as the work of people who lacked vision. Dynasty leagues have invented an entire economy of future draft picks largely to facilitate the decisions made by men in this exact emotional state."
+    ],
+    "for_the_record": [
+      {
+        "text": "**Jahmyr Gibbs scored his 58th career touchdown Sunday, passing Barry Sanders for the most in NFL history before turning 25.** He also now has 16 career games with multiple touchdowns, breaking the previous under-25 record shared by Jim Brown, Todd Gurley and Christian McCaffrey. Gibbs doesn't turn 25 until March.",
+        "fact_ids": [
+          "gibbs-58-td-under-25-week5"
+        ]
+      },
+      {
+        "text": "**Jaylen Warren became the first NFL player since at least 1991 to score a receiving touchdown of 75-plus yards and a rushing touchdown of 50-plus yards in the same game.** His 80-yard reception was only the second touchdown catch of that distance by a Steelers running back. The other came in 1946, against a team called the Boston Yanks.",
+        "fact_ids": [
+          "warren-80-yard-catch-50-yard-run-week5"
+        ]
+      },
+      {
+        "text": "**Trey McBride passed Jimmy Graham for the most receptions by a tight end through his first five NFL seasons, reaching 388 on Sunday.** He also became the first tight end ever to catch at least seven passes in each of his team's first five games of a season.",
+        "fact_ids": [
+          "mcbride-388-receptions-week5"
+        ]
+      },
+      {
+        "text": "**Justin Herbert's fourth-quarter passer rating through five games is 38.2.** An NFL quarterback who intentionally spikes the ball into the ground on every single passing attempt would finish with a 39.6 passer rating. Herbert has somehow managed to produce a statistically worse result than refusing to participate.",
+        "fact_ids": [
+          "herbert-38-2-fourth-quarter-week5"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w05-bench-hank1517-daniels",
+      "2026-w05-blowout-brendanball03-hank1517-margin",
+      "2026-w05-high-brendanball03-score",
+      "2026-w05-close-jtyurconic2-greenie0513-margin",
+      "2026-w05-high-scoring-loss-greenie0513-top-six",
+      "2026-w05-matchup-connordolan14-chrisrenna17-margin",
+      "2026-w05-power-drop-chrisrenna17-2",
+      "2026-w05-blowout-ryanog-jbitterman99-margin",
+      "2026-w05-blowout-thebearjew44-dackerly36-margin",
+      "2026-w05-matchup-dball11-mhaanders-margin",
+      "2026-w05-low-scoring-win-dball11-missed-bonus"
+    ],
+    "external_context_used": [
+      "eagles-jaguars-kickoff-return-week5",
+      "commanders-giants-ot-clock-week5",
+      "maye-five-tds-raiders-week5",
+      "warren-80-yard-catch-50-yard-run-week5",
+      "gibbs-58-td-under-25-week5",
+      "mcbride-388-receptions-week5",
+      "herbert-38-2-fourth-quarter-week5"
+    ],
+    "team_bits_used": [],
+    "opening_mechanism": "NFL clock management",
+    "ending_mechanism": "dynasty maxim"
+  }
+}
