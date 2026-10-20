@@ -287,7 +287,10 @@ async function main() {
     const research = existsSync(rp) ? readJson(rp) : null;
     const article = readJson(articleFile!) as RecapArticle;
 
-    const result = validateRecap(article, optionsFor(packet.context, research));
+    // Hand-written recaps are published verbatim, so the 600-800 word range
+    // (a guardrail for generated drafts) doesn't apply to them.
+    const lengthOverride = MODELS.writer === "human" ? { minWords: 0, maxWords: Infinity } : {};
+    const result = validateRecap(article, { ...optionsFor(packet.context, research), ...lengthOverride });
     for (const w of result.warnings) console.warn(`  warn  [${w.rule}] ${w.detail}`);
     if (!result.ok) {
       console.error(`Validation failed for ${season} week ${week}. Nothing was written.`);

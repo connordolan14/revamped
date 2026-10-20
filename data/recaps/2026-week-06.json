@@ -1,0 +1,80 @@
+{
+  "season": 2026,
+  "week": 6,
+  "generated_at": "2026-10-20T06:30:44.364Z",
+  "source_data_hash": "3709a98ad5b0a74f",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 6 Recap",
+    "body": [
+      "Happy first major bye week, when having 28 players on your roster and having someone available to play every position turn out to be two entirely unrelated things.",
+      "The Los Angeles Rams signed Blake Grupe on Tuesday to solve their kicking problem. By Sunday, he had made one field goal, injured his knee tackling a returner on the ensuing kickoff and left the Rams asking their punter to handle extra points. Arizona subsequently beat them 18-16 without scoring a touchdown, courtesy of six Chad Ryland field goals. But at least their new kicking (lack of) plan doesn’t follow hundreds of high school girls on Instagram like Harrison Mevis.",
+      "The superflex memo apparently never reached Hanging With Hernandez, which entered Week 6 with an actual zero in its quarterback slot. Team chrisrenna17 spent the afternoon pounding Hanging With Hernandez with nobody under center, winning 111.94 to 75.45. Despite a fairly unremarkable performance itself, Team chrisrenna17 secured both the head-to-head victory and the sixth and final top-half scoring bonus.",
+      "Elsewhere, the New York Mudbones appear to have been playing an entirely different sport from the rest of the league. Six teams failed to reach 100 this week, while the Mudbones put up 174.08 against Injured Reserve’s 66.08. Trevor Lawrence threw four touchdowns in London, Christian McCaffrey added 26.2, and the Mudbones have now exceeded 145 points in all six weeks. Scoring 145 is generally cause for celebration in fantasy football. For the Mudbones, it has somehow become an underperformance.",
+      "Most of the week’s actual suspense was concentrated in Woodys Toy Box and It Hurts When I Pitts. Eight Pitts starters reached double figures, while Woodys got three performances above 22 points, producing a 139.80 to 135.42 finish. Both collected top-six bonuses, although Woodys claimed the head-to-head win by 4.38. It was a welcome bit of competitive football on a Sunday otherwise dominated by teams attempting to discover how little offense they could produce without being investigated.",
+      "BrendanBall03 followed last week’s league-leading performance with a comfortable 114.21 to 97.45 win over Team jtyurconic2. BrendanBall03 got 23.8 from Drake Maye, while Team jtyurconic2 received 18.3 from Josh Allen, bringing its recently established winning tradition to an end almost immediately after its creation. There was probably a commemorative T-shirt being printed somewhere for jtyurconic2’s first victory. Hopefully nobody ordered in bulk.",
+      "The New England Keys experienced a similarly abrupt change in fortunes. Having beaten Team chrisrenna17 and looked like a legitimate contender just seven days earlier, the Keys followed that performance with 98.69 against Mark 2.0, which won with 112.66. Whatever speech was delivered in the locker room after last week’s victory can be safely returned to the drawer.",
+      "Green Egbukas & Ham rounded out the slate by beating The Permanent Rebuild 75.04 to 53.20, despite nobody in Green’s starting lineup scoring more than 16 points. The game should probably be preserved as a warning to future commissioners considering league expansion.",
+      "Perhaps the best response to Week 6’s personnel problems came from Eagles tight end Dallas Goedert, whose pants were pulled down by Carolina cornerback Will Lee III while running a route. Goedert got a defensive pass interference call, Philadelphia received a first down and the Eagles scored two plays later. There is apparently still considerable value in getting your ass exposed on national television, provided you can convince an official somebody else was responsible."
+    ],
+    "for_the_record": [
+      {
+        "text": "**Travis Hunter caught a touchdown pass and intercepted C.J. Stroud on consecutive Jacksonville drives Sunday.** He became the first player in the Super Bowl era to accomplish that combination on back-to-back possessions. Both of Hunter’s career NFL receiving touchdowns have come at Wembley Stadium. He has yet to catch one in the United States.",
+        "fact_ids": [
+          "hunter-td-int-consecutive-drives-week6"
+        ]
+      },
+      {
+        "text": "**Caleb Williams completed all 24 of his passes from a clean pocket against Atlanta, gaining 248 yards without a single incompletion.** It was the most such attempts in a game since Next Gen Stats began tracking the figure in 2018. He finished 30-of-36 overall, so apparently the Falcons’ only viable defensive strategy was making somebody stand near him.",
+        "fact_ids": [
+          "caleb-williams-clean-pocket-week6"
+        ]
+      },
+      {
+        "text": "**Puka Nacua passed Michael Thomas’s record of 346 receptions within a player’s first 50 NFL games.** He accomplished it in his 48th appearance, which is a fairly aggressive interpretation of the phrase *ahead of schedule*.",
+        "fact_ids": [
+          "nacua-receptions-first-50-games-week6"
+        ]
+      },
+      {
+        "text": "**Alvin Kamara became just the sixth player in NFL history with 5,000 career rushing yards and 5,000 receiving yards.** The other five are Marshall Faulk, Marcus Allen, Tiki Barber, Christian McCaffrey and Lenny Moore. Kamara has spent nearly a decade putting together two respectable NFL careers while New Orleans has struggled to assemble one functioning offense.",
+        "fact_ids": [
+          "kamara-5000-5000-week6"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w06-matchup-chrisrenna17-thebearjew44-margin",
+      "2026-w06-high-ryanog-score",
+      "2026-w06-blowout-ryanog-mhaanders-margin",
+      "2026-w06-close-dball11-hank1517-margin",
+      "2026-w06-high-scoring-loss-hank1517-top-six",
+      "2026-w06-matchup-brendanball03-jtyurconic2-margin",
+      "2026-w06-matchup-jbitterman99-connordolan14-margin",
+      "2026-w06-power-drop-connordolan14-3",
+      "2026-w06-matchup-greenie0513-dackerly36-margin"
+    ],
+    "external_context_used": [
+      "rams-grupe-cardinals-18-16-week6",
+      "mevis-instagram-week6",
+      "lawrence-four-tds-london-week6",
+      "goedert-pants-dpi-week6",
+      "hunter-td-int-consecutive-drives-week6",
+      "caleb-williams-clean-pocket-week6",
+      "nacua-receptions-first-50-games-week6",
+      "kamara-5000-5000-week6"
+    ],
+    "team_bits_used": [],
+    "opening_mechanism": "bye week roster math",
+    "ending_mechanism": "NFL officiating anecdote"
+  }
+}
