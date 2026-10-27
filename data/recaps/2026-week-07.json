@@ -1,0 +1,71 @@
+{
+  "season": 2026,
+  "week": 7,
+  "generated_at": "2026-10-27T07:27:50.063Z",
+  "source_data_hash": "unverified-no-sleeper-access",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 7 Recap",
+    "body": [
+      "France sold Louisiana to the United States for $15 million in 1803. On Sunday, the New Orleans Saints returned to Paris and gave the French their first opportunity in more than two centuries to see what had become of it. Alvin Kamara and Kendre Miller combined for 11 rushing yards on 14 carries, Pittsburgh won 16-10, and Aaron Rodgers passed Peyton Manning for third on the all-time touchdown list. Any lingering French regret over the Louisiana Purchase should now be considered resolved.",
+      "Joe Burrow had a considerably better afternoon in Baltimore, throwing four touchdowns in the second half after the Bengals entered halftime trailing 13-0. Tee Higgins caught six passes for 148 yards, while Jameson Williams caught another two touchdowns for Detroit against Green Bay. All three started for the New England Keys, which unloaded 177.04 on Injured Reserve, an awful lot to swallow in one afternoon. It was the highest score by any team in the league this season, and the Keys now sit at 7.5-3.",
+      "Green Egbukas & Ham has spent the last five weeks doing an admirable job of pretending September never happened. After opening 0-3 in the standings, Green has won four of its last five matchups, most recently beating Team chrisrenna17 144.90 to 109.57. Bo Nix contributed 26.28, Quinshon Judkins added 22.9 and Rhamondre Stevenson supplied another 20. If Green were a publicly traded company, management would already be preparing an earnings presentation explaining how Q1’s disappointing results were actually part of a carefully executed restructuring strategy.",
+      "The New York Mudbones continued their assault on the league with a 153.04 to 106.00 win over It Hurts When I Pitts. Jaxon Smith-Njigba supplied 26.8, Trey McBride added 24.6, and the Mudbones have now scored at least 145 points in all seven weeks. Their lowest-scoring performance of the season would have ranked third in Week 7. Nobody needs another paragraph explaining how good the Mudbones are, especially when the numbers are becoming this obnoxious.",
+      "BrendanBall03 beat Woodys Toy Box 129.11 to 116.35 behind another strong performance from Drake Maye, who finished with 28.44. Woodys received an outstanding 35 from Tony Pollard, who rushed for 129 yards and scored three touchdowns against Cleveland. Pollard opened the game with two touchdowns on Tennessee’s first two drives, then tied it with his third in the final minute. Cleveland kicked the game-winning field goal as time expired, meaning Pollard managed to have the best game of his season and lose for two entirely different teams on the same afternoon.",
+      "Mark 2.0 picked up another win over Hanging With Hernandez, 123.14 to 116.82. Amon-Ra St. Brown had 153 receiving yards for Detroit, although the more memorable part of his afternoon involved getting tackled, standing back up and getting tackled again, this time directly into umpire Terry Killens Jr. St. Brown’s cleat caught Killens in the stomach, sending him to the ground, where he promptly threw an unnecessary-roughness flag on Green Bay.",
+      "The Packers objected because nobody had heard a whistle before the second tackle. Referee Alex Moore subsequently explained that the play was over, although he admitted he couldn’t tell whether a whistle had actually blown. It is an interesting approach to officiating, declaring a play finished without necessarily informing any of the people playing in it. Detroit scored two plays later.",
+      "Team jtyurconic2 has now won two of its last three after opening the season with four consecutive losses. Its latest achievement was a 103.82 to 95.40 victory over The Permanent Rebuild, following a players-only meeting and the removal of the locker-room ping-pong table. Given what happened in Paris, the Saints might want the phone number of whoever ordered the table removed."
+    ],
+    "for_the_record": [
+      {
+        "text": "**Bo Nix became the fifth quarterback in NFL history with a touchdown pass and a touchdown run of at least 50 yards in the same game.** His 52-yard touchdown pass to RJ Harvey and 62-yard touchdown run against Arizona put him alongside Cam Newton, Lamar Jackson, Justin Fields and Ace Parker. Parker accomplished the feat in 1938 while playing for the NFL’s Brooklyn Dodgers against the Pittsburgh Pirates.",
+        "fact_ids": [
+          "nix-50yd-td-pass-and-run-week7"
+        ]
+      },
+      {
+        "text": "**Minnesota blitzed on 85.2% of Indianapolis’ dropbacks Sunday, the highest rate recorded in a game since Next Gen Stats began tracking it in 2016.** The Vikings recorded four sacks and held the Colts to 64 net passing yards in a 16-10 victory.",
+        "fact_ids": [
+          "vikings-blitz-rate-week7"
+        ]
+      },
+      {
+        "text": "**Matthew Stafford became the first quarterback to hold the career passing-touchdown record for two current NFL franchises.** He already held Detroit’s record with 282 touchdown passes and surpassed Roman Gabriel’s Rams record of 154 with his 155th touchdown pass for Los Angeles.",
+        "fact_ids": [
+          "stafford-two-franchise-td-records-week7"
+        ]
+      },
+      {
+        "text": "**Harrison Smith recorded his 40th career interception, joining Ronde Barber and Charles Woodson as the only NFL players since sacks became official in 1982 with at least 40 interceptions and 20 sacks.** Smith has 22 career sacks to go with those interceptions.",
+        "fact_ids": [
+          "harrison-smith-40-int-20-sacks-week7"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [],
+    "external_context_used": [
+      "saints-paris-louisiana-week7",
+      "rodgers-passes-manning-week7",
+      "burrow-second-half-week7",
+      "pollard-three-tds-week7",
+      "st-brown-umpire-week7",
+      "saints-ping-pong-table-week7",
+      "nix-50yd-td-pass-and-run-week7",
+      "vikings-blitz-rate-week7",
+      "stafford-two-franchise-td-records-week7",
+      "harrison-smith-40-int-20-sacks-week7"
+    ],
+    "team_bits_used": [],
+    "opening_mechanism": "Louisiana Purchase / Saints in Paris",
+    "ending_mechanism": "Saints ping-pong table callback"
+  }
+}
