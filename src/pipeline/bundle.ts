@@ -7,6 +7,7 @@ import { computeWeeklyResults, computeStandings } from "../core/standings.js";
 import { powerAt, toTeamWeeks } from "../core/powerAtWeek.js";
 import { computeRecaps, WeekRecap } from "../core/recap.js";
 import { loadSeasonRecaps } from "../core/recapStore.js";
+import { loadSeasonSpecialEditions } from "../core/specialEdition.js";
 import { MatchRow } from "../core/history.js";
 import { round } from "../core/stats.js";
 import { PlayerHistory, StintEnd, Usage } from "../core/rosterHistory.js";
@@ -20,25 +21,41 @@ export interface BundleTeam {
   avatar: string | null;
 }
 
-/** Add publishable article fields while keeping generation metadata private. */
+/**
+ * Add publishable article fields while keeping generation metadata private. A
+ * special edition (data/recaps/specials/) rides on the same week entry and
+ * takes the article's place on the homepage.
+ */
 export function attachArticles(
   season: string,
   recaps: WeekRecap[],
   root = process.cwd(),
 ) {
   const byWeek = new Map(loadSeasonRecaps(season, root).map((r) => [r.week, r.recap]));
+  const specials = loadSeasonSpecialEditions(season, root);
   return recaps.map((recap) => {
     const article = byWeek.get(recap.week);
-    return article
-      ? {
-          ...recap,
-          article: {
-            title: article.title,
-            body: article.body,
-            forTheRecord: article.for_the_record.map((item) => item.text),
-          },
-        }
-      : recap;
+    const special = specials.get(recap.week);
+    return {
+      ...recap,
+      ...(article && {
+        article: {
+          title: article.title,
+          body: article.body,
+          forTheRecord: article.for_the_record.map((item) => item.text),
+        },
+      }),
+      ...(special && {
+        special: {
+          kicker: special.kicker,
+          title: special.title,
+          intro: special.intro,
+          lead: special.lead,
+          teamShort: special.teamShort,
+          sections: special.sections,
+        },
+      }),
+    };
   });
 }
 

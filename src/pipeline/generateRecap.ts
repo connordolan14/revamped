@@ -33,6 +33,7 @@ import {
 } from "../core/recapSchema.js";
 import { loadRecap, saveRecap, sourceHash, recentRecapContext, recapPath, decideGeneration } from "../core/recapStore.js";
 import { computeRecords, MatchRow, MatchupEntry } from "../core/history.js";
+import { specialPath } from "../core/specialEdition.js";
 
 const LEAGUE_ID = process.env.LEAGUE_ID || "1312251123628789760";
 export const CONTEXT_DIR = "data/recaps/context";
@@ -212,6 +213,7 @@ async function main() {
     const existing = loadRecap(season, week);
     console.log(`${season} week ${week}`);
     console.log(`  published: ${existing ? recapPath(season, week) : "no"}`);
+    if (existsSync(specialPath(season, week))) console.log(`  special:   ${specialPath(season, week)}`);
     console.log(`  context:   ${existsSync(cp) ? cp : "not built"}`);
     console.log(`  research:  ${existsSync(rp) ? rp : "none"}`);
     if (existing && existsSync(cp)) {
@@ -225,6 +227,13 @@ async function main() {
       console.log(`  prompts: ${JSON.stringify(existing.prompt_versions)}`);
       console.log(`  models:  ${JSON.stringify(existing.models)}`);
     }
+    return;
+  }
+
+  // A special edition replaces the generated recap for its week.
+  if ((cmd === "context" || cmd === "persist") && existsSync(specialPath(season, week)) && !flag("force")) {
+    console.log(`${season} week ${week} is a special edition (${specialPath(season, week)}); there is no recap to generate.`);
+    console.log("Pass --force to generate one anyway.");
     return;
   }
 

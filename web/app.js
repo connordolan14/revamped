@@ -78,6 +78,19 @@ const latestSeasonKey = () => Object.keys(B.seasons || {}).sort().pop();
 const streakText = (s) => /^[WL]0$/.test(s || "") ? "—" : s;
 
 /* ---------- HOME: standings + power + weekly recap ---------- */
+let homeWeek = null;
+function matchupsCard(r) {
+  const mcard = h("div", { class: "card pad" }, h("div", { class: "mini-title", style: "margin-bottom:6px" }, "Matchups"));
+  const top6 = new Set(r.topSix);
+  r.games.forEach((g) => {
+    const aWin = g.w === g.a, bWin = g.w === g.b;
+    mcard.append(h("div", { class: "wk-match" },
+      h("div", { class: "wk-match-side" + (aWin ? "" : " lose") }, avatar(TByR.get(g.a)?.avatar, nameOf(g.a), 26), h("span", { class: "wk-match-name" }, nameOf(g.a)), top6.has(g.a) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "wk-match-pts" }, fmt(g.aP, 1))),
+      h("div", { class: "wk-match-side" + (bWin ? "" : " lose") }, avatar(TByR.get(g.b)?.avatar, nameOf(g.b), 26), h("span", { class: "wk-match-name" }, nameOf(g.b)), top6.has(g.b) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "wk-match-pts" }, fmt(g.bP, 1)))));
+  });
+  mcard.append(h("div", { class: "wk-match-legend" }, h("span", { class: "dot6" }), " = top-6 in weekly scoring"));
+  return mcard;
+}
 function pageHome() {
   const sk = latestSeasonKey(); const s = B.seasons[sk];
   const wrap = h("div", {});
@@ -110,14 +123,26 @@ function pageHome() {
   wrap.append(h("div", { class: "section-title" }, "Weekly recap"));
   wrap.append(h("p", { class: "muted", style: "font-size:12.5px;margin:-6px 0 12px" }, `${curSeason} season`));
   const sel = h("select", { class: "team-select", style: "max-width:200px" }, weekOptions.map((wk) => h("option", { value: wk }, "Week " + wk)));
+  const prev = h("button", { class: "icon-btn", "aria-label": "Previous week", title: "Previous week", onclick: () => step(-1) }, "‹");
+  const next = h("button", { class: "icon-btn", "aria-label": "Next week", title: "Next week", onclick: () => step(1) }, "›");
   const box = h("div", {});
   sel.addEventListener("change", () => renderRecap(Number(sel.value)));
-  wrap.append(h("div", { class: "wk-select-row" }, h("span", { class: "muted", style: "font-size:13px" }, "Week"), sel));
+  function step(d) {
+    const i = weekOptions.indexOf(Number(sel.value)) + d;
+    if (i < 0 || i >= weekOptions.length) return;
+    sel.value = weekOptions[i]; renderRecap(weekOptions[i]);
+  }
+  wrap.append(h("div", { class: "wk-select-row" }, h("span", { class: "muted", style: "font-size:13px" }, "Week"), prev, sel, next));
   wrap.append(box);
   function renderRecap(week) {
+    homeWeek = week;
+    const i = weekOptions.indexOf(week);
+    prev.disabled = i <= 0; next.disabled = i < 0 || i >= weekOptions.length - 1;
     box.innerHTML = "";
     const r = recaps.find((x) => x.week === week);
     if (!r) { box.append(h("div", { class: "callout", style: "text-align:left" }, h("strong", {}, `Week ${week} — no recap available yet.`), `The Week ${week} recap and matchups post here after the games.`)); return; }
+    // A special edition (e.g. the midseason report) takes the article's place.
+    if (r.special) { renderSpecial(r, box); return; }
     // Prose comes from the generated article; a week without one shows the
     // matchups alone rather than an auto-written stand-in.
     const write = h("div", { class: "card pad" });
@@ -137,25 +162,271 @@ function pageHome() {
         h("strong", {}, `The Week ${week} write-up is not up yet.`),
         "Scores are final below. The column posts once it's written."));
     }
-    const mcard = h("div", { class: "card pad" }, h("div", { class: "mini-title", style: "margin-bottom:6px" }, "Matchups"));
-    const top6 = new Set(r.topSix);
-    r.games.forEach((g) => {
-      const aWin = g.w === g.a, bWin = g.w === g.b;
-      mcard.append(h("div", { class: "wk-match" },
-        h("div", { class: "wk-match-side" + (aWin ? "" : " lose") }, avatar(TByR.get(g.a)?.avatar, nameOf(g.a), 26), h("span", { class: "wk-match-name" }, nameOf(g.a)), top6.has(g.a) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "wk-match-pts" }, fmt(g.aP, 1))),
-        h("div", { class: "wk-match-side" + (bWin ? "" : " lose") }, avatar(TByR.get(g.b)?.avatar, nameOf(g.b), 26), h("span", { class: "wk-match-name" }, nameOf(g.b)), top6.has(g.b) ? h("span", { class: "dot6", title: "Top-6 bonus" }) : null, h("span", { class: "wk-match-pts" }, fmt(g.bP, 1)))));
-    });
-    mcard.append(h("div", { class: "wk-match-legend" }, h("span", { class: "dot6" }), " = top-6 in weekly scoring"));
-    box.append(h("div", { class: "recap-cols" }, write, mcard));
+    box.append(h("div", { class: "recap-cols" }, write, matchupsCard(r)));
   }
-  const def = recaps.length
-    ? (B.state.recapSeason === curSeason && recaps.some((r) => r.week === B.state.recapWeek) ? B.state.recapWeek : recaps[recaps.length - 1].week)
-    : weekOptions[0];
+  // Keep the reader's week when the page re-renders (e.g. after liveSync).
+  const def = homeWeek != null && weekOptions.includes(homeWeek) ? homeWeek
+    : recaps.length
+      ? (B.state.recapSeason === curSeason && recaps.some((r) => r.week === B.state.recapWeek) ? B.state.recapWeek : recaps[recaps.length - 1].week)
+      : weekOptions[0];
   sel.value = def; renderRecap(def);
 
   const activity = recentActivity();
   if (activity) wrap.append(activity);
   return wrap;
+}
+
+/* ---------- special edition: a report that takes a week's recap slot ----------
+   Content is data/recaps/specials/<season>-week-NN.json, attached to the week
+   by the bundle. Prose, tables and chart values come from that file; the power
+   rankings chart reads the site's own weekly power snapshots. */
+const svg = (tag, attrs = {}, ...kids) => {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) if (v !== null && v !== undefined) e.setAttribute(k, v);
+  for (const kid of kids.flat()) { if (kid == null) continue; e.append(kid.nodeType ? kid : document.createTextNode(String(kid))); }
+  return e;
+};
+/* Full name on wide screens, the edition's short name on phones. */
+function dual(full, short) {
+  return !short || short === full ? h("span", {}, full) : h("span", {}, h("span", { class: "sp-full" }, full), h("span", { class: "sp-short" }, short));
+}
+function spTeamName(sp, rid) { return dual(nameOf(rid), sp.teamShort?.[rid]); }
+function spTeam(sp, rid, size = 22) {
+  return h("span", { class: "sp-team" }, avatar(TByR.get(rid)?.avatar, nameOf(rid), size), h("span", { class: "sp-tn" }, spTeamName(sp, rid)));
+}
+function spPlayer(sp, p, size = 28) {
+  const sub = [p.pos ? h("span", { class: "pos-" + p.pos }, p.pos) : null, p.pos && p.team ? " · " : null, p.team ? spTeamName(sp, p.team) : null];
+  const img = size ? playerHeadshot(p.pid, size) || avatar(null, p.name, size) : null;
+  return h("span", { class: "sp-player" }, img,
+    h("span", { class: "sp-pn" }, h("span", { class: "nm" }, p.name), sub.some(Boolean) ? h("span", { class: "sb" }, sub) : null));
+}
+
+function renderSpecial(r, box) {
+  const sp = r.special;
+  const head = h("div", { class: "card pad sp-head" },
+    h("div", { class: "sp-kicker" }, sp.kicker),
+    h("h2", { class: "sp-title" }, sp.title),
+    h("div", { class: "recap-lines sp-intro" }, sp.intro.map((t) => h("p", { html: mdInline(t) }))),
+    h("div", { class: "sp-lead-title" }, sp.lead.title),
+    h("div", { class: "recap-lines" }, sp.lead.body.map((t) => h("p", { html: mdInline(t) }))));
+  box.append(h("div", { class: "recap-cols" }, head, matchupsCard(r)));
+
+  const toc = h("nav", { class: "sp-toc", "aria-label": "In this report" });
+  const body = h("div", { class: "sp" });
+  for (const sec of sp.sections) {
+    const el = h("section", { class: "sp-sec", id: "sp-" + sec.id }, h("h3", { class: "sp-h" }, sec.title));
+    for (const b of sec.blocks) {
+      if (b.caption && b.type !== "fixtures") el.append(h("div", { class: "sp-cap" }, b.caption));
+      const render = SP_BLOCKS[b.type];
+      if (render) el.append(render(sp, b, r));
+    }
+    toc.append(h("button", { type: "button", onclick: () => el.scrollIntoView({ behavior: "smooth", block: "start" }) }, sec.title));
+    body.append(el);
+  }
+  box.append(toc, body);
+}
+
+const SP_BLOCKS = {
+  p: (_sp, b) => h("p", { class: "sp-p", html: mdInline(b.text) }),
+  sub: (_sp, b) => h("h4", { class: "sp-sub" }, b.text),
+  powerChart: (sp, b, r) => powerMovementChart(sp, b, r),
+
+  reportCards: (sp, b) => h("div", { class: "card sp-cards" }, b.rows.map((row) =>
+    h("div", { class: "sp-rc" },
+      h("div", { class: "sp-rc-rank" }, row.rank),
+      avatar(TByR.get(row.team)?.avatar, nameOf(row.team), 30),
+      h("div", { class: "sp-rc-body" }, h("div", { class: "nm" }, nameOf(row.team)), h("div", { class: "tx", html: mdInline(row.text) })),
+      h("div", { class: "sp-grade g-" + row.grade[0], title: "Grade" }, row.grade)))),
+
+  playoffOdds: (sp, b) => {
+    const pct = (v) => `${Math.max(0, Math.min(100, v))}%`;
+    return h("div", { class: "card sp-odds" },
+      h("div", { class: "sp-odds-row sp-odds-hd" }, h("span", {}), h("span", {}, "Playoffs"), h("span", {}), dual("First-round bye", "Bye"), dual("Championship", "Title")),
+      b.rows.map((row) => h("div", { class: "sp-odds-row", title: `${nameOf(row.team)}: ${row.playoff}% playoffs (range ${row.low}–${row.high}%)` },
+        spTeam(sp, row.team, 20),
+        h("span", { class: "sp-strip" },
+          row.high > row.low ? h("i", { class: "rng", style: `left:${pct(row.low)};width:${row.high - row.low}%` }) : null,
+          h("i", { class: "dot", style: `left:${pct(row.playoff)}` })),
+        h("span", { class: "v strong" }, row.label),
+        h("span", { class: "v" }, row.bye),
+        h("span", { class: "v" }, row.title))));
+  },
+
+  table: (sp, b) => {
+    const cols = b.columns;
+    const cell = (c, v) => {
+      if (c.kind === "team") return h("td", { class: "l" }, spTeam(sp, v));
+      if (c.kind === "player") return h("td", { class: "l" }, spPlayer(sp, v, 26));
+      if (c.kind === "text") return h("td", { class: "l" + (c.wrap ? " wrap" : "") }, v);
+      if (c.kind === "delta") return h("td", { class: "strong", style: `color:${String(v).startsWith("+") ? "var(--up)" : String(v).startsWith("-") ? "var(--down)" : "inherit"}` }, String(v).replace(/^-/, "−"));
+      return h("td", {}, v);
+    };
+    return h("div", { class: "tbl-wrap sp-tbl" }, h("table", {},
+      h("thead", {}, h("tr", {}, cols.map((c) => h("th", { class: ["team", "player", "text"].includes(c.kind) ? "l" : "", title: c.short ? c.label : null }, dual(c.label, c.short))))),
+      h("tbody", {}, b.rows.map((row) => h("tr", {}, cols.map((c) => cell(c, row[c.key])))))));
+  },
+
+  stats: (_sp, b) => h("div", { class: "sp-stats" }, b.items.map((it) =>
+    h("div", { class: "card sp-stat" }, h("div", { class: "val" }, it.value), h("div", { class: "sub" }, it.label)))),
+
+  barList: (sp, b) => {
+    const vals = b.rows.map((row) => row.value);
+    const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals), span = hi - lo || 1;
+    const x = (v) => ((v - lo) / span) * 100;
+    return h("div", { class: "card sp-bars" + (b.diverging ? " div" : "") },
+      h("div", { class: "sp-bar-row sp-bar-hd" }, h("span", {}), h("span", {}), dual(b.valueLabel, b.valueShort), dual(b.extraLabel, b.extraShort)),
+      b.rows.map((row) => {
+        const neg = row.value < 0;
+        const left = x(Math.min(0, row.value)), width = Math.abs(x(row.value) - x(0));
+        return h("div", { class: "sp-bar-row" },
+          playerHeadshot(row.player.pid, 30) || avatar(null, row.player.name, 30),
+          spPlayer(sp, row.player, 0),
+          h("span", { class: "sp-bar" }, h("span", { class: "zone" },
+            b.diverging ? h("i", { class: "zero", style: `left:${x(0)}%` }) : null,
+            h("i", { class: "fill" + (b.diverging ? (neg ? " neg" : " pos") : ""), style: `left:${left}%;width:${width}%` }),
+            h("span", { class: "lbl" + (neg ? " neg" : ""), style: neg ? `right:${100 - left}%` : `left:${left + width}%` }, row.display))),
+          h("span", { class: "v" }, row.extra));
+      }));
+  },
+
+  awards: (sp, b) => h("div", { class: "sp-awards" }, b.items.map((it) =>
+    h("div", { class: "rec-card sp-award" },
+      h("div", { class: "lb" }, it.award),
+      h("div", { class: "sp-award-who" },
+        it.team ? avatar(TByR.get(it.team)?.avatar, nameOf(it.team), 32) : playerHeadshot(it.player.pid, 32) || avatar(null, it.player.name, 32),
+        h("span", {}, it.team ? nameOf(it.team) : it.player.name)),
+      h("div", { class: "sb", html: mdInline(it.text) })))),
+
+  fixtures: (sp, b) => h("div", { class: "sp-fix" }, b.items.map((it) => {
+    const odds = new Map((it.odds || []).map((o) => [o.team, o]));
+    const side = (rid) => {
+      const o = odds.get(rid);
+      return h("div", { class: "sp-fix-team" + (o ? "" : " dim") }, spTeam({}, rid, 24),
+        o ? h("span", { class: "sp-fix-odds" }, h("b", { class: "w" }, o.win), " / ", h("b", { class: "l" }, o.loss)) : null);
+    };
+    return h("div", { class: "card pad sp-fix-card" },
+      h("div", { class: "sp-fix-hd" }, h("span", { class: "mini-title" }, "Week " + it.week), h("span", { class: "muted" }, "Playoff odds if win / loss")),
+      side(it.a), side(it.b));
+  })),
+};
+
+/* Power rankings bump chart from the season's weekly power snapshots. Twelve
+   lines can't each get a colour, so one team is emphasised and the rest stay
+   gray; tap or hover a line (or a label on the right) to switch teams. */
+function powerMovementChart(sp, b, r) {
+  const snaps = (B.seasons[r.season]?.powerHistory || [])
+    .filter((s) => s.week <= b.throughWeek).sort((a, c) => a.week - c.week);
+  if (!snaps.length) return h("div", { class: "callout" }, "Power rankings history isn't available.");
+  const weeks = snaps.map((s) => s.week);
+  const last = snaps[snaps.length - 1].rankings;
+  const seq = new Map(last.map((t) => [t.rosterId, snaps.map((s) => s.rankings.find((x) => x.rosterId === t.rosterId)?.rank ?? null)]));
+  const atRank = snaps.map((s) => new Map(s.rankings.map((x) => [x.rank, x.rosterId])));
+  const n = last.length;
+  // Default emphasis: the team whose ranking moved the most over the stretch.
+  const moved = (rid) => seq.get(rid).reduce((m, v, i, a) => (i && v != null && a[i - 1] != null ? m + Math.abs(v - a[i - 1]) : m), 0);
+  let selected = [...seq.keys()].sort((a, c) => moved(c) - moved(a))[0];
+  let hover = null;
+
+  const wrapEl = h("div", { class: "card sp-pc" });
+  const tip = h("div", { class: "sp-tip", role: "status" });
+  const plot = h("div", { class: "sp-pc-plot" });
+  const legend = h("div", { class: "sp-pc-key" });
+  wrapEl.append(plot, tip, legend);
+  let geo = null;
+
+  function draw() {
+    const W = plot.clientWidth;
+    if (!W) return;
+    const narrow = W < 520;
+    const rowH = narrow ? 26 : 30, padT = 12, padB = 30;
+    const labelW = narrow ? 112 : 196, axisW = 26;
+    const x0 = axisW + 8, x1 = W - labelW - 14;
+    const H = padT + rowH * (n - 1) + padB + 8;
+    const x = (i) => x0 + (weeks.length === 1 ? 0 : (i * (x1 - x0)) / (weeks.length - 1));
+    const y = (rank) => padT + 8 + (rank - 1) * rowH;
+    geo = { x, y, x0, x1, rowH, padT, narrow };
+    const root = svg("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": b.caption || "Power rankings movement" });
+    for (let k = 1; k <= n; k++) {
+      root.append(svg("line", { class: "grid", x1: x0, x2: x1, y1: y(k), y2: y(k) }));
+      root.append(svg("text", { class: "ax", x: axisW, y: y(k) + 4, "text-anchor": "end" }, k));
+    }
+    root.append(svg("text", { class: "ax", x: axisW, y: H - 10, "text-anchor": "end" }, "Wk"));
+    weeks.forEach((wk, i) => root.append(svg("text", { class: "ax", x: x(i), y: H - 10, "text-anchor": "middle" }, wk)));
+    const lines = svg("g", {});
+    for (const [rid, ranks] of seq) {
+      const pts = ranks.map((v, i) => (v == null ? null : `${x(i)},${y(v)}`)).filter(Boolean).join(" ");
+      lines.append(svg("polyline", { class: "ln", "data-rid": rid, points: pts }));
+    }
+    root.append(lines, svg("g", { class: "hi" }));
+    // Week-8 endpoint labels double as the selector.
+    const keyG = svg("g", {});
+    for (const t of last) {
+      const yy = y(t.rank), lx = x1 + 12;
+      const g = svg("g", { class: "key", "data-rid": t.rosterId, tabindex: 0, role: "button", "aria-label": `${t.teamName}, rank ${t.rank}` });
+      g.append(svg("rect", { class: "hit", x: x1 + 4, y: yy - rowH / 2, width: labelW + 10, height: rowH }));
+      if (t.avatar) {
+        const id = `sp-clip-${t.rosterId}`;
+        g.append(svg("clipPath", { id }, svg("rect", { x: lx, y: yy - 10, width: 20, height: 20, rx: 5 })));
+        g.append(svg("image", { href: t.avatar, x: lx, y: yy - 10, width: 20, height: 20, "clip-path": `url(#${id})`, preserveAspectRatio: "xMidYMid slice" }));
+      } else g.append(svg("rect", { class: "ph", x: lx, y: yy - 10, width: 20, height: 20, rx: 5 }));
+      g.append(svg("text", { class: "kt", x: lx + 27, y: yy + 4 }, narrow ? (sp.teamShort?.[t.rosterId] || t.teamName) : t.teamName));
+      g.addEventListener("click", () => { selected = t.rosterId; hover = null; paint(); });
+      g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selected = t.rosterId; paint(); } });
+      g.addEventListener("pointerenter", () => { hover = t.rosterId; paint(); });
+      g.addEventListener("pointerleave", () => { hover = null; paint(); });
+      keyG.append(g);
+    }
+    root.append(keyG);
+    const hit = svg("rect", { class: "hit", x: x0 - 12, y: 0, width: x1 - x0 + 24, height: H - padB + 6 });
+    hit.addEventListener("pointermove", onMove);
+    hit.addEventListener("pointerleave", () => { hover = null; tip.classList.remove("on"); paint(); });
+    hit.addEventListener("click", (e) => { const p = pick(e); if (p) { selected = p.rid; paint(); } });
+    root.append(hit);
+    plot.innerHTML = ""; plot.append(root);
+    paint();
+  }
+  function pick(e) {
+    const box = plot.firstChild.getBoundingClientRect();
+    const px = e.clientX - box.left, py = e.clientY - box.top;
+    const i = Math.round(((px - geo.x0) / (geo.x1 - geo.x0)) * (weeks.length - 1));
+    const wi = Math.max(0, Math.min(weeks.length - 1, i));
+    const rank = Math.max(1, Math.min(n, Math.round((py - geo.padT - 8) / geo.rowH) + 1));
+    const rid = atRank[wi].get(rank);
+    return rid == null ? null : { rid, wi, rank, px: geo.x(wi), py: geo.y(rank) };
+  }
+  function onMove(e) {
+    const p = pick(e);
+    if (!p) return;
+    hover = p.rid; paint();
+    tip.textContent = "";
+    tip.append(h("strong", {}, "#" + p.rank), ` ${nameOf(p.rid)} · Week ${weeks[p.wi]}`);
+    tip.classList.add("on");
+    const tw = tip.offsetWidth;
+    tip.style.left = Math.max(4, Math.min(plot.clientWidth - tw - 4, p.px - tw / 2)) + "px";
+    tip.style.top = (p.py - 40) + "px";
+  }
+  function paint() {
+    const root = plot.firstChild;
+    if (!root) return;
+    const on = hover ?? selected;
+    root.querySelectorAll(".ln").forEach((l) => l.classList.toggle("on", Number(l.dataset.rid) === on));
+    root.querySelectorAll(".key").forEach((k) => {
+      k.classList.toggle("on", Number(k.dataset.rid) === on);
+      k.classList.toggle("sel", Number(k.dataset.rid) === selected);
+    });
+    const hi = root.querySelector(".hi"); hi.innerHTML = "";
+    const ranks = seq.get(on) || [];
+    const lnOn = root.querySelector(`.ln[data-rid="${on}"]`);
+    if (lnOn) hi.append(lnOn.cloneNode());
+    ranks.forEach((v, i) => { if (v != null) hi.append(svg("circle", { class: "pt", cx: geo.x(i), cy: geo.y(v), r: 4 })); });
+    legend.textContent = "";
+    const first = ranks.find((v) => v != null), end = ranks[ranks.length - 1];
+    legend.append(avatar(TByR.get(on)?.avatar, nameOf(on), 18), h("strong", {}, nameOf(on)),
+      h("span", { class: "muted" }, ` · Week ${weeks[0]} #${first} → Week ${weeks[weeks.length - 1]} #${end}`));
+  }
+  if ("ResizeObserver" in window) new ResizeObserver(() => draw()).observe(plot);
+  requestAnimationFrame(draw);
+  return wrapEl;
 }
 
 /* Recent roster moves — bundle feed, replaced by live Sleeper reads when liveSync lands. */
