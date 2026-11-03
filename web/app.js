@@ -194,9 +194,15 @@ function spTeamName(sp, rid) { return dual(nameOf(rid), sp.teamShort?.[rid]); }
 function spTeam(sp, rid, size = 22) {
   return h("span", { class: "sp-team" }, avatar(TByR.get(rid)?.avatar, nameOf(rid), size), h("span", { class: "sp-tn" }, spTeamName(sp, rid)));
 }
+/* Player photo that falls back to initials (keeps grid cells in place). */
+function spHead(pid, name, size) {
+  const a = avatar(pid ? `https://sleepercdn.com/content/nfl/players/thumb/${pid}.jpg` : null, name, size);
+  a.classList.add("sp-head");
+  return a;
+}
 function spPlayer(sp, p, size = 28) {
   const sub = [p.pos ? h("span", { class: "pos-" + p.pos }, p.pos) : null, p.pos && p.team ? " · " : null, p.team ? spTeamName(sp, p.team) : null];
-  const img = size ? playerHeadshot(p.pid, size) || avatar(null, p.name, size) : null;
+  const img = size ? spHead(p.pid, p.name, size) : null;
   return h("span", { class: "sp-player" }, img,
     h("span", { class: "sp-pn" }, h("span", { class: "nm" }, p.name), sub.some(Boolean) ? h("span", { class: "sb" }, sub) : null));
 }
@@ -279,7 +285,7 @@ const SP_BLOCKS = {
         const neg = row.value < 0;
         const left = x(Math.min(0, row.value)), width = Math.abs(x(row.value) - x(0));
         return h("div", { class: "sp-bar-row" },
-          playerHeadshot(row.player.pid, 30) || avatar(null, row.player.name, 30),
+          spHead(row.player.pid, row.player.name, 30),
           spPlayer(sp, row.player, 0),
           h("span", { class: "sp-bar" }, h("span", { class: "zone" },
             b.diverging ? h("i", { class: "zero", style: `left:${x(0)}%` }) : null,
@@ -293,7 +299,7 @@ const SP_BLOCKS = {
     h("div", { class: "rec-card sp-award" },
       h("div", { class: "lb" }, it.award),
       h("div", { class: "sp-award-who" },
-        it.team ? avatar(TByR.get(it.team)?.avatar, nameOf(it.team), 32) : playerHeadshot(it.player.pid, 32) || avatar(null, it.player.name, 32),
+        it.team ? avatar(TByR.get(it.team)?.avatar, nameOf(it.team), 32) : spHead(it.player.pid, it.player.name, 32),
         h("span", {}, it.team ? nameOf(it.team) : it.player.name)),
       h("div", { class: "sb", html: mdInline(it.text) })))),
 

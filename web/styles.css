@@ -456,7 +456,8 @@ tr.playoff-line td { border-bottom:2px solid var(--accent-line); }
 .sp-cap { font-size:12px; color:var(--muted); margin:0 0 8px; }
 .sp-p { max-width:760px; font-size:14px; line-height:1.7; color:var(--ink-2); margin:14px 0 0; }
 .sp-p strong { color:var(--ink); font-weight:600; }
-.sp .rec-headshot { position:static; flex:none; border-radius:50%; }
+.sp .sp-head { border-radius:50%; }
+.sp .sp-head img { object-position:top center; }
 .sp .ava { flex:none; }
 .sp-team { display:inline-flex; align-items:center; gap:8px; min-width:0; color:var(--ink); font-weight:600; }
 .sp-team .sp-tn { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -590,7 +591,7 @@ tr.playoff-line td { border-bottom:2px solid var(--accent-line); }
 @media (max-width:380px){
   .sp-tbl thead th, .sp-tbl tbody td { padding-left:6px; padding-right:6px; }
   .sp-tbl .sp-pn .nm, .sp-tbl .sp-pn .sb { max-width:128px; }
-  .sp-tbl .rec-headshot { display:none; }
+  .sp-tbl .sp-head { display:none; }
 }
 @media (max-width:400px){
   .sp-odds-row { grid-template-columns:88px minmax(0,1fr) 34px 40px 42px; }
