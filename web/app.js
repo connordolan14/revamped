@@ -279,8 +279,8 @@ const SP_BLOCKS = {
     const vals = b.rows.map((row) => row.value);
     const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals), span = hi - lo || 1;
     const x = (v) => ((v - lo) / span) * 100;
-    return h("div", { class: "card sp-bars" + (b.diverging ? " div" : "") },
-      h("div", { class: "sp-bar-row sp-bar-hd" }, h("span", {}), h("span", {}), dual(b.valueLabel, b.valueShort), dual(b.extraLabel, b.extraShort)),
+    return h("div", { class: "card sp-bars" + (b.diverging ? " div" : "") + (b.extraCols.length > 1 ? " x2" : "") },
+      h("div", { class: "sp-bar-row sp-bar-hd" }, h("span", {}), h("span", {}), dual(b.valueLabel, b.valueShort), b.extraCols.map((c) => h("span", { class: "v" }, dual(c.label, c.short)))),
       b.rows.map((row) => {
         const neg = row.value < 0;
         const left = x(Math.min(0, row.value)), width = Math.abs(x(row.value) - x(0));
@@ -291,7 +291,7 @@ const SP_BLOCKS = {
             b.diverging ? h("i", { class: "zero", style: `left:${x(0)}%` }) : null,
             h("i", { class: "fill" + (b.diverging ? (neg ? " neg" : " pos") : ""), style: `left:${left}%;width:${width}%` }),
             h("span", { class: "lbl" + (neg ? " neg" : ""), style: neg ? `right:${100 - left}%` : `left:${left + width}%` }, row.display))),
-          h("span", { class: "v" }, row.extra));
+          row.extras.map((v, i) => h("span", { class: "v" + (i === 0 && row.extras.length > 1 ? " strong" : "") }, v)));
       }));
   },
 

@@ -4,7 +4,7 @@
   "kicker": "Special edition · Week 8",
   "title": "2026 Midseason Report",
   "intro": [
-    "Welcome to the 2026 midseason report, otherwise known as the Week 8 recap with a lot more tables. It’s been a slow year for some teams, but none of them were as slow as Kramer’s New York City Marathon time this past weekend. (He was running at his girlfriend’s pace, guys. I swear.) We’ve got midseason grades, playoff odds, player analytics and a few awards that probably won’t be making anyone’s résumé."
+    "Welcome to the 2026 midseason report, otherwise known as the Week 8 recap with a lot more tables. It’s been a slow year for some teams, but none of them were as slow as the Bronx’s own Dan Kramer’s New York City Marathon time this past weekend. (He was running at his girlfriend’s pace guys I swear.) We’ve got midseason grades, playoff odds, player analytics and a few awards that probably won’t be making anyone’s résumé."
   ],
   "lead": {
     "title": "Week 8",
@@ -33,22 +33,86 @@
       "id": "power",
       "title": "Power rankings and report cards",
       "blocks": [
-        { "type": "powerChart", "throughWeek": 8, "caption": "Power rankings movement, Weeks 1–8" },
+        {
+          "type": "powerChart",
+          "throughWeek": 8,
+          "caption": "Power rankings movement, Weeks 1–8"
+        },
         {
           "type": "reportCards",
           "rows": [
-            { "rank": 1, "team": 7, "grade": "A+", "text": "83–5 against the field, with a top-half scoring finish every week." },
-            { "rank": 2, "team": 12, "grade": "A−", "text": "Third in points and third in the standings. Drake Maye and Brock Purdy have supplied 254.90 starter points; Lamar Jackson’s zero in Week 8 was somehow survivable." },
-            { "rank": 3, "team": 8, "grade": "A", "text": "Three weekly scoring titles and six scores above 130. Both weeks below 100 were losses." },
-            { "rank": 4, "team": 11, "grade": "B+", "text": "Three consecutive head-to-head wins have helped turn a Week 5 score of 77.95 into an 8–4 record. They rank eighth in total points." },
-            { "rank": 5, "team": 6, "grade": "B", "text": "Fourth in total points but eighth in the standings." },
-            { "rank": 6, "team": 4, "grade": "B+", "text": "Six top-half scoring finishes, with a 75.45-point disaster in Week 6. The other seven weeks have all cleared 100." },
-            { "rank": 7, "team": 3, "grade": "C+", "text": "Three scores above 140 and two below 90." },
-            { "rank": 8, "team": 10, "grade": "B", "text": "Their first seven scores averaged 130.62. The eighth looked like someone else had logged into the account." },
-            { "rank": 9, "team": 9, "grade": "C", "text": "Sixth in scoring but ninth in the standings. Four straight head-to-head losses to open the season did plenty of damage before the offense settled in." },
-            { "rank": 10, "team": 5, "grade": "D", "text": "Two weeks above 120 points, three below 90. Injured Reserve have not won a head-to-head matchup since Week 4." },
-            { "rank": 11, "team": 2, "grade": "D−", "text": "Their only head-to-head win came in Week 1. Even a 135.42-point game in Week 6 ended in a loss." },
-            { "rank": 12, "team": 1, "grade": "F", "text": "A 3–85 record against the field and a season high of 99.76." }
+            {
+              "rank": 1,
+              "team": 7,
+              "grade": "A+",
+              "text": "83–5 against the field, with a top-half scoring finish every week."
+            },
+            {
+              "rank": 2,
+              "team": 12,
+              "grade": "A−",
+              "text": "Third in points and third in the standings. Drake Maye and Brock Purdy have supplied 254.90 starter points; Lamar Jackson’s zero in Week 8 was somehow survivable."
+            },
+            {
+              "rank": 3,
+              "team": 8,
+              "grade": "A",
+              "text": "Three weekly scoring titles and six scores above 130. Both weeks below 100 were losses."
+            },
+            {
+              "rank": 4,
+              "team": 11,
+              "grade": "B+",
+              "text": "Three consecutive head-to-head wins have helped turn a Week 5 score of 77.95 into an 8–4 record. They rank eighth in total points."
+            },
+            {
+              "rank": 5,
+              "team": 6,
+              "grade": "B",
+              "text": "Fourth in total points but eighth in the standings."
+            },
+            {
+              "rank": 6,
+              "team": 4,
+              "grade": "B+",
+              "text": "Six top-half scoring finishes, with a 75.45-point disaster in Week 6. The other seven weeks have all cleared 100."
+            },
+            {
+              "rank": 7,
+              "team": 3,
+              "grade": "C+",
+              "text": "Three scores above 140 and two below 90."
+            },
+            {
+              "rank": 8,
+              "team": 10,
+              "grade": "B",
+              "text": "Their first seven scores averaged 130.62. The eighth looked like someone else had logged into the account."
+            },
+            {
+              "rank": 9,
+              "team": 9,
+              "grade": "C",
+              "text": "Sixth in scoring but ninth in the standings. Four straight head-to-head losses to open the season did plenty of damage before the offense settled in."
+            },
+            {
+              "rank": 10,
+              "team": 5,
+              "grade": "D",
+              "text": "Two weeks above 120 points, three below 90. Injured Reserve have not won a head-to-head matchup since Week 4."
+            },
+            {
+              "rank": 11,
+              "team": 2,
+              "grade": "D−",
+              "text": "Their only head-to-head win came in Week 1. Even a 135.42-point game in Week 6 ended in a loss."
+            },
+            {
+              "rank": 12,
+              "team": 1,
+              "grade": "F",
+              "text": "A 3–85 record against the field and a season high of 99.76."
+            }
           ]
         }
       ]
@@ -61,130 +125,631 @@
           "type": "playoffOdds",
           "caption": "Playoff odds: dot = base model, line = range across alternative assumptions",
           "rows": [
-            { "team": 7, "playoff": 100.0, "low": 100.0, "high": 100.0, "label": "100%", "bye": "98.4%", "title": "47.7%" },
-            { "team": 8, "playoff": 97.8, "low": 97.4, "high": 98.7, "label": "98%", "bye": "55.0%", "title": "21.6%" },
-            { "team": 11, "playoff": 89.8, "low": 88.4, "high": 90.9, "label": "90%", "bye": "16.0%", "title": "5.3%" },
-            { "team": 4, "playoff": 85.4, "low": 73.8, "high": 87.4, "label": "85%", "bye": "15.1%", "title": "9.0%" },
-            { "team": 12, "playoff": 81.6, "low": 77.6, "high": 83.5, "label": "82%", "bye": "11.5%", "title": "6.0%" },
-            { "team": 10, "playoff": 62.6, "low": 55.2, "high": 87.0, "label": "63%", "bye": "2.6%", "title": "4.6%" },
-            { "team": 6, "playoff": 36.8, "low": 30.0, "high": 39.2, "label": "37%", "bye": "0.6%", "title": "2.2%" },
-            { "team": 3, "playoff": 33.9, "low": 25.1, "high": 35.8, "label": "34%", "bye": "0.8%", "title": "2.7%" },
-            { "team": 9, "playoff": 11.4, "low": 11.1, "high": 17.7, "label": "11%", "bye": "<0.1%", "title": "1.0%" },
-            { "team": 5, "playoff": 0.5, "low": 0.1, "high": 0.6, "label": "<1%", "bye": "0%", "title": "<0.1%" },
-            { "team": 2, "playoff": 0.0, "low": 0.0, "high": 0.1, "label": "<1%", "bye": "0%", "title": "0%" },
-            { "team": 1, "playoff": 0.0, "low": 0.0, "high": 0.0, "label": "<1%", "bye": "0%", "title": "0%" }
+            {
+              "team": 7,
+              "playoff": 100.0,
+              "low": 100.0,
+              "high": 100.0,
+              "label": "100%",
+              "bye": "98.4%",
+              "title": "47.7%"
+            },
+            {
+              "team": 8,
+              "playoff": 97.8,
+              "low": 97.4,
+              "high": 98.7,
+              "label": "98%",
+              "bye": "55.0%",
+              "title": "21.6%"
+            },
+            {
+              "team": 11,
+              "playoff": 89.8,
+              "low": 88.4,
+              "high": 90.9,
+              "label": "90%",
+              "bye": "16.0%",
+              "title": "5.3%"
+            },
+            {
+              "team": 4,
+              "playoff": 85.4,
+              "low": 73.8,
+              "high": 87.4,
+              "label": "85%",
+              "bye": "15.1%",
+              "title": "9.0%"
+            },
+            {
+              "team": 12,
+              "playoff": 81.6,
+              "low": 77.6,
+              "high": 83.5,
+              "label": "82%",
+              "bye": "11.5%",
+              "title": "6.0%"
+            },
+            {
+              "team": 10,
+              "playoff": 62.6,
+              "low": 55.2,
+              "high": 87.0,
+              "label": "63%",
+              "bye": "2.6%",
+              "title": "4.6%"
+            },
+            {
+              "team": 6,
+              "playoff": 36.8,
+              "low": 30.0,
+              "high": 39.2,
+              "label": "37%",
+              "bye": "0.6%",
+              "title": "2.2%"
+            },
+            {
+              "team": 3,
+              "playoff": 33.9,
+              "low": 25.1,
+              "high": 35.8,
+              "label": "34%",
+              "bye": "0.8%",
+              "title": "2.7%"
+            },
+            {
+              "team": 9,
+              "playoff": 11.4,
+              "low": 11.1,
+              "high": 17.7,
+              "label": "11%",
+              "bye": "<0.1%",
+              "title": "1.0%"
+            },
+            {
+              "team": 5,
+              "playoff": 0.5,
+              "low": 0.1,
+              "high": 0.6,
+              "label": "<1%",
+              "bye": "0%",
+              "title": "<0.1%"
+            },
+            {
+              "team": 2,
+              "playoff": 0.0,
+              "low": 0.0,
+              "high": 0.1,
+              "label": "<1%",
+              "bye": "0%",
+              "title": "0%"
+            },
+            {
+              "team": 1,
+              "playoff": 0.0,
+              "low": 0.0,
+              "high": 0.0,
+              "label": "<1%",
+              "bye": "0%",
+              "title": "0%"
+            }
           ]
         },
-        { "type": "p", "text": "Woody’s Toy Box project to outscore chrisrenna17 over the remaining six weeks but begin 1.5 wins behind them in the standings. Green Egbukas & Ham are between the two and meet Woody’s Toy Box in Week 11." }
+        {
+          "type": "p",
+          "text": "Woody’s Toy Box project to outscore chrisrenna17 over the remaining six weeks but begin 1.5 wins behind them in the standings. Green Egbukas & Ham are between the two and meet Woody’s Toy Box in Week 11."
+        }
       ]
     },
     {
       "id": "numbers",
       "title": "By the numbers",
       "blocks": [
-        { "type": "sub", "text": "League scoring" },
+        {
+          "type": "sub",
+          "text": "League scoring"
+        },
         {
           "type": "table",
           "columns": [
-            { "key": "stat", "label": "Statistic", "kind": "text", "wrap": true },
-            { "key": "y2026", "label": "2026, Weeks 1–8", "short": "2026" },
-            { "key": "y2025", "label": "2025, Weeks 1–8", "short": "2025" }
+            {
+              "key": "stat",
+              "label": "Statistic",
+              "kind": "text",
+              "wrap": true
+            },
+            {
+              "key": "y2026",
+              "label": "2026, Weeks 1–8",
+              "short": "2026"
+            },
+            {
+              "key": "y2025",
+              "label": "2025, Weeks 1–8",
+              "short": "2025"
+            }
           ],
           "caption": "Weeks 1–8 of each season",
           "rows": [
-            { "stat": "Points per team per week", "y2026": "120.03", "y2025": "119.73" },
-            { "stat": "Team-weeks with at least 130 points", "y2026": "41 of 96", "y2025": "33 of 96" },
-            { "stat": "Average weekly sixth-place score", "y2026": "126.28", "y2025": "123.72" },
-            { "stat": "Team-weeks below 90 points", "y2026": "16 of 96", "y2025": "9 of 96" }
+            {
+              "stat": "Points per team per week",
+              "y2026": "120.03",
+              "y2025": "119.73"
+            },
+            {
+              "stat": "Team-weeks with at least 130 points",
+              "y2026": "41 of 96",
+              "y2025": "33 of 96"
+            },
+            {
+              "stat": "Average weekly sixth-place score",
+              "y2026": "126.28",
+              "y2025": "123.72"
+            },
+            {
+              "stat": "Team-weeks below 90 points",
+              "y2026": "16 of 96",
+              "y2025": "9 of 96"
+            }
           ]
         },
-        { "type": "sub", "text": "Other numbers" },
+        {
+          "type": "sub",
+          "text": "Other numbers"
+        },
         {
           "type": "stats",
           "items": [
-            { "value": "10 of 48", "label": "Head-to-head losses that still earned the top-half scoring bonus." },
-            { "value": "11 of 48", "label": "Matchups decided by 10 points or fewer." },
-            { "value": "24.03", "label": "Median head-to-head scoring margin, in points." }
+            {
+              "value": "10 of 48",
+              "label": "Head-to-head losses that still earned the top-half scoring bonus."
+            },
+            {
+              "value": "11 of 48",
+              "label": "Matchups decided by 10 points or fewer."
+            },
+            {
+              "value": "24.03",
+              "label": "Median head-to-head scoring margin, in points."
+            }
           ]
         },
-        { "type": "sub", "text": "Schedule luck" },
-        { "type": "p", "text": "How many head-to-head wins each team gained or lost compared with drawing a random opponent each week." },
+        {
+          "type": "sub",
+          "text": "Schedule luck"
+        },
+        {
+          "type": "p",
+          "text": "How many head-to-head wins each team gained or lost compared with drawing a random opponent each week."
+        },
         {
           "type": "table",
           "columns": [
-            { "key": "team", "label": "Franchise", "kind": "team" },
-            { "key": "w", "label": "H2H wins", "short": "H2H W" },
-            { "key": "xw", "label": "Expected H2H wins", "short": "Exp. W" },
-            { "key": "diff", "label": "Difference", "short": "Diff", "kind": "delta" }
+            {
+              "key": "team",
+              "label": "Franchise",
+              "kind": "team"
+            },
+            {
+              "key": "w",
+              "label": "H2H wins",
+              "short": "H2H W"
+            },
+            {
+              "key": "xw",
+              "label": "Expected H2H wins",
+              "short": "Exp. W"
+            },
+            {
+              "key": "diff",
+              "label": "Difference",
+              "short": "Diff",
+              "kind": "delta"
+            }
           ],
           "rows": [
-            { "team": 10, "w": "5", "xw": "3.91", "diff": "+1.09" },
-            { "team": 11, "w": "5", "xw": "4.27", "diff": "+0.73" },
-            { "team": 12, "w": "6", "xw": "5.36", "diff": "+0.64" },
-            { "team": 4, "w": "5", "xw": "4.64", "diff": "+0.36" },
-            { "team": 3, "w": "4", "xw": "3.82", "diff": "+0.18" },
-            { "team": 8, "w": "6", "xw": "5.82", "diff": "+0.18" },
-            { "team": 6, "w": "4", "xw": "4.18", "diff": "-0.18" },
-            { "team": 1, "w": "0", "xw": "0.27", "diff": "-0.27" },
-            { "team": 5, "w": "2", "xw": "2.27", "diff": "-0.27" },
-            { "team": 7, "w": "7", "xw": "7.55", "diff": "-0.55" },
-            { "team": 9, "w": "3", "xw": "3.73", "diff": "-0.73" },
-            { "team": 2, "w": "1", "xw": "2.18", "diff": "-1.18" }
+            {
+              "team": 10,
+              "w": "5",
+              "xw": "3.91",
+              "diff": "+1.09"
+            },
+            {
+              "team": 11,
+              "w": "5",
+              "xw": "4.27",
+              "diff": "+0.73"
+            },
+            {
+              "team": 12,
+              "w": "6",
+              "xw": "5.36",
+              "diff": "+0.64"
+            },
+            {
+              "team": 4,
+              "w": "5",
+              "xw": "4.64",
+              "diff": "+0.36"
+            },
+            {
+              "team": 3,
+              "w": "4",
+              "xw": "3.82",
+              "diff": "+0.18"
+            },
+            {
+              "team": 8,
+              "w": "6",
+              "xw": "5.82",
+              "diff": "+0.18"
+            },
+            {
+              "team": 6,
+              "w": "4",
+              "xw": "4.18",
+              "diff": "-0.18"
+            },
+            {
+              "team": 1,
+              "w": "0",
+              "xw": "0.27",
+              "diff": "-0.27"
+            },
+            {
+              "team": 5,
+              "w": "2",
+              "xw": "2.27",
+              "diff": "-0.27"
+            },
+            {
+              "team": 7,
+              "w": "7",
+              "xw": "7.55",
+              "diff": "-0.55"
+            },
+            {
+              "team": 9,
+              "w": "3",
+              "xw": "3.73",
+              "diff": "-0.73"
+            },
+            {
+              "team": 2,
+              "w": "1",
+              "xw": "2.18",
+              "diff": "-1.18"
+            }
           ]
         },
-        { "type": "p", "text": "With 200,000 alternative first-half schedules, Chris Renna would have been in the top six **46.4%** of the time; Woody’s Toy Box, **36.2%**. Their weekly scores stay the same in every scenario." }
+        {
+          "type": "p",
+          "text": "With 200,000 alternative first-half schedules, Chris Renna would have been in the top six **46.4%** of the time; Woody’s Toy Box, **36.2%**. Their weekly scores stay the same in every scenario."
+        }
       ]
     },
     {
       "id": "players",
       "title": "Players",
       "blocks": [
-        { "type": "sub", "text": "Scoring versus opportunity" },
+        {
+          "type": "sub",
+          "text": "Scoring versus opportunity"
+        },
         {
           "type": "barList",
           "caption": "Points above or below opportunity-based expected fantasy points, Weeks 1–8",
           "valueLabel": "Above / below expected",
           "valueShort": "+/− exp.",
-          "extraLabel": "Expected points",
-          "extraShort": "Exp.",
           "diverging": true,
           "rows": [
-            { "player": { "pid": "9488", "name": "Jaxon Smith-Njigba", "pos": "WR" }, "value": 60.0, "display": "+60.0", "extra": "128.0" },
-            { "player": { "pid": "4984", "name": "Josh Allen", "pos": "QB" }, "value": 38.0, "display": "+38.0", "extra": "155.1" },
-            { "player": { "pid": "6770", "name": "Joe Burrow", "pos": "QB" }, "value": 36.6, "display": "+36.6", "extra": "141.4" },
-            { "player": { "pid": "6801", "name": "Tee Higgins", "pos": "WR" }, "value": 33.0, "display": "+33.0", "extra": "85.1" },
-            { "player": { "pid": "8167", "name": "Christian Watson", "pos": "WR" }, "value": 31.6, "display": "+31.6", "extra": "94.2" },
-            { "player": { "pid": "9221", "name": "Jahmyr Gibbs", "pos": "RB" }, "value": 20.6, "display": "+20.6", "extra": "157.3" },
-            { "player": { "pid": "11604", "name": "Brock Bowers", "pos": "TE" }, "value": 5.4, "display": "+5.4", "extra": "108.0" },
-            { "player": { "pid": "12501", "name": "Matthew Golden", "pos": "WR" }, "value": -17.9, "display": "−17.9", "extra": "125.9" },
-            { "player": { "pid": "12517", "name": "Colston Loveland", "pos": "TE" }, "value": -20.3, "display": "−20.3", "extra": "86.0" },
-            { "player": { "pid": "5846", "name": "DK Metcalf", "pos": "WR" }, "value": -30.8, "display": "−30.8", "extra": "92.2" },
-            { "player": { "pid": "10232", "name": "Michael Wilson", "pos": "WR" }, "value": -46.2, "display": "−46.2", "extra": "132.4" }
+            {
+              "player": {
+                "pid": "9488",
+                "name": "Jaxon Smith-Njigba",
+                "pos": "WR"
+              },
+              "value": 60.0,
+              "display": "+60.0",
+              "extras": [
+                "188.0",
+                "128.0"
+              ]
+            },
+            {
+              "player": {
+                "pid": "4984",
+                "name": "Josh Allen",
+                "pos": "QB"
+              },
+              "value": 38.0,
+              "display": "+38.0",
+              "extras": [
+                "193.1",
+                "155.1"
+              ]
+            },
+            {
+              "player": {
+                "pid": "6770",
+                "name": "Joe Burrow",
+                "pos": "QB"
+              },
+              "value": 36.6,
+              "display": "+36.6",
+              "extras": [
+                "178.0",
+                "141.4"
+              ]
+            },
+            {
+              "player": {
+                "pid": "6801",
+                "name": "Tee Higgins",
+                "pos": "WR"
+              },
+              "value": 33.0,
+              "display": "+33.0",
+              "extras": [
+                "118.1",
+                "85.1"
+              ]
+            },
+            {
+              "player": {
+                "pid": "8167",
+                "name": "Christian Watson",
+                "pos": "WR"
+              },
+              "value": 31.6,
+              "display": "+31.6",
+              "extras": [
+                "125.8",
+                "94.2"
+              ]
+            },
+            {
+              "player": {
+                "pid": "9221",
+                "name": "Jahmyr Gibbs",
+                "pos": "RB"
+              },
+              "value": 20.6,
+              "display": "+20.6",
+              "extras": [
+                "177.9",
+                "157.3"
+              ]
+            },
+            {
+              "player": {
+                "pid": "11604",
+                "name": "Brock Bowers",
+                "pos": "TE"
+              },
+              "value": 5.4,
+              "display": "+5.4",
+              "extras": [
+                "113.4",
+                "108.0"
+              ]
+            },
+            {
+              "player": {
+                "pid": "12501",
+                "name": "Matthew Golden",
+                "pos": "WR"
+              },
+              "value": -17.9,
+              "display": "−17.9",
+              "extras": [
+                "108.0",
+                "125.9"
+              ]
+            },
+            {
+              "player": {
+                "pid": "12517",
+                "name": "Colston Loveland",
+                "pos": "TE"
+              },
+              "value": -20.3,
+              "display": "−20.3",
+              "extras": [
+                "65.7",
+                "86.0"
+              ]
+            },
+            {
+              "player": {
+                "pid": "5846",
+                "name": "DK Metcalf",
+                "pos": "WR"
+              },
+              "value": -30.8,
+              "display": "−30.8",
+              "extras": [
+                "61.4",
+                "92.2"
+              ]
+            },
+            {
+              "player": {
+                "pid": "10232",
+                "name": "Michael Wilson",
+                "pos": "WR"
+              },
+              "value": -46.2,
+              "display": "−46.2",
+              "extras": [
+                "86.2",
+                "132.4"
+              ]
+            }
+          ],
+          "extraCols": [
+            {
+              "label": "Actual points",
+              "short": "Actual"
+            },
+            {
+              "label": "Expected points",
+              "short": "Exp."
+            }
           ]
         },
-        { "type": "p", "text": "Jaxon Smith-Njigba has 89 targets and 51.7% of Seattle’s air yards. Michael Wilson has two touchdowns on opportunities worth approximately 7.5 expected touchdowns." },
-        { "type": "p", "text": "Brock Bowers averaged **18.0 expected points per active game**. Trey McBride’s 66 catches added **16.5 points** from TE premium alone." },
-        { "type": "sub", "text": "Leading scorers by franchise" },
+        {
+          "type": "p",
+          "text": "Jaxon Smith-Njigba has 89 targets and 51.7% of Seattle’s air yards. Michael Wilson has two touchdowns on opportunities worth approximately 7.5 expected touchdowns."
+        },
+        {
+          "type": "p",
+          "text": "Brock Bowers averaged **18.0 expected points per active game**. Trey McBride’s 66 catches added **16.5 points** from TE premium alone."
+        },
+        {
+          "type": "sub",
+          "text": "Leading scorers by franchise"
+        },
         {
           "type": "table",
           "columns": [
-            { "key": "player", "label": "Player", "kind": "player" },
-            { "key": "pts", "label": "Started points", "short": "Pts" },
-            { "key": "share", "label": "Share of team points", "short": "Share" }
+            {
+              "key": "player",
+              "label": "Player",
+              "kind": "player"
+            },
+            {
+              "key": "pts",
+              "label": "Started points",
+              "short": "Pts"
+            },
+            {
+              "key": "share",
+              "label": "Share of team points",
+              "short": "Share"
+            }
           ],
           "rows": [
-            { "player": { "pid": "4984", "name": "Josh Allen", "pos": "QB", "team": 9 }, "pts": "192.32", "share": "19.7%" },
-            { "player": { "pid": "9488", "name": "Jaxon Smith-Njigba", "pos": "WR", "team": 7 }, "pts": "187.96", "share": "14.9%" },
-            { "player": { "pid": "9221", "name": "Jahmyr Gibbs", "pos": "RB", "team": 3 }, "pts": "178.80", "share": "18.6%" },
-            { "player": { "pid": "6770", "name": "Joe Burrow", "pos": "QB", "team": 8 }, "pts": "175.60", "share": "15.4%" },
-            { "player": { "pid": "1166", "name": "Kirk Cousins", "pos": "QB", "team": 5 }, "pts": "164.66", "share": "19.9%" },
-            { "player": { "pid": "3294", "name": "Dak Prescott", "pos": "QB", "team": 6 }, "pts": "152.94", "share": "15.1%" },
-            { "player": { "pid": "8151", "name": "Kenneth Walker III", "pos": "RB", "team": 4 }, "pts": "149.10", "share": "15.2%" },
-            { "player": { "pid": "9509", "name": "Bijan Robinson", "pos": "RB", "team": 10 }, "pts": "140.80", "share": "14.4%" },
-            { "player": { "pid": "6790", "name": "D'Andre Swift", "pos": "RB", "team": 11 }, "pts": "138.70", "share": "14.4%" },
-            { "player": { "pid": "8183", "name": "Brock Purdy", "pos": "QB", "team": 12 }, "pts": "127.92", "share": "12.2%" },
-            { "player": { "pid": "96", "name": "Aaron Rodgers", "pos": "QB", "team": 2 }, "pts": "123.14", "share": "15.6%" },
-            { "player": { "pid": "11560", "name": "Caleb Williams", "pos": "QB", "team": 1 }, "pts": "98.58", "share": "16.8%" }
+            {
+              "player": {
+                "pid": "4984",
+                "name": "Josh Allen",
+                "pos": "QB",
+                "team": 9
+              },
+              "pts": "192.32",
+              "share": "19.7%"
+            },
+            {
+              "player": {
+                "pid": "9488",
+                "name": "Jaxon Smith-Njigba",
+                "pos": "WR",
+                "team": 7
+              },
+              "pts": "187.96",
+              "share": "14.9%"
+            },
+            {
+              "player": {
+                "pid": "9221",
+                "name": "Jahmyr Gibbs",
+                "pos": "RB",
+                "team": 3
+              },
+              "pts": "178.80",
+              "share": "18.6%"
+            },
+            {
+              "player": {
+                "pid": "6770",
+                "name": "Joe Burrow",
+                "pos": "QB",
+                "team": 8
+              },
+              "pts": "175.60",
+              "share": "15.4%"
+            },
+            {
+              "player": {
+                "pid": "1166",
+                "name": "Kirk Cousins",
+                "pos": "QB",
+                "team": 5
+              },
+              "pts": "164.66",
+              "share": "19.9%"
+            },
+            {
+              "player": {
+                "pid": "3294",
+                "name": "Dak Prescott",
+                "pos": "QB",
+                "team": 6
+              },
+              "pts": "152.94",
+              "share": "15.1%"
+            },
+            {
+              "player": {
+                "pid": "8151",
+                "name": "Kenneth Walker III",
+                "pos": "RB",
+                "team": 4
+              },
+              "pts": "149.10",
+              "share": "15.2%"
+            },
+            {
+              "player": {
+                "pid": "9509",
+                "name": "Bijan Robinson",
+                "pos": "RB",
+                "team": 10
+              },
+              "pts": "140.80",
+              "share": "14.4%"
+            },
+            {
+              "player": {
+                "pid": "6790",
+                "name": "D'Andre Swift",
+                "pos": "RB",
+                "team": 11
+              },
+              "pts": "138.70",
+              "share": "14.4%"
+            },
+            {
+              "player": {
+                "pid": "8183",
+                "name": "Brock Purdy",
+                "pos": "QB",
+                "team": 12
+              },
+              "pts": "127.92",
+              "share": "12.2%"
+            },
+            {
+              "player": {
+                "pid": "96",
+                "name": "Aaron Rodgers",
+                "pos": "QB",
+                "team": 2
+              },
+              "pts": "123.14",
+              "share": "15.6%"
+            },
+            {
+              "player": {
+                "pid": "11560",
+                "name": "Caleb Williams",
+                "pos": "QB",
+                "team": 1
+              },
+              "pts": "98.58",
+              "share": "16.8%"
+            }
           ]
         }
       ]
@@ -198,17 +763,109 @@
           "caption": "Drop in team playoff odds after replacing one player",
           "valueLabel": "Playoff odds lost",
           "valueShort": "Odds lost",
-          "extraLabel": "Projected points over replacement",
-          "extraShort": "Pts over repl.",
           "rows": [
-            { "player": { "pid": "9221", "name": "Jahmyr Gibbs", "team": 3 }, "value": 22.8, "display": "22.8 pp", "extra": "92.3" },
-            { "player": { "pid": "9509", "name": "Bijan Robinson", "team": 10 }, "value": 20.2, "display": "20.2 pp", "extra": "59.9" },
-            { "player": { "pid": "11604", "name": "Brock Bowers", "team": 3 }, "value": 13.1, "display": "13.1 pp", "extra": "47.2" },
-            { "player": { "pid": "8151", "name": "Kenneth Walker III", "team": 4 }, "value": 12.7, "display": "12.7 pp", "extra": "59.2" },
-            { "player": { "pid": "12527", "name": "Ashton Jeanty", "team": 10 }, "value": 11.9, "display": "11.9 pp", "extra": "34.9" },
-            { "player": { "pid": "12526", "name": "Tetairoa McMillan", "team": 10 }, "value": 10.3, "display": "10.3 pp", "extra": "31.5" },
-            { "player": { "pid": "9758", "name": "C.J. Stroud", "team": 6 }, "value": 8.9, "display": "8.9 pp", "extra": "29.9" },
-            { "player": { "pid": "7547", "name": "Amon-Ra St. Brown", "team": 4 }, "value": 8.5, "display": "8.5 pp", "extra": "42.2" }
+            {
+              "player": {
+                "pid": "9221",
+                "name": "Jahmyr Gibbs",
+                "team": 3
+              },
+              "value": 22.8,
+              "display": "22.8%",
+              "extras": [
+                "92.3"
+              ]
+            },
+            {
+              "player": {
+                "pid": "9509",
+                "name": "Bijan Robinson",
+                "team": 10
+              },
+              "value": 20.2,
+              "display": "20.2%",
+              "extras": [
+                "59.9"
+              ]
+            },
+            {
+              "player": {
+                "pid": "11604",
+                "name": "Brock Bowers",
+                "team": 3
+              },
+              "value": 13.1,
+              "display": "13.1%",
+              "extras": [
+                "47.2"
+              ]
+            },
+            {
+              "player": {
+                "pid": "8151",
+                "name": "Kenneth Walker III",
+                "team": 4
+              },
+              "value": 12.7,
+              "display": "12.7%",
+              "extras": [
+                "59.2"
+              ]
+            },
+            {
+              "player": {
+                "pid": "12527",
+                "name": "Ashton Jeanty",
+                "team": 10
+              },
+              "value": 11.9,
+              "display": "11.9%",
+              "extras": [
+                "34.9"
+              ]
+            },
+            {
+              "player": {
+                "pid": "12526",
+                "name": "Tetairoa McMillan",
+                "team": 10
+              },
+              "value": 10.3,
+              "display": "10.3%",
+              "extras": [
+                "31.5"
+              ]
+            },
+            {
+              "player": {
+                "pid": "9758",
+                "name": "C.J. Stroud",
+                "team": 6
+              },
+              "value": 8.9,
+              "display": "8.9%",
+              "extras": [
+                "29.9"
+              ]
+            },
+            {
+              "player": {
+                "pid": "7547",
+                "name": "Amon-Ra St. Brown",
+                "team": 4
+              },
+              "value": 8.5,
+              "display": "8.5%",
+              "extras": [
+                "42.2"
+              ]
+            }
+          ],
+          "extraCols": [
+            {
+              "label": "Projected points over replacement",
+              "short": "Pts over repl."
+            }
           ]
         }
       ]
@@ -220,61 +877,237 @@
         {
           "type": "table",
           "columns": [
-            { "key": "team", "label": "Manager", "kind": "team" },
-            { "key": "pct", "label": "% of best legal lineup", "short": "% best" },
-            { "key": "unused", "label": "Unused points", "short": "Unused" },
-            { "key": "extra", "label": "Maximum extra wins", "short": "Max +W" }
+            {
+              "key": "team",
+              "label": "Manager",
+              "kind": "team"
+            },
+            {
+              "key": "pct",
+              "label": "% of best legal lineup",
+              "short": "% best"
+            },
+            {
+              "key": "unused",
+              "label": "Unused points",
+              "short": "Unused"
+            },
+            {
+              "key": "extra",
+              "label": "Maximum extra wins",
+              "short": "Max +W"
+            }
           ],
           "rows": [
-            { "team": 8, "pct": "92.2%", "unused": "96.72", "extra": "+0" },
-            { "team": 10, "pct": "89.5%", "unused": "114.52", "extra": "+0.5" },
-            { "team": 7, "pct": "88.6%", "unused": "162.84", "extra": "+1" },
-            { "team": 11, "pct": "87.2%", "unused": "141.20", "extra": "+2.5" },
-            { "team": 12, "pct": "86.9%", "unused": "157.47", "extra": "+1" },
-            { "team": 5, "pct": "86.9%", "unused": "125.17", "extra": "+1" },
-            { "team": 3, "pct": "85.3%", "unused": "164.94", "extra": "+2.5" },
-            { "team": 1, "pct": "85.2%", "unused": "101.57", "extra": "+1.5" },
-            { "team": 6, "pct": "84.4%", "unused": "186.96", "extra": "+5" },
-            { "team": 4, "pct": "83.3%", "unused": "197.35", "extra": "+1.5" },
-            { "team": 9, "pct": "82.3%", "unused": "209.47", "extra": "+6" },
-            { "team": 2, "pct": "76.0%", "unused": "249.46", "extra": "+4" }
+            {
+              "team": 8,
+              "pct": "92.2%",
+              "unused": "96.72",
+              "extra": "+0"
+            },
+            {
+              "team": 10,
+              "pct": "89.5%",
+              "unused": "114.52",
+              "extra": "+0.5"
+            },
+            {
+              "team": 7,
+              "pct": "88.6%",
+              "unused": "162.84",
+              "extra": "+1"
+            },
+            {
+              "team": 11,
+              "pct": "87.2%",
+              "unused": "141.20",
+              "extra": "+2.5"
+            },
+            {
+              "team": 12,
+              "pct": "86.9%",
+              "unused": "157.47",
+              "extra": "+1"
+            },
+            {
+              "team": 5,
+              "pct": "86.9%",
+              "unused": "125.17",
+              "extra": "+1"
+            },
+            {
+              "team": 3,
+              "pct": "85.3%",
+              "unused": "164.94",
+              "extra": "+2.5"
+            },
+            {
+              "team": 1,
+              "pct": "85.2%",
+              "unused": "101.57",
+              "extra": "+1.5"
+            },
+            {
+              "team": 6,
+              "pct": "84.4%",
+              "unused": "186.96",
+              "extra": "+5"
+            },
+            {
+              "team": 4,
+              "pct": "83.3%",
+              "unused": "197.35",
+              "extra": "+1.5"
+            },
+            {
+              "team": 9,
+              "pct": "82.3%",
+              "unused": "209.47",
+              "extra": "+6"
+            },
+            {
+              "team": 2,
+              "pct": "76.0%",
+              "unused": "249.46",
+              "extra": "+4"
+            }
           ]
         },
-        { "type": "p", "text": "The lineup figures use the highest-scoring legal combination **after the games**. They show hindsight opportunities, not mistakes managers could necessarily have predicted." }
+        {
+          "type": "p",
+          "text": "The lineup figures use the highest-scoring legal combination **after the games**. They show hindsight opportunities, not mistakes managers could necessarily have predicted."
+        }
       ]
     },
     {
       "id": "drafts",
       "title": "Drafts and pickups",
       "blocks": [
-        { "type": "sub", "text": "Startup picks" },
+        {
+          "type": "sub",
+          "text": "Startup picks"
+        },
         {
           "type": "table",
           "columns": [
-            { "key": "player", "label": "Player", "kind": "player" },
-            { "key": "pick", "label": "Startup pick", "short": "Pick" },
-            { "key": "pts", "label": "Starter points", "short": "Pts" },
-            { "key": "rank", "label": "Scoring rank of 336", "short": "Rank/336" }
+            {
+              "key": "player",
+              "label": "Player",
+              "kind": "player"
+            },
+            {
+              "key": "pick",
+              "label": "Startup pick",
+              "short": "Pick"
+            },
+            {
+              "key": "pts",
+              "label": "Starter points",
+              "short": "Pts"
+            },
+            {
+              "key": "rank",
+              "label": "Scoring rank of 336",
+              "short": "Rank/336"
+            }
           ],
           "rows": [
-            { "player": { "pid": "8167", "name": "Christian Watson", "pos": "WR", "team": 12 }, "pick": "238", "pts": "125.80", "rank": "24" },
-            { "player": { "pid": "9487", "name": "Parker Washington", "pos": "WR", "team": 6 }, "pick": "271", "pts": "82.00", "rank": "58" },
-            { "player": { "pid": "12506", "name": "Harold Fannin Jr.", "pos": "TE", "team": 1 }, "pick": "152", "pts": "81.35", "rank": "59" }
+            {
+              "player": {
+                "pid": "8167",
+                "name": "Christian Watson",
+                "pos": "WR",
+                "team": 12
+              },
+              "pick": "238",
+              "pts": "125.80",
+              "rank": "24"
+            },
+            {
+              "player": {
+                "pid": "9487",
+                "name": "Parker Washington",
+                "pos": "WR",
+                "team": 6
+              },
+              "pick": "271",
+              "pts": "82.00",
+              "rank": "58"
+            },
+            {
+              "player": {
+                "pid": "12506",
+                "name": "Harold Fannin Jr.",
+                "pos": "TE",
+                "team": 1
+              },
+              "pick": "152",
+              "pts": "81.35",
+              "rank": "59"
+            }
           ]
         },
-        { "type": "sub", "text": "Waiver acquisitions" },
+        {
+          "type": "sub",
+          "text": "Waiver acquisitions"
+        },
         {
           "type": "table",
           "columns": [
-            { "key": "player", "label": "Player", "kind": "player" },
-            { "key": "faab", "label": "FAAB spent", "short": "FAAB" },
-            { "key": "starts", "label": "Starts" },
-            { "key": "pts", "label": "Starter points", "short": "Pts" }
+            {
+              "key": "player",
+              "label": "Player",
+              "kind": "player"
+            },
+            {
+              "key": "faab",
+              "label": "FAAB spent",
+              "short": "FAAB"
+            },
+            {
+              "key": "starts",
+              "label": "Starts"
+            },
+            {
+              "key": "pts",
+              "label": "Starter points",
+              "short": "Pts"
+            }
           ],
           "rows": [
-            { "player": { "pid": "11834", "name": "Devaughn Vele", "pos": "WR", "team": 9 }, "faab": "$0", "starts": "6", "pts": "52.90" },
-            { "player": { "pid": "8172", "name": "Greg Dulcich", "pos": "TE", "team": 1 }, "faab": "$87", "starts": "6", "pts": "31.75" },
-            { "player": { "pid": "8180", "name": "Jalen Nailor", "pos": "WR", "team": 10 }, "faab": "$253", "starts": "0", "pts": "0.00" }
+            {
+              "player": {
+                "pid": "11834",
+                "name": "Devaughn Vele",
+                "pos": "WR",
+                "team": 9
+              },
+              "faab": "$0",
+              "starts": "6",
+              "pts": "52.90"
+            },
+            {
+              "player": {
+                "pid": "8172",
+                "name": "Greg Dulcich",
+                "pos": "TE",
+                "team": 1
+              },
+              "faab": "$87",
+              "starts": "6",
+              "pts": "31.75"
+            },
+            {
+              "player": {
+                "pid": "8180",
+                "name": "Jalen Nailor",
+                "pos": "WR",
+                "team": 10
+              },
+              "faab": "$253",
+              "starts": "0",
+              "pts": "0.00"
+            }
           ]
         }
       ]
@@ -286,13 +1119,47 @@
         {
           "type": "awards",
           "items": [
-            { "award": "Manager of the Year", "team": 7, "text": "11–1 and 1,259.73 points, 118.36 ahead of the next-highest scorer." },
-            { "award": "Worst Defense", "team": 2, "text": "1,089.30 points allowed. Injured Reserve are only 2.28 behind. Fire the defensive coordinator." },
-            { "award": "Rookie of the Year", "player": { "pid": "13279", "name": "Carnell Tate" }, "text": "The No. 3 rookie-draft pick leads all 48 selections with 60.30 starter points." },
-            { "award": "Best Rookie Draft Steal", "team": 10, "text": "Germie Bernard went 21st and ranks third among 2026 rookie picks with 41.30 starter points." },
-            { "award": "Breakout Team", "team": 12, "text": "141.22 more points than through eight weeks last season." },
-            { "award": "Biggest Disappointment", "team": 5, "text": "128.72 fewer points than at the same point last season." },
-            { "award": "Most Disappointing Startup Pick", "player": { "pid": "11566", "name": "Jayden Daniels" }, "text": "The No. 2 pick in the 2025 startup draft has contributed 47.38 points in three starts this season." }
+            {
+              "award": "Manager of the Year",
+              "team": 7,
+              "text": "11–1 and 1,259.73 points, 118.36 ahead of the next-highest scorer."
+            },
+            {
+              "award": "Worst Defense",
+              "team": 2,
+              "text": "1,089.30 points allowed. Injured Reserve are only 2.28 behind. Fire the defensive coordinator."
+            },
+            {
+              "award": "Rookie of the Year",
+              "player": {
+                "pid": "13279",
+                "name": "Carnell Tate"
+              },
+              "text": "The No. 3 rookie-draft pick leads all 48 selections with 60.30 starter points."
+            },
+            {
+              "award": "Best Rookie Draft Steal",
+              "team": 10,
+              "text": "Germie Bernard went 21st and ranks third among 2026 rookie picks with 41.30 starter points."
+            },
+            {
+              "award": "Breakout Team",
+              "team": 12,
+              "text": "141.22 more points than through eight weeks last season."
+            },
+            {
+              "award": "Biggest Disappointment",
+              "team": 5,
+              "text": "128.72 fewer points than at the same point last season."
+            },
+            {
+              "award": "Most Disappointing Startup Pick",
+              "player": {
+                "pid": "11566",
+                "name": "Jayden Daniels"
+              },
+              "text": "The No. 2 pick in the 2025 startup draft has contributed 47.38 points in three starts this season."
+            }
           ]
         }
       ]
@@ -305,12 +1172,53 @@
           "type": "fixtures",
           "caption": "Playoff odds if the named team wins / loses",
           "items": [
-            { "week": 11, "a": 3, "b": 6, "odds": [{ "team": 3, "win": "56.0%", "loss": "19.6%" }] },
-            { "week": 14, "a": 10, "b": 6, "odds": [{ "team": 10, "win": "78.4%", "loss": "41.3%" }, { "team": 6, "win": "58.1%", "loss": "21.1%" }] },
-            { "week": 10, "a": 10, "b": 12, "odds": [{ "team": 10, "win": "81.0%", "loss": "47.4%" }] }
+            {
+              "week": 11,
+              "a": 3,
+              "b": 6,
+              "odds": [
+                {
+                  "team": 3,
+                  "win": "56.0%",
+                  "loss": "19.6%"
+                }
+              ]
+            },
+            {
+              "week": 14,
+              "a": 10,
+              "b": 6,
+              "odds": [
+                {
+                  "team": 10,
+                  "win": "78.4%",
+                  "loss": "41.3%"
+                },
+                {
+                  "team": 6,
+                  "win": "58.1%",
+                  "loss": "21.1%"
+                }
+              ]
+            },
+            {
+              "week": 10,
+              "a": 10,
+              "b": 12,
+              "odds": [
+                {
+                  "team": 10,
+                  "win": "81.0%",
+                  "loss": "47.4%"
+                }
+              ]
+            }
           ]
         },
-        { "type": "p", "text": "Mark 2.0 face The Permanent Rebuild in Week 10 and It Hurts When I Pitts in Week 14. BrendanBall03 face New York Mudbones in Week 9 and New England Keys in Week 11." }
+        {
+          "type": "p",
+          "text": "Mark 2.0 face The Permanent Rebuild in Week 10 and It Hurts When I Pitts in Week 14. BrendanBall03 face New York Mudbones in Week 9 and New England Keys in Week 11."
+        }
       ]
     }
   ]
