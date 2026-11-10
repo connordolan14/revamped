@@ -296,10 +296,17 @@ async function main() {
     const research = existsSync(rp) ? readJson(rp) : null;
     const article = readJson(articleFile!) as RecapArticle;
 
-    // Hand-written recaps are published verbatim, so the 600-800 word range
-    // (a guardrail for generated drafts) doesn't apply to them.
-    const lengthOverride = MODELS.writer === "human" ? { minWords: 0, maxWords: Infinity } : {};
-    const result = validateRecap(article, { ...optionsFor(packet.context, research), ...lengthOverride });
+    // Hand-written recaps are published verbatim, so guardrails for generated
+    // drafts (the 600-800 word range, the cultural-reference cap) don't apply,
+    // and the writer's own researched external ids are accepted as sources.
+    const opts = optionsFor(packet.context, research);
+    const humanOverrides = MODELS.writer === "human"
+      ? {
+          minWords: 0, maxWords: Infinity, maxExternalRefs: Infinity,
+          knownExternalIds: new Set([...(opts.knownExternalIds ?? []), ...article.external_context_used]),
+        }
+      : {};
+    const result = validateRecap(article, { ...opts, ...humanOverrides });
     for (const w of result.warnings) console.warn(`  warn  [${w.rule}] ${w.detail}`);
     if (!result.ok) {
       console.error(`Validation failed for ${season} week ${week}. Nothing was written.`);

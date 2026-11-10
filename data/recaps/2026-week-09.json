@@ -1,0 +1,88 @@
+{
+  "season": 2026,
+  "week": 9,
+  "generated_at": "2026-11-10T10:07:01.372Z",
+  "source_data_hash": "3d7ab6231de727a3",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 9 Recap",
+    "body": [
+      "Tom Brady returned to Foxborough on Sunday for Rob Gronkowski's Patriots Hall of Fame induction and stayed to call Packers-Patriots for Fox. New England celebrated by surrendering 45 points, the most an opponent has ever scored at Gillette Stadium. Brady spent twenty years building the most successful dynasty in NFL history, and his first trip back to the broadcast booth at Gillette involved explaining how two Green Bay receivers had accumulated 335 yards against his former team. Gronkowski might have been the only person inducted into a Hall of Fame ceremony who left with a worse impression of the organization than when he arrived.",
+      "Fortunately for BrendanBall03, Christian Watson and Matthew Golden were both in its starting lineup. Watson caught seven passes for 171 yards, Golden added 10 for 164, and the two combined for 54 fantasy points in a 128.59 to 118.23 victory over the New York Mudbones. Brock Purdy contributed another 26.28, giving BrendanBall03 its fifth consecutive win and handing the Mudbones their second loss of the season. After seven straight weeks above 145 points, the Mudbones have now posted their two lowest scores in consecutive weeks. The rest of the league has spent two months waiting for this team to look remotely mortal, and BrendanBall03 was happy to collect the evidence.",
+      "The other beneficiary of Green Bay's afternoon was the New England Keys, which started Jordan Love for 36.18 while the actual New England spent most of Sunday trying to get him off the field. Joe Burrow added 29.54 in Cincinnati's victory over Atlanta in Madrid, and Puka Nacua contributed another 28. The Keys beat Woodys Toy Box 145.47 to 129.81. Dan \"Dan Ball\" Ball got 36.36 points from C.J. Stroud's five-touchdown performance, but it still wasn't enough to prevent another loss.",
+      "The Keys have now finished as the league's highest-scoring team three consecutive weeks, including last week's league-record 193.90. Unfortunately, Puka Nacua has since landed on injured reserve and Michael Wilson is out for the season. The offense has never been better, and the receiving corps has never been more interested in meeting the team doctors.",
+      "Hanging With Hernandez spent Sunday laying pipe on It Hurts When I Pitts, winning 134.70 to 66.86 behind five combined touchdowns from Kenneth Walker and Bucky Irving. Walker contributed 34.3, Irving added 26.5, and the two running backs nearly outscored Pitts' entire starting lineup by themselves. Pitts has now lost eight consecutive matchups since its Week 1 victory. There are still five weeks left in the regular season, which feels like a cruel amount of time to keep making somebody set a lineup.",
+      "Mark 2.0 extended its winning streak to four games with a 115.96 to 85.84 victory over Team jtyurconic2. CeeDee Lamb caught 10 passes for 195 yards against Indianapolis, while Shedeur Sanders supplied another 22.68 for Mark. The Cowboys and Colts combined for 23 penalties and 220 penalty yards, which made for an entertaining afternoon if you happen to believe the referee is the most important position in professional football.",
+      "For a little while, it looked like The Permanent Rebuild might accidentally win the first game in franchise history. Team chrisrenna17 was coming off a 60.24-point performance in Week 8, and Ackerly had managed to reach the fourth quarter with an opportunity to exploit another underwhelming afternoon. Renna eventually escaped 108.32 to 93.64. The Permanent Rebuild is now 0-9, although the fact that the possibility of winning required genuine consideration was a substantial departure from the usual proceedings.",
+      "Green Egbukas & Ham also picked up a win, beating Injured Reserve 117.25 to 100.86 behind 20.55 from Brock Bowers. Injured Reserve had enough scoring on its roster to win but left 26.5 points from Kayshon Boutte on the bench, starting Kyle Williams in a flex spot for exactly zero. Making that one substitution would have changed the result to a 127.36 to 117.25 victory.",
+      "Injured Reserve has spent $994 of its $1,000 FAAB budget this season, leaving six dollars available for the remaining five regular-season weeks. It's an impressive amount of money to spend assembling a team that still managed to leave a 26.5-point receiver on the bench."
+    ],
+    "for_the_record": [
+      {
+        "text": "**C.J. Stroud threw five touchdown passes against the Chargers, all on throws traveling between 10 and 19 yards downfield.** According to Next Gen Stats, no other quarterback has thrown five touchdowns targeting that intermediate range in a single game since tracking began in 2016. Stroud finished with 384 passing yards in Houston's 44-22 victory.",
+        "fact_ids": [
+          "stroud-five-tds-intermediate-week9"
+        ]
+      },
+      {
+        "text": "**Brock Bowers reached 224 career receptions Sunday, surpassing Trey McBride's record of 221 for the most catches by a tight end through his first three NFL seasons.** Bowers is only midway through his third season and also joined Mike Ditka, Kellen Winslow Sr. and Rob Gronkowski as the only tight ends with at least six games of 100 receiving yards and a touchdown within their first three seasons.",
+        "fact_ids": [
+          "bowers-te-receptions-record-week9"
+        ]
+      },
+      {
+        "text": "**Giants rookie linebacker Arvell Reese recorded 12 tackles, three sacks and a forced fumble against Philadelphia.** At 21 years and 70 days old, he became the youngest player to record three sacks in a game since the statistic became official in 1982. His first sack took 2.29 seconds, the fastest recorded in the NFL this season.",
+        "fact_ids": [
+          "reese-youngest-three-sacks-week9"
+        ]
+      },
+      {
+        "text": "**Puka Nacua reached 70 receptions through his first seven games of the season, breaking Adam Thielen's NFL record of 67 set in 2018.** His 14 catches against Washington also helped him record his ninth career game with at least 150 receiving yards, the third-most through a player's first four seasons in NFL history, behind Justin Jefferson and Lance Alworth.",
+        "fact_ids": [
+          "nacua-70-receptions-record-week9"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [],
+    "external_context_used": [
+      "brady-broadcast-gillette-week9",
+      "gronkowski-hof-induction-week9",
+      "packers-335-receiving-week9",
+      "burrow-madrid-week9",
+      "cowboys-colts-penalties-week9",
+      "stroud-five-tds-intermediate-week9",
+      "bowers-te-receptions-record-week9",
+      "reese-youngest-three-sacks-week9",
+      "nacua-70-receptions-record-week9"
+    ],
+    "team_bits_used": [
+      {
+        "team": "New York Mudbones",
+        "theme": "finally looked mortal, two lowest scores in a row after an untouchable start"
+      },
+      {
+        "team": "It Hurts When I Pitts",
+        "theme": "eight straight losses since a Week 1 win"
+      },
+      {
+        "team": "The Permanent Rebuild",
+        "theme": "0-9, came closer than usual to a first-ever win"
+      },
+      {
+        "team": "Injured Reserve",
+        "theme": "spent nearly all its FAAB and still benched a 26.5-point receiver"
+      }
+    ],
+    "opening_mechanism": "Tom Brady back at Gillette in the Fox booth for Gronkowski's induction while the Patriots give up 45",
+    "ending_mechanism": "Injured Reserve FAAB-spending callback to the benched receiver"
+  }
+}
