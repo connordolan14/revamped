@@ -1,0 +1,109 @@
+{
+  "season": 2026,
+  "week": 10,
+  "generated_at": "2026-11-17T09:27:49.691Z",
+  "source_data_hash": "20c57a2942c393bf",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 10 Recap",
+    "body": [
+      "The Detroit Lions traveled to Munich on Sunday and celebrated an Amon-Ra St. Brown touchdown by reenacting what appeared to be The Human Centipede. The team later explained that it had borrowed the celebration from the Scottish Claymores, a defunct NFL Europe franchise. Someone on Detroit’s staff has apparently been spending his free time watching 25-year-old Scottish Claymores highlights, which might be more disturbing than the celebration itself. Earlier in the game, Aidan Hutchinson had injured his knee celebrating a sack of Drake Maye, who also injured his ankle on the play. Detroit won 35-10, and the Patriots returned to Boston with one fewer healthy quarterback and an unfortunate mental image.",
+      "Maye’s departure was bad news for BrendanBall03, which received just 3.0 fantasy points from a quarterback who had been averaging over 20. Fortunately, Brendan also owned George Pickens and Brock Purdy, who were busy participating in one of the highest-scoring games of the NFL season. San Francisco beat Dallas 46-40, with Purdy throwing for 389 yards and three touchdowns while Pickens caught 11 passes for 145 yards and three scores. They combined for 69.7 fantasy points, helping BrendanBall03 beat Team chrisrenna17 125.18 to 81.58. That’s six consecutive wins for Brendan, whose decision to start two players in a game featuring 86 combined points turned out to be pretty good roster management.",
+      "Dallas actually got five touchdown passes from Dak Prescott and still lost. The Cowboys surrendered 584 yards, the most they’ve ever allowed at home, and Dan “Dan Ball” Ball was happy to take the quarterback’s 35.4 fantasy points. Woodys Toy Box also got 25.5 from Isaiah Likely, 24.7 from Parker Washington and 21.4 from C.J. Stroud, producing a 178.66 to 114.91 beating of Hanging With Hernandez.",
+      "It was the second-highest score in the league this season, snapped a three-game losing streak, and ended the New England Keys’ three-week run as the league’s highest-scoring team. Woody’s has now scored at least 129 points in four of its last five games and somehow lost three of them. The offense has been doing its job for a month. The schedule has been treating it like a rented mule.",
+      "The Cowboys’ defensive generosity was also a significant help to the New York Mudbones. Christian McCaffrey caught touchdown passes of 74 and 66 yards against Dallas, added a rushing touchdown and finished with 44.3 fantasy points. Chuba Hubbard contributed another 31.7, Jaxon Smith-Njigba added 27.1 and Trevor Lawrence scored 27.8. Those four players alone combined for 130.9 points.",
+      "The Mudbones spent Sunday blowing the Keys’ back out, winning 170.23 to 139.61. New England finished third in weekly scoring, with Joe Burrow throwing four touchdowns for 33.2 points and Chase Brown adding another 24.3. The Mudbones, meanwhile, have assembled the Los Angeles Dodgers of fantasy football. McCaffrey, Smith-Njigba, George Kittle, Trey McBride and Travis Kelce are all on the same roster. Somebody should probably check whether Ryan has been deferring player salaries until 2046.",
+      "Green Egbukas & Ham spent $461 in FAAB to acquire quarterback Kyle McCord, who contributed 12.8 points in its 122.77 to 89.28 victory over It Hurts When I Pitts. Hopefully the investment works out better than mhaanders’ $901 Gardner Minshew purchase two weeks ago. Minshew was released the following week, giving him one of the shortest and most expensive tenures in league history.",
+      "Jahmyr Gibbs did most of the heavy lifting for Green, rushing for 153 yards and two touchdowns against New England, catching seven passes for another 99 yards and finishing with 40.7 fantasy points. Green has now won six of its last eight matchups and moves into sixth place with four weeks remaining. Pitts, meanwhile, has lost nine straight since winning its opener. At least someone in that locker room still remembers what winning felt like.",
+      "Team jtyurconic2 also picked up a substantial win over Injured Reserve, 126.81 to 72.45. Emmett Johnson had 32.1 after scoring twice on receptions against Atlanta, Josh Allen added 23.3 and James Cook supplied 21.7. Those three alone outscored the entire Injured Reserve starting lineup. Yurconic has now won four of its last six after starting 0-4, and the decision to remove the locker-room ping-pong table continues to look like the work of a football genius.",
+      "Mark 2.0 extended its winning streak to five games, beating The Permanent Rebuild 120.06 to 86.59. Patrick Mahomes threw five touchdowns against Atlanta, contributing 35.4 points, while Cam Skattebo added 25.7. Mark now occupies fourth place at 10-5 after opening the season with consecutive losses. Ackerly has reached 0-10 and remains in pursuit of the league’s first winless regular season, a record that nobody else has shown much interest in contesting.",
+      "Team chrisrenna17 has now scored below 110 in four consecutive weeks after opening the season 4-0. Its latest 81.58-point performance knocked it out of the six playoff positions, with Woody’s Toy Box sitting just half a win behind. Renna may have to start looking over his shoulder at a team that just scored 178.7 points.",
+      "And finally, the week’s $10 low-scorer penalty belongs to Injured Reserve, which finished dead last with 72.45 points despite getting 28.6 from Ja’Marr Chase. Justin Fields and Kayshon Boutte both contributed zeros to the starting lineup. Boutte scored 26.5 on mhaanders’ bench last week, then zero when he was finally promoted to the starting lineup this week. If mhaanders wants another good performance out of him, the instructions should be fairly obvious."
+    ],
+    "for_the_record": [
+      {
+        "text": "**Christian McCaffrey became the first running back in NFL history to catch two touchdown passes of at least 65 yards in the same game.** His 74- and 66-yard scores against Dallas helped him finish with 161 receiving yards, 62 rushing yards and three touchdowns. No player in NFL history had previously combined 160 receiving yards, two receiving touchdowns, 60 rushing yards and a rushing touchdown in one game.",
+        "fact_ids": [
+          "mccaffrey-two-65yd-receiving-tds-week10"
+        ]
+      },
+      {
+        "text": "**Jaxon Smith-Njigba became the first player in 66 years with at least 1,200 receiving yards and 10 touchdown catches through his team’s first 10 games.** The previous three were Raymond Berry in 1960, Elroy “Crazylegs” Hirsch in 1951 and Don Hutson in 1942. Smith-Njigba has 1,207 yards and 10 touchdowns after catching eight passes for 171 yards against Las Vegas.",
+        "fact_ids": [
+          "jsn-1200-yards-10-tds-week10"
+        ]
+      },
+      {
+        "text": "**The Cleveland Browns became the first team in NFL history to win each of its first six victories of a season by four points or fewer.** Cleveland came back from a 17-point deficit to beat Houston 27-24 and has trailed in the fourth quarter of every game it has won. The only other team since 1970 to win its first six games after trailing in the fourth quarter was the 2016 Detroit Lions.",
+        "fact_ids": [
+          "browns-six-close-wins-week10"
+        ]
+      },
+      {
+        "text": "**Chiefs rookie Emmett Johnson joined a rare group with at least 70 rushing yards, 60 receiving yards and two receiving touchdowns in one game.** The previous rookies to accomplish it were Ollie Matson, O.J. Simpson, Joey Galloway and Kareem Hunt. Johnson finished with 101 rushing yards and 70 receiving yards against Atlanta, becoming the fifth rookie in NFL history to reach those thresholds with two receiving touchdowns.",
+        "fact_ids": [
+          "emmett-johnson-rookie-receiving-tds-week10"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w10-win-streak-brendanball03-w6",
+      "2026-w10-blowout-brendanball03-chrisrenna17-margin",
+      "2026-w10-blowout-dball11-thebearjew44-margin",
+      "2026-w10-high-dball11-score",
+      "2026-w10-matchup-ryanog-connordolan14-margin",
+      "2026-w10-high-scoring-loss-connordolan14-top-six",
+      "2026-w10-matchup-greenie0513-hank1517-margin",
+      "2026-w10-playoff-entry-greenie0513",
+      "2026-w10-losing-streak-hank1517-l9",
+      "2026-w10-blowout-jtyurconic2-mhaanders-margin",
+      "2026-w10-matchup-jbitterman99-dackerly36-margin",
+      "2026-w10-losing-streak-dackerly36-l10",
+      "2026-w10-playoff-exit-chrisrenna17",
+      "2026-w10-low-mhaanders-score"
+    ],
+    "external_context_used": [
+      "lions-claymores-celebration-munich-week10",
+      "hutchinson-maye-injuries-week10",
+      "niners-cowboys-46-40-week10",
+      "cowboys-584-yards-allowed-week10",
+      "mccaffrey-two-65yd-receiving-tds-week10",
+      "jsn-1200-yards-10-tds-week10",
+      "browns-six-close-wins-week10",
+      "emmett-johnson-rookie-receiving-tds-week10"
+    ],
+    "team_bits_used": [
+      {
+        "team": "BrendanBall03",
+        "theme": "six straight wins, stacked Purdy and Pickens in a 46-40 shootout"
+      },
+      {
+        "team": "Woodys Toy Box",
+        "theme": "offense keeps scoring, schedule keeps losing it games"
+      },
+      {
+        "team": "New York Mudbones",
+        "theme": "the Los Angeles Dodgers of fantasy football"
+      },
+      {
+        "team": "jtyurconic2",
+        "theme": "ping-pong table removal callback"
+      },
+      {
+        "team": "Injured Reserve",
+        "theme": "Boutte benched for 26.5, started for zero"
+      }
+    ],
+    "opening_mechanism": "Lions' Human Centipede touchdown celebration in Munich, borrowed from the Scottish Claymores",
+    "ending_mechanism": "Injured Reserve's Kayshon Boutte bench/start callback"
+  }
+}
