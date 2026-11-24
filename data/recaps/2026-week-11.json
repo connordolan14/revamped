@@ -1,0 +1,110 @@
+{
+  "season": 2026,
+  "week": 11,
+  "generated_at": "2026-11-24T05:09:58.233Z",
+  "source_data_hash": "9fdb6a7ab1b1741a",
+  "prompt_versions": {
+    "research": "recap-research-v1",
+    "writer": "recap-writer-v1",
+    "editor": "recap-editor-v1"
+  },
+  "models": {
+    "research": "claude-code-session",
+    "writer": "human",
+    "editor": "claude-code-session"
+  },
+  "recap": {
+    "title": "Week 11 Recap",
+    "body": [
+      "If John Yurconic ever runs for public office, his opponent can save the money earmarked for private investigators. All it takes is a screenshot of his Week 11 superflex spot, printed on a billboard above the words GENO SMITH WAS AVAILABLE. The campaign can devote the rest of its budget to lawn signs and beer.",
+      "Yurconic started Xavier Hutchinson for 2.3 fantasy points while Geno Smith collected 19.4 on his bench, eventually losing 99.79 to 97.51 against It Hurts When I Pitts. Had he made that substitution, he would've picked up a head-to-head victory and the additional half-win awarded to the week's six highest-scoring teams. Instead, a team featuring Josh Allen, James Cook and Derrick Henry managed to fall to a franchise that had spent the previous nine weeks doing nothing except lose.",
+      "Pitts hardly deserves congratulations for its role in this affair. Jonah Coleman rushed for 111 yards and three touchdowns against Las Vegas, delivering 32.9 fantasy points from the taxi squad while Courtland Sutton occupied a starting spot and contributed zero. Somehow, in a matchup between two managers who left 50 combined points unused, one of them was entitled to a victory. Both managers should be grateful the league doesn't award losses for gross negligence.",
+      "It was also a difficult week for anyone whose employment depends on keeping his hands to himself. Steelers receiver DK Metcalf caught one pass for two yards before attempting to poke Cooper DeJean in the eye, receiving his second unsportsmanlike-conduct penalty and getting ejected from Pittsburgh's loss to Philadelphia. Metcalf subsequently told reporters that he couldn't remember the incident, which is a shame because Jensen Huang could probably teach him a thing or two about getting away with putting his hands where they don't belong.",
+      "Chris Renna received 0.7 fantasy points from Metcalf, which helped Mark 2.0 win 114.58 to 87.61 and extend its winning streak to six. Renna has now fallen to eighth place after opening the season 4-0, when his team averaged 141.2 points per game. Over the last five weeks, that average has fallen to 89.5. At Thanksgiving dinner, somebody ought to confiscate Renna's phone before he starts showing relatives screenshots of his September standings.",
+      "Mark's Cam Skattebo also made headlines this weekend, although his contribution to the fantasy lineup was limited to 4.3 points. On Wednesday, the Giants running back announced he was retiring his backflip celebration after watching Aidan Hutchinson tear his ACL celebrating a sack. Giants coach John Harbaugh applauded the decision, relieved that one of his players had finally considered the possibility of getting hurt doing something other than playing football. Four days later, Skattebo performed another backflip after securing a five-yard first down against Jacksonville. Skattebo appears determined to become the first NFL player to give himself CTE without an opposing defender ever touching him, and somebody should probably check whether he can still spell his last name before he tries another one.",
+      "The most consequential result for the playoff race came from Dan \"Dan Ball\" Ball, whose Woodys Toy Box beat Green Egbukas & Ham 125.11 to 107.54 behind 35.9 from Dak Prescott and 21.5 from C.J. Stroud. Woodys has now scored 303.77 points in two weeks, and the gap between it and sixth-place Green is down to half a win. Green still earned a top-half scoring bonus thanks to 25.8 from Jahmyr Gibbs and 22.4 from Justin Herbert, although Brock Bowers contributed zero and last week's $461 quarterback acquisition, Kyle McCord, managed 4.0 points on the bench.",
+      "The race for sixth has become especially interesting because Team chrisrenna17 is now sitting behind both clubs, while Hanging With Hernandez continues to produce enough points to contend without actually winning its matchups. Hanging With Hernandez put up 124.21, third-highest in the league, but discovered Sunday that Ryan's Mudbone was a lot more than he could handle. Chuba Hubbard contributed 26.0, Travis Kelce added 23.9 and George Kittle supplied another 17.7. Newly acquired Justin Jefferson scored 10.2, making him the ninth-highest-scoring starter on Ryan's team.",
+      "Jefferson was, until recently, the centerpiece of The Permanent Rebuild. Ryan already had Christian McCaffrey, Travis Kelce, George Kittle, Trey McBride and a collection of receivers that most managers would happily build their franchises around, and decided the appropriate next step was acquiring Justin Jefferson. The Mudbones are 14.5-2 with more than 1,700 points through eleven weeks, leaving Ryan with a roster so loaded that a first-round playoff exit would be one of the funniest things to happen in league history. It's probably the only outcome the other eleven managers are unanimously rooting for.",
+      "The matchup between the New England Keys and BrendanBall03 was supposed to feature the league's second- and third-place teams, but with six NFL franchises on bye and both rosters dealing with injuries, it played out more like The Permanent Rebuild against It Hurts When I Pitts. The Keys were without Puka Nacua and Jordan Love, while Brendan had Drake Maye unavailable and received exactly zero from Dalton Kincaid. New England escaped 103.50 to 96.90, ending Brendan's six-game winning streak and reclaiming second place. The Keys also finished exactly sixth in weekly scoring, earning the final top-half bonus by 3.71 points. Both managers will be hoping the next meeting involves more of their actual football teams.",
+      "Finally, Ackerly is now 0-11 after The Permanent Rebuild scored 62.11 in a loss to Injured Reserve, which snapped its own six-game losing streak. Fernando Mendoza scored 23.9 and Jack Bech added 18.8 on Ackerly's bench, each outscoring every player he actually started. He also owes the league another $10 for finishing last in scoring.",
+      "After eleven weeks, Ackerly has managed to trade Justin Jefferson to the league's wealthiest franchise, lose every game on his schedule, and keep paying fines to the people beating him. I don't know who wrote the league's economic policy, but the International Monetary Fund would be proud."
+    ],
+    "for_the_record": [
+      {
+        "text": "**James Cook became just the second player in NFL history to rush for at least 75 yards and a touchdown in nine consecutive games**, joining Terry Allen, who reached ten straight with Washington in 1995–96. Cook and Josh Allen are also the first teammates ever to record at least ten rushing touchdowns apiece in three consecutive seasons.",
+        "fact_ids": [
+          "cook-75yd-td-nine-straight-week11"
+        ]
+      },
+      {
+        "text": "**Dallas's 51-30 victory over Tennessee was a scorigami**, the first time that exact final score has occurred in NFL history. The Cowboys scored on each of their first eight possessions, and Dak Prescott finished with four passing touchdowns and another on the ground.",
+        "fact_ids": [
+          "cowboys-titans-scorigami-week11"
+        ]
+      },
+      {
+        "text": "**Travis Kelce passed Rob Gronkowski for third place in career touchdowns by a tight end, including postseason games.** Kelce now has 110, trailing only Antonio Gates (118) and Tony Gonzalez (115). His two-touchdown performance against Arizona was his first multi-touchdown regular-season game since November 2022.",
+        "fact_ids": [
+          "kelce-te-touchdowns-third-week11"
+        ]
+      },
+      {
+        "text": "**Bryce Young now has 14 career game-winning drives, tied for the most by any quarterback under 26 in the Super Bowl era.** His latest came in Carolina's 35-33 comeback against Baltimore. Young is tied with Justin Herbert and Dak Prescott, a fairly impressive achievement considering the state of the Panthers during much of his career.",
+        "fact_ids": [
+          "bryce-young-game-winning-drives-week11"
+        ]
+      }
+    ],
+    "used_body_fact_ids": [
+      "2026-w11-close-hank1517-jtyurconic2-margin",
+      "2026-w11-bench-hank1517-coleman",
+      "2026-w11-lineup-regret-jtyurconic2-cost-the-game",
+      "2026-w11-matchup-jbitterman99-chrisrenna17-margin",
+      "2026-w11-win-streak-jbitterman99-w6",
+      "2026-w11-matchup-dball11-greenie0513-margin",
+      "2026-w11-high-scoring-loss-greenie0513-top-six",
+      "2026-w11-matchup-ryanog-thebearjew44-margin",
+      "2026-w11-high-scoring-loss-thebearjew44-top-six",
+      "2026-w11-high-ryanog-score",
+      "2026-w11-trade-dackerly36-ryanog",
+      "2026-w11-matchup-connordolan14-brendanball03-margin",
+      "2026-w11-losing-streak-dackerly36-l11",
+      "2026-w11-matchup-mhaanders-dackerly36-margin",
+      "2026-w11-low-dackerly36-score",
+      "2026-w11-lineup-dackerly36-bech"
+    ],
+    "external_context_used": [
+      "metcalf-dejean-ejection-week11",
+      "jensen-huang-reference-week11",
+      "skattebo-backflip-week11",
+      "cook-75yd-td-nine-straight-week11",
+      "cowboys-titans-scorigami-week11",
+      "kelce-te-touchdowns-third-week11",
+      "bryce-young-game-winning-drives-week11"
+    ],
+    "team_bits_used": [
+      {
+        "team": "jtyurconic2",
+        "theme": "Geno Smith benched for Xavier Hutchinson, attack-ad billboard"
+      },
+      {
+        "team": "It Hurts When I Pitts",
+        "theme": "Jonah Coleman's 32.9 on the taxi squad"
+      },
+      {
+        "team": "chrisrenna17",
+        "theme": "4-0 start collapse, September standings screenshots"
+      },
+      {
+        "team": "New York Mudbones",
+        "theme": "rich get richer with Justin Jefferson"
+      },
+      {
+        "team": "The Permanent Rebuild",
+        "theme": "0-11, Jefferson trade, IMF economic policy"
+      }
+    ],
+    "opening_mechanism": "Political attack ad over Yurconic benching Geno Smith",
+    "ending_mechanism": "IMF joke about Ackerly's Jefferson trade and fines"
+  }
+}
